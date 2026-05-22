@@ -20,7 +20,12 @@ export function Header() {
           <a href={`tel:${site.phone.replace(/\s/g, "")}`}>
             <Phone size={15} /> {site.phone}
           </a>
-          <span className="topbar__brand">Nature Romp Safaris</span>
+          <span className="topbar__brand">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Instagram">◎</a>
+            <a href="#" aria-label="Twitter">x</a>
+            <a href="#" aria-label="YouTube">▶</a>
+          </span>
         </div>
       </div>
       <div className="navwrap">
@@ -54,8 +59,6 @@ export function Header() {
                 </div>
               </div>
             ))}
-            <Link href="/blog">Blog</Link>
-            <Link href="/photo-gallery">Gallery</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/contact" className="book-btn">
               Book Now

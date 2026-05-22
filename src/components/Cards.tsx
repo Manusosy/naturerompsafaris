@@ -1,4 +1,3 @@
-import { CalendarDays, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,16 +11,13 @@ export function PackageCard({ item }: { item: Package }) {
     <article className="tour-card">
       <Link href={`/safari-packages/${item.slug}`} className="tour-card__image">
         <Image src={item.image} alt={item.title} width={640} height={420} />
+        <span className="tour-card__duration">{item.duration}</span>
       </Link>
       <div className="tour-card__body">
-        <div className="tour-card__meta">
-          <span><CalendarDays size={15} /> {item.duration}</span>
-          <span><MapPin size={15} /> {item.category}</span>
-        </div>
         <h3><Link href={`/safari-packages/${item.slug}`}>{item.title}</Link></h3>
         <p>{item.excerpt}</p>
-        <Link href={`/safari-packages/${item.slug}`} className="read-more">
-          Explore More
+        <Link href={`/safari-packages/${item.slug}`} className="tour-card__button">
+          Book Now
         </Link>
       </div>
     </article>

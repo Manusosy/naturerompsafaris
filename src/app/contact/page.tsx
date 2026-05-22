@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Globe2, Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
 import { EnquiryForm } from "@/components/EnquiryForm";
@@ -19,16 +19,17 @@ export default function ContactPage() {
     <main>
       <PageHero title="Contact" />
       <section className="content-page">
-        <div className="container split">
-          <EnquiryForm />
-          <div>
+        <div className="container split contact-layout">
+          <EnquiryForm variant="light" />
+          <div className="contact-panel">
             <h2>Would Like to Talk?</h2>
             <ul className="info-list">
-              <li><MapPin size={18} /> <strong>Main Office:</strong> {site.address}</li>
-              <li><Mail size={18} /> <strong>Email:</strong> {site.email}</li>
-              <li><Mail size={18} /> <strong>Alternative Email:</strong> {site.secondaryEmail}</li>
-              <li><Phone size={18} /> <strong>Phone:</strong> {site.phone}</li>
-              <li><Phone size={18} /> <strong>Phone:</strong> {site.phoneAlt}</li>
+              <li><MapPin size={18} /> <span><strong>Main office</strong>{site.address}</span></li>
+              <li><Mail size={18} /> <span><strong>Email Address</strong>{site.email}</span></li>
+              <li><Mail size={18} /> <span><strong>Email Address</strong>{site.secondaryEmail}</span></li>
+              <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phone}</span></li>
+              <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phoneAlt.replace(" ", "")}</span></li>
+              <li><Globe2 size={18} /> <span><strong>Website</strong>www.naturerompsafaris.com</span></li>
             </ul>
           </div>
         </div>

@@ -3,7 +3,13 @@
 import { Send } from "lucide-react";
 import { useState } from "react";
 
-export function EnquiryForm({ subject = "Kenya Tanzania safari adventure" }: { subject?: string }) {
+export function EnquiryForm({
+  subject = "Kenya Tanzania safari adventure",
+  variant = "solid",
+}: {
+  subject?: string;
+  variant?: "solid" | "light";
+}) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function submit(formData: FormData) {
@@ -17,7 +23,7 @@ export function EnquiryForm({ subject = "Kenya Tanzania safari adventure" }: { s
   }
 
   return (
-    <form action={submit} className="enquiry-form">
+    <form action={submit} className={`enquiry-form enquiry-form--${variant}`}>
       <h3>Get In Touch</h3>
       <input name="company" className="honeypot" tabIndex={-1} autoComplete="off" />
       <div className="form-grid">

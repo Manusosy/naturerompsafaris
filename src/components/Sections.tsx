@@ -17,9 +17,10 @@ export function SectionHeader({ title, eyebrow }: { title: string; eyebrow?: str
 export function AboutPreview() {
   return (
     <section className="section about-preview">
-      <div className="container split">
-        <div>
-          <SectionHeader title="Nature Romp Safaris | Who We Are" />
+      <div className="container">
+        <SectionHeader title="Nature Romp Safaris | Who We Are" />
+        <div className="split about-preview__split">
+          <div>
           <p>
             Nature Romp Safaris is a trusted East African travel company crafting
             personalized Kenya Tanzania safari adventures, wildlife holidays,
@@ -32,10 +33,11 @@ export function AboutPreview() {
             most iconic parks.
           </p>
           <Link className="btn btn--outline" href="/about">Read More</Link>
-        </div>
-        <div className="image-stack">
+          </div>
+          <div className="image-stack">
           <Image src="/assets/img/about.jpg" alt="Nature Romp Safaris team and safari planning" width={720} height={520} />
           <Image src="/assets/img/about-small.webp" alt="Kenya safari vehicle" width={260} height={190} />
+          </div>
         </div>
       </div>
     </section>
@@ -47,8 +49,9 @@ export function Services() {
     <section className="section services">
       <div className="container">
         <SectionHeader title="Our Services and Products" />
-        <div className="service-grid">
-          {serviceCards.map(([title, image]) => (
+        <div className="services-layout">
+          <div className="service-grid">
+            {serviceCards.map(([title, image]) => (
             <article className="service-card" key={title}>
               <Image src={image} alt={title} width={560} height={390} />
               <div>
@@ -57,7 +60,9 @@ export function Services() {
                 <Link href="/safari-packages">Explore More</Link>
               </div>
             </article>
-          ))}
+            ))}
+          </div>
+          <EnquiryForm subject="Safari enquiry" />
         </div>
       </div>
     </section>

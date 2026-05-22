@@ -1,8 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { PageHero } from "@/components/PageHero";
-import { SectionHeader } from "@/components/Sections";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -17,54 +17,49 @@ export default function AboutPage() {
   return (
     <main>
       <PageHero title="About Page" />
-      <section className="content-page">
-        <div className="container split">
-          <div>
-            <SectionHeader title="Nature Romp Safaris | Who We Are" />
-            <p>
-              Nature Romp Safaris is a trusted name in travel, with dedicated
-              professionals who craft personalized safari itineraries. We help
-              guests explore Kenya, Tanzania and East Africa with careful
-              planning, reliable operations and local knowledge.
-            </p>
-            <p>
-              Our work is rooted in memorable journeys: wildlife safaris,
-              mountain climbing, beach extensions, cultural encounters and
-              private travel experiences shaped around each guest.
-            </p>
-          </div>
-          <Image src="/assets/img/vision.jpg" alt="Nature Romp Safaris vision" width={720} height={520} />
+      <section className="content-page about-page">
+        <div className="container about-intro">
+          <h2>Nature Romp Safaris | Who We Ar</h2>
+          <p>
+            Nature Romp Safaris is a leading and trusted name in the travel
+            industry, with a team of dedicated professionals who are experts in
+            crafting personalized travel itineraries. With years of experience
+            and a deep love for travel, our team is committed to delivering
+            exceptional service and ensuring every aspect of your journey is
+            seamless.
+          </p>
+          <Link href="/contact" className="btn btn--primary">Read More</Link>
         </div>
       </section>
       <section className="section">
-        <div className="container split">
-          <Image src="/assets/img/mission1.jpg" alt="Kenya Tanzania safari mission" width={720} height={520} />
+        <div className="container split about-mission">
           <div>
-            <SectionHeader title="Our Mission" />
+            <h2>Our Mission</h2>
             <p>
-              Our mission is to design authentic Kenya Tanzania safari
-              adventures that are smooth, safe, memorable and respectful of the
-              destinations we visit.
+              Our mission is to inspire and enable travelers to discover the
+              beauty and diversity of the world through exceptional and
+              immersive travel experiences. We believe that travel has the power
+              to broaden horizons, foster connections, and create life time
+              memories.
             </p>
-            <ul className="info-list">
-              <li>Personalized safari planning for families, couples, groups and solo travelers.</li>
-              <li>Local expertise across Kenya, Tanzania and wider East Africa.</li>
-              <li>Reliable transport, practical route design and responsive guest support.</li>
-            </ul>
           </div>
+          <Image src="/assets/img/mission1.jpg" alt="Kenya Tanzania safari mission" width={720} height={520} />
         </div>
       </section>
-      <section className="content-page">
+      <section className="content-page about-who">
         <div className="container split">
+          <Image src="/assets/img/vision.jpg" alt="Nature Romp Safaris team" width={720} height={520} />
           <div>
-            <SectionHeader title="Transportation" />
+            <h2>Who We Are?</h2>
             <p>
-              Safari transport is central to comfort and safety. We plan routes
-              around practical driving times, park conditions, guest priorities
-              and the best wildlife-viewing opportunities.
+              Nature Romp Safaris is a leading and trusted name in the travel
+              industry, with a team of dedicated professionals who are experts
+              in crafting personalized travel itineraries. With years of
+              experience and a deep love for travel, our team is committed to
+              delivering exceptional service and ensuring every aspect of your
+              journey is seamless.
             </p>
           </div>
-          <Image src="/assets/img/transportaion1.jpg" alt="Safari transportation in East Africa" width={720} height={520} />
         </div>
       </section>
     </main>

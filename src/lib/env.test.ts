@@ -8,6 +8,7 @@ describe("parseEnv", () => {
       DATABASE_URL: "postgresql://user:pass@example.com/neondb?sslmode=require",
       PAYLOAD_SECRET: "a-secure-secret-with-enough-length",
       NEXT_PUBLIC_SITE_URL: "https://kenyatanzaniasafariadventure.com",
+      PORTAL_HOST: "portal.kenyatanzaniasafariadventure.com",
       RESEND_API_KEY: "re_test_key",
       ENQUIRY_TO_EMAIL: "info@naturerompsafaris.com",
       ENQUIRY_FROM_EMAIL: "Nature Romp Safaris <onboarding@resend.dev>",
@@ -17,6 +18,7 @@ describe("parseEnv", () => {
     expect(env.NEXT_PUBLIC_SITE_URL).toBe(
       "https://kenyatanzaniasafariadventure.com",
     );
+    expect(env.PORTAL_HOST).toBe("portal.kenyatanzaniasafariadventure.com");
     expect(JSON.stringify(env)).not.toContain("a-secure-secret");
     expect(env.hasEmailProvider).toBe(true);
   });

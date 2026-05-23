@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { anyone, editorOrAdmin } from "@/lib/access";
+
 const seoFields = [
   { name: "metaTitle", type: "text" as const },
   { name: "metaDescription", type: "textarea" as const },
@@ -8,9 +10,16 @@ const seoFields = [
 
 export const Packages: CollectionConfig = {
   slug: "packages",
+  access: {
+    read: anyone,
+    create: editorOrAdmin,
+    update: editorOrAdmin,
+    delete: editorOrAdmin,
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "category", "duration", "featured"],
+    group: "Content",
   },
   fields: [
     { name: "title", type: "text", required: true },
@@ -34,6 +43,16 @@ export const Packages: CollectionConfig = {
     { name: "excerpt", type: "textarea", required: true },
     { name: "destinations", type: "text" },
     { name: "bestTime", type: "text" },
+    {
+      name: "accommodations",
+      type: "relationship",
+      relationTo: "accommodations",
+      hasMany: true,
+      admin: {
+        description:
+          "Optional Airbnb, lodge or stay choices shown on this package detail page.",
+      },
+    },
     { name: "content", type: "richText" },
     {
       name: "faqs",

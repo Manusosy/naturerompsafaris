@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import configPromise from "@payload-config";
+import { getPayload } from "payload";
 import { Resend } from "resend";
 
 import { validateEnquiry } from "@/lib/enquiry";
@@ -31,6 +33,16 @@ export async function POST(request: Request) {
 
   const env = getEnv();
   const apiKey = env.getResendApiKey();
+  const payload = await getPayload({ config: configPromise });
+
+  await payload.create({
+    collection: "enquiries",
+    data: {
+      ...result.data,
+      status: "new",
+    },
+    overrideAccess: true,
+  });
 
   if (apiKey) {
     const resend = new Resend(apiKey);

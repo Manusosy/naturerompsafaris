@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { JsonLd } from "@/components/JsonLd";
+import { PackageEnhancementsLoader } from "@/components/PackageEnhancements";
 import { PageHero } from "@/components/PageHero";
 import { packages, site } from "@/content/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
@@ -78,6 +79,7 @@ export default async function PackageDetailPage({ params }: Props) {
                 <p>Kenya routes can be extended into Tanzania for Serengeti, Ngorongoro and broader Kenya Tanzania safari adventure itineraries.</p>
               </article>
             </div>
+            <PackageEnhancementsLoader slug={item.slug} />
           </div>
           <EnquiryForm subject={item.title} />
         </div>

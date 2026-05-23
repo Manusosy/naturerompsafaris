@@ -1,9 +1,18 @@
 import type { CollectionConfig } from "payload";
 
+import { anyone, editorOrAdmin } from "@/lib/access";
+
 export const Testimonials: CollectionConfig = {
   slug: "testimonials",
+  access: {
+    read: anyone,
+    create: editorOrAdmin,
+    update: editorOrAdmin,
+    delete: editorOrAdmin,
+  },
   admin: {
     useAsTitle: "name",
+    group: "Content",
   },
   fields: [
     { name: "name", type: "text", required: true },

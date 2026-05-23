@@ -7,6 +7,7 @@ const envSchema = z.object({
     .string()
     .url()
     .default("https://kenyatanzaniasafariadventure.com"),
+  PORTAL_HOST: z.string().default("portal.kenyatanzaniasafariadventure.com"),
   RESEND_API_KEY: z.string().optional(),
   ENQUIRY_TO_EMAIL: z.string().email().default("info@naturerompsafaris.com"),
   ENQUIRY_FROM_EMAIL: z
@@ -18,6 +19,7 @@ const envSchema = z.object({
 export type AppEnv = {
   DATABASE_URL: string;
   NEXT_PUBLIC_SITE_URL: string;
+  PORTAL_HOST: string;
   ENQUIRY_TO_EMAIL: string;
   ENQUIRY_FROM_EMAIL: string;
   WHATSAPP_NUMBER: string;
@@ -41,6 +43,7 @@ export function parseEnv(source: Record<string, string | undefined>): AppEnv {
   return {
     DATABASE_URL: values.DATABASE_URL,
     NEXT_PUBLIC_SITE_URL: values.NEXT_PUBLIC_SITE_URL.replace(/\/$/, ""),
+    PORTAL_HOST: values.PORTAL_HOST.toLowerCase(),
     ENQUIRY_TO_EMAIL: values.ENQUIRY_TO_EMAIL,
     ENQUIRY_FROM_EMAIL: values.ENQUIRY_FROM_EMAIL,
     WHATSAPP_NUMBER: values.WHATSAPP_NUMBER,

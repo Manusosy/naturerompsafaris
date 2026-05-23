@@ -781,6 +781,67 @@ textarea {
   height: auto;
 }
 
+.package-enhancements {
+  display: grid;
+  gap: 32px;
+  margin-top: 36px;
+}
+
+.accommodation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.accommodation-card {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+}
+
+.accommodation-card img {
+  width: 100%;
+  aspect-ratio: 1.55 / 1;
+  object-fit: cover;
+}
+
+.accommodation-card > div {
+  padding: 20px;
+}
+
+.availability-badge {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  background: #eae5e3;
+  color: #111;
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.availability-badge--available {
+  background: #dff1d8;
+  color: #183d13;
+}
+
+.availability-badge--limited {
+  background: #fff0c2;
+  color: #5c3a00;
+}
+
+.availability-badge--unavailable {
+  background: #f4d1ca;
+  color: #69240f;
+}
+
+.flight-cta {
+  padding: 26px;
+  background: #eae5e3;
+  border-left: 4px solid var(--brown);
+}
+
 .footer {
   color: #dce5d6;
   background: #111;

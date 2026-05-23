@@ -1,10 +1,19 @@
 import type { CollectionConfig } from "payload";
 
+import { anyone, editorOrAdmin } from "@/lib/access";
+
 export const Posts: CollectionConfig = {
   slug: "posts",
+  access: {
+    read: anyone,
+    create: editorOrAdmin,
+    update: editorOrAdmin,
+    delete: editorOrAdmin,
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "category", "publishedAt"],
+    group: "Content",
   },
   fields: [
     { name: "title", type: "text", required: true },

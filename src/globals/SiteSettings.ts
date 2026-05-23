@@ -1,7 +1,16 @@
 import type { GlobalConfig } from "payload";
 
+import { anyone, editorOrAdmin } from "@/lib/access";
+
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
+  access: {
+    read: anyone,
+    update: editorOrAdmin,
+  },
+  admin: {
+    group: "Portal",
+  },
   fields: [
     { name: "siteName", type: "text", defaultValue: "Kenya Tanzania Safari Adventure" },
     { name: "companyName", type: "text", defaultValue: "Nature Romp Safaris" },

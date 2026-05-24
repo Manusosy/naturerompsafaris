@@ -28,6 +28,38 @@ export type AppEnv = {
   getResendApiKey: () => string | undefined;
 };
 
+export function normalizeDatabaseUrl(databaseUrl: string) {
+  let url: URL;
+
+  try {
+    url = new URL(databaseUrl);
+  } catch {
+    throw new Error("DATABASE_URL must be a valid PostgreSQL connection URL");
+  }
+
+  if (!["postgres:", "postgresql:"].includes(url.protocol)) {
+    throw new Error("DATABASE_URL must use the postgres:// or postgresql:// protocol");
+  }
+
+  const placeholderHosts = new Set(["example.com", "host", "localhost.example"]);
+  if (placeholderHosts.has(url.hostname.toLowerCase())) {
+    throw new Error(
+      "DATABASE_URL is still using a placeholder host. Set it to the real Neon Postgres connection string.",
+    );
+  }
+
+  if (!url.username || !url.password) {
+    throw new Error("DATABASE_URL must include the Neon database role and password");
+  }
+
+  const sslMode = url.searchParams.get("sslmode");
+  if (sslMode && ["prefer", "require", "verify-ca"].includes(sslMode)) {
+    url.searchParams.set("sslmode", "verify-full");
+  }
+
+  return url.toString();
+}
+
 export function parseEnv(source: Record<string, string | undefined>): AppEnv {
   const parsed = envSchema.safeParse(source);
 
@@ -39,9 +71,10 @@ export function parseEnv(source: Record<string, string | undefined>): AppEnv {
   }
 
   const values = parsed.data;
+  const databaseUrl = normalizeDatabaseUrl(values.DATABASE_URL);
 
   return {
-    DATABASE_URL: values.DATABASE_URL,
+    DATABASE_URL: databaseUrl,
     NEXT_PUBLIC_SITE_URL: values.NEXT_PUBLIC_SITE_URL.replace(/\/$/, ""),
     PORTAL_HOST: values.PORTAL_HOST.toLowerCase(),
     ENQUIRY_TO_EMAIL: values.ENQUIRY_TO_EMAIL,

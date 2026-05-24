@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { parseEnv } from "./env";
+import { normalizeDatabaseUrl, parseEnv } from "./env";
 
 describe("parseEnv", () => {
   it("accepts the minimum production-safe configuration without exposing secrets", () => {
     const env = parseEnv({
-      DATABASE_URL: "postgresql://user:pass@example.com/neondb?sslmode=require",
+      DATABASE_URL: "postgresql://user:pass@db.neon.tech/neondb?sslmode=require",
       PAYLOAD_SECRET: "a-secure-secret-with-enough-length",
       NEXT_PUBLIC_SITE_URL: "https://kenyatanzaniasafariadventure.com",
       PORTAL_HOST: "portal.kenyatanzaniasafariadventure.com",
@@ -25,5 +25,23 @@ describe("parseEnv", () => {
 
   it("rejects missing required server configuration", () => {
     expect(() => parseEnv({})).toThrow(/DATABASE_URL/);
+  });
+});
+
+describe("normalizeDatabaseUrl", () => {
+  it("keeps current pg SSL behavior without the deprecated sslmode warning", () => {
+    const normalized = normalizeDatabaseUrl(
+      "postgresql://user:pass@db.neon.tech/neondb?sslmode=require",
+    );
+
+    expect(new URL(normalized).searchParams.get("sslmode")).toBe("verify-full");
+  });
+
+  it("rejects placeholder database hosts before Payload tries to connect", () => {
+    expect(() =>
+      normalizeDatabaseUrl(
+        "postgresql://user:pass@example.com/neondb?sslmode=require",
+      ),
+    ).toThrow(/placeholder host/);
   });
 });

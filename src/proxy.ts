@@ -1,15 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { getEnv } from "@/lib/env";
 import { resolvePortalRoute } from "@/lib/portal-routing";
 
 export function proxy(request: NextRequest) {
-  const env = getEnv();
   const action = resolvePortalRoute({
     host: request.headers.get("host"),
     nextUrl: request.nextUrl,
-    portalHost: env.PORTAL_HOST,
-    siteUrl: env.NEXT_PUBLIC_SITE_URL,
+    portalHost:
+      process.env.PORTAL_HOST ?? "portal.kenyatanzaniasafariadventure.com",
+    siteUrl:
+      process.env.NEXT_PUBLIC_SITE_URL ??
+      "https://kenyatanzaniasafariadventure.com",
   });
 
   if (action.type === "redirect") {

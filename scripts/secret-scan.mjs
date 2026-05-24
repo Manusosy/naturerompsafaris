@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
@@ -21,6 +21,7 @@ const patterns = [
 const findings = [];
 
 for (const file of files) {
+  if (!existsSync(join(root, file))) continue;
   const content = readFileSync(join(root, file), "utf8");
   for (const pattern of patterns) {
     if (pattern.test(content)) findings.push(file);

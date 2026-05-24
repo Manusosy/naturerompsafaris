@@ -1,8 +1,17 @@
 import configPromise from "@payload-config";
 import { handleServerFunctions, RootLayout } from "@payloadcms/next/layouts";
 import type { ServerFunctionClient } from "payload";
+import { importMap } from "../importMap.js";
 
-const importMap = {};
+async function serverFunction(args: Parameters<ServerFunctionClient>[0]) {
+  "use server";
+
+  return handleServerFunctions({
+    ...args,
+    config: configPromise,
+    importMap,
+  });
+}
 
 export default function PayloadLayout({
   children,
@@ -13,7 +22,7 @@ export default function PayloadLayout({
     <RootLayout
       config={configPromise}
       importMap={importMap}
-      serverFunction={handleServerFunctions as ServerFunctionClient}
+      serverFunction={serverFunction as ServerFunctionClient}
     >
       {children}
     </RootLayout>

@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema } from "@/lib/seo";
 import { site } from "@/content/site";
+import { getPublicNavigation } from "@/lib/public-navigation";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -28,11 +29,12 @@ export const metadata: Metadata = {
     "Plan Kenya Tanzania safari adventures, Kenya adventure safaris, Tanzania adventure safaris, Masai Mara Serengeti routes and custom East Africa tours with Nature Romp Safaris.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const navItems = await getPublicNavigation();
   return (
     <html
       lang="en"
@@ -40,9 +42,9 @@ export default function RootLayout({
     >
       <body>
         <JsonLd data={organizationSchema()} />
-        <Header />
+        <Header navItems={navItems} />
         {children}
-        <Footer />
+        <Footer navItems={navItems} />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import type { GlobalConfig } from "payload";
 
-import { adminOnly, anyone } from "@/lib/access";
+import { adminOnly, anyone } from "../lib/access";
 
 export const FlightAffiliateSettings: GlobalConfig = {
   slug: "flight-affiliate-settings",

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 
-import { anyone, editorOrAdmin } from "@/lib/access";
+import { anyone, editorOrAdmin } from "../lib/access";
 
 export const Itineraries: CollectionConfig = {
   slug: "itineraries",
@@ -21,8 +21,8 @@ export const Itineraries: CollectionConfig = {
       name: "package",
       type: "relationship",
       relationTo: "packages",
-      required: true,
     },
+    { name: "trip", type: "relationship", relationTo: "trips" },
     {
       name: "dayCount",
       label: "Number of days",
@@ -40,6 +40,7 @@ export const Itineraries: CollectionConfig = {
         { name: "meals", type: "text" },
         { name: "accommodation", type: "text" },
         { name: "description", type: "textarea", required: true },
+        { name: "image", type: "upload", relationTo: "media" },
       ],
     },
   ],

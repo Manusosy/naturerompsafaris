@@ -114,7 +114,13 @@ export function Testimonials() {
         <div className="testimonial-grid">
           {testimonials.map((item) => (
             <blockquote key={item.name}>
-              <Image src="/assets/img/testimonial/review-icon.png" alt="" width={32} height={32} />
+              <Image
+                src="/assets/img/testimonial/review-icon.png"
+                alt=""
+                width={32}
+                height={32}
+                style={{ height: 32, width: 32 }}
+              />
               <p>{item.quote}</p>
               <cite>{item.name}</cite>
             </blockquote>

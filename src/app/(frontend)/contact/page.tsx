@@ -1,8 +1,8 @@
 import { Globe2, Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
-import { EnquiryForm } from "@/components/EnquiryForm";
 import { PageHero } from "@/components/PageHero";
+import { SafariQuoteForm } from "@/components/SafariQuoteForm";
 import { site } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
@@ -17,12 +17,23 @@ export const metadata: Metadata = buildMetadata({
 export default function ContactPage() {
   return (
     <main>
-      <PageHero title="Contact" />
-      <section className="content-page">
-        <div className="container split contact-layout">
-          <EnquiryForm variant="light" />
-          <div className="contact-panel">
-            <h2>Would Like to Talk?</h2>
+      <PageHero
+        eyebrow="Safari planning"
+        title="Request a Free Quote"
+        subtitle="Share your preferred route, dates, travelers, comfort level, and budget range. Nature Romp Safaris will prepare a quote-first Kenya and Tanzania safari plan."
+      />
+      <section className="contact-quote-section">
+        <div className="container contact-quote-layout">
+          <div className="contact-quote-main">
+            <div className="section-kicker">Plan your safari</div>
+            <h2>Tell us what kind of Kenya or Tanzania adventure you want.</h2>
+            <p>
+              No payment is collected on the website. This form gives the team enough context to prepare a practical safari proposal and follow up with the right options.
+            </p>
+            <SafariQuoteForm subject="Website safari quote request" />
+          </div>
+          <aside className="contact-panel contact-panel--sticky">
+            <h2>Contact Details</h2>
             <ul className="info-list">
               <li><MapPin size={18} /> <span><strong>Main office</strong>{site.address}</span></li>
               <li><Mail size={18} /> <span><strong>Email Address</strong>{site.email}</span></li>
@@ -31,7 +42,15 @@ export default function ContactPage() {
               <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phoneAlt.replace(" ", "")}</span></li>
               <li><Globe2 size={18} /> <span><strong>Website</strong>www.naturerompsafaris.com</span></li>
             </ul>
-          </div>
+            <div className="contact-trust">
+              <h3>Why travelers enquire with us</h3>
+              <ul>
+                <li>Quote-first planning for private, family, budget, and luxury safaris.</li>
+                <li>Kenya and Tanzania routes managed by a dedicated safari operations team.</li>
+                <li>Flexible itinerary planning before any booking commitment.</li>
+              </ul>
+            </div>
+          </aside>
         </div>
       </section>
       <iframe

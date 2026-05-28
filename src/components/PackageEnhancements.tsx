@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 import type { PackageEnhancements } from "@/lib/portal-content";
 
@@ -12,32 +9,7 @@ const availabilityLabels: Record<string, string> = {
   unavailable: "Unavailable",
 };
 
-export function PackageEnhancementsLoader({ slug }: { slug: string }) {
-  const [data, setData] = useState<PackageEnhancements | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch(`/api/package-enhancements/${slug}`)
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: PackageEnhancements | null) => {
-        if (active) setData(payload);
-      })
-      .catch(() => {
-        if (active) setData(null);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [slug]);
-
-  if (!data) return null;
-
-  return <PackageEnhancementsView {...data} />;
-}
-
-function PackageEnhancementsView({
+export function PackageEnhancementsView({
   accommodations,
   flightAffiliate,
 }: PackageEnhancements) {
@@ -75,10 +47,9 @@ function PackageEnhancementsView({
       )}
       {flightAffiliate && (
         <div className="flight-cta">
-          <h2>Flights For This Safari</h2>
+          <h2>Need Flights?</h2>
           <p>
-            Compare flight options through the configured {flightAffiliate.provider}
-            affiliate partner.
+            Book flights with our travel partner. Nature Romp Safaris may earn a commission.
           </p>
           <a href={flightAffiliate.href} className="btn btn--primary" rel="nofollow sponsored" target="_blank">
             {flightAffiliate.ctaLabel}

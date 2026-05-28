@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 
-import { anyone, operationsOrAdmin } from "@/lib/access";
+import { anyone, operationsOrAdmin } from "../lib/access";
 
 export const availabilityOptions = [
   { label: "Available", value: "available" },

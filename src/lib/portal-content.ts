@@ -23,11 +23,11 @@ type LocalPayloadReader = {
     limit?: number;
     overrideAccess?: boolean;
     where?: Record<string, unknown>;
-  }) => Promise<{ docs?: Array<Record<string, unknown>> }>;
+  }) => Promise<{ docs?: Array<unknown> }>;
   findGlobal: (args: {
     overrideAccess?: boolean;
     slug: string;
-  }) => Promise<Record<string, unknown> | null>;
+  }) => Promise<unknown>;
 };
 
 export type PackageEnhancements = {
@@ -71,7 +71,7 @@ export async function getPackageEnhancements(
     const flightSettings = await payload.findGlobal({
       slug: "flight-affiliate-settings",
       overrideAccess: true,
-    });
+    }) as Record<string, unknown> | null;
 
     return {
       accommodations: rawAccommodations

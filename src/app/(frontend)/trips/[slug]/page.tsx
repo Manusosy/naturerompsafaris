@@ -1,0 +1,217 @@
+import configPromise from "@payload-config";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getPayload } from "payload";
+
+import { JsonLd } from "@/components/JsonLd";
+import { TripDetailExperience, type TripDetailData } from "@/components/TripDetailExperience";
+import { site } from "@/content/site";
+import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
+
+type Props = { params: Promise<{ slug: string }> };
+
+function mediaUrl(value: unknown) {
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return typeof record.url === "string" ? record.url : "";
+  }
+  return "";
+}
+
+function relationName(value: unknown) {
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return String(record.name ?? record.title ?? "");
+  }
+  return "";
+}
+
+function relationSlug(value: unknown) {
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return typeof record.slug === "string" ? record.slug : "";
+  }
+  return "";
+}
+
+function arrayItems(value: unknown, key = "item") {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => {
+    if (typeof item === "string") return item;
+    if (item && typeof item === "object") return String((item as Record<string, unknown>)[key] ?? "");
+    return "";
+  }).filter(Boolean);
+}
+
+async function getTrip(slug: string) {
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const result = await payload.find({
+      collection: "trips" as never,
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+      where: {
+        slug: { equals: slug },
+        status: { equals: "published" },
+      } as never,
+    });
+    return (result.docs[0] ?? null) as Record<string, unknown> | null;
+  } catch {
+    return null;
+  }
+}
+
+async function getReviewSettings() {
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const settings = await payload.findGlobal({
+      depth: 0,
+      overrideAccess: true,
+      slug: "site-settings" as never,
+    });
+    return settings as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<string, unknown>): TripDetailData {
+  const budget = doc.budget && typeof doc.budget === "object" ? doc.budget as Record<string, unknown> : {};
+  const gallery = Array.isArray(doc.gallery) ? doc.gallery : [];
+  const destinations = Array.isArray(doc.destinations) ? doc.destinations.map(relationName).filter(Boolean) : [];
+  const itinerary = doc.itinerary && typeof doc.itinerary === "object" ? doc.itinerary as Record<string, unknown> : {};
+  const itineraryDays = Array.isArray(doc.itineraryDays)
+    ? doc.itineraryDays as TripDetailData["itineraryDays"]
+    : Array.isArray(itinerary.days)
+      ? itinerary.days as TripDetailData["itineraryDays"]
+      : [];
+  const budgetText = String(budget.displayText || doc.priceText || [
+    budget.currency || "USD",
+    budget.min && budget.max ? `${budget.min} - ${budget.max}` : "",
+  ].filter(Boolean).join(" "));
+  const destinationStops = Array.isArray(doc.destinationStops) && doc.destinationStops.length
+    ? doc.destinationStops.map((item) => {
+      const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+      return {
+        alt: String(record.alt || record.title || doc.title || "Safari destination"),
+        description: typeof record.description === "string" ? record.description : "",
+        image: mediaUrl(record.image),
+        slug: relationSlug(record.destination),
+        title: String(record.title || relationName(record.destination) || "Safari destination"),
+      };
+    })
+    : (Array.isArray(doc.destinations) ? doc.destinations.map((destination) => ({
+      description: "",
+      slug: relationSlug(destination),
+      title: relationName(destination),
+    })).filter((item) => item.title) : []);
+
+  return {
+    availability: String(doc.availability ?? "on-request"),
+    budgetText,
+    days: typeof doc.days === "number" ? doc.days : undefined,
+    destinationStops,
+    directAnswers: Array.isArray(doc.directAnswers) ? doc.directAnswers as TripDetailData["directAnswers"] : [],
+    endLocation: typeof doc.endLocation === "string" ? doc.endLocation : undefined,
+    excluded: arrayItems(doc.excluded),
+    gallery: gallery.map((item) => {
+      const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+      const src = mediaUrl(record.image);
+      return {
+        alt: String(record.alt || doc.title || "Nature Romp Safaris trip"),
+        caption: typeof record.caption === "string" ? record.caption : "",
+        src: src || "/assets/img/banner1.webp",
+      };
+    }),
+    heroSubtitle: typeof doc.heroSubtitle === "string" ? doc.heroSubtitle : undefined,
+    highlights: Array.isArray(doc.highlights) ? doc.highlights.map((item) => {
+      const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+      return {
+        alt: String(record.alt || record.title || doc.title || "Safari highlight"),
+        description: typeof record.description === "string" ? record.description : "",
+        image: mediaUrl(record.image),
+        title: String(record.title || ""),
+      };
+    }).filter((item) => item.title) : [],
+    id: String(doc.id ?? ""),
+    included: arrayItems(doc.included),
+    itineraryDays,
+    location: String(doc.location || destinations.join(", ") || "Kenya and Tanzania"),
+    mapEmbedUrl: typeof doc.mapEmbedUrl === "string" ? doc.mapEmbedUrl : undefined,
+    nights: typeof doc.nights === "number" ? doc.nights : undefined,
+    overview: typeof doc.overview === "string" ? doc.overview : undefined,
+    positiveImpact: typeof doc.positiveImpact === "string" ? doc.positiveImpact : undefined,
+    priceSeasons: Array.isArray(doc.priceSeasons) ? doc.priceSeasons as TripDetailData["priceSeasons"] : [],
+    relatedTrips: Array.isArray(doc.relatedTrips) ? doc.relatedTrips.map((item) => {
+      const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+      const relatedBudget = record.budget && typeof record.budget === "object" ? record.budget as Record<string, unknown> : {};
+      const relatedGallery = Array.isArray(record.gallery) ? record.gallery : [];
+      const firstImage = relatedGallery[0] && typeof relatedGallery[0] === "object"
+        ? mediaUrl((relatedGallery[0] as Record<string, unknown>).image)
+        : "";
+      return {
+        budgetText: String(relatedBudget.displayText || record.priceText || ""),
+        image: firstImage,
+        slug: String(record.slug || ""),
+        title: String(record.title || ""),
+      };
+    }).filter((item) => item.slug && item.title) : [],
+    reviewSettings: {
+      heading: String(reviewSettings.reviewHeading || "We Are Highly Recommended"),
+      trustindexEmbed: typeof reviewSettings.trustindexEmbed === "string" ? reviewSettings.trustindexEmbed : "",
+    },
+    slug: String(doc.slug ?? ""),
+    startLocation: typeof doc.startLocation === "string" ? doc.startLocation : undefined,
+    title: String(doc.title ?? "Safari Trip"),
+    whyBook: arrayItems(doc.whyBook),
+  };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const trip = await getTrip(slug);
+    if (!trip) return {};
+    const seo = trip.seo && typeof trip.seo === "object" ? trip.seo as Record<string, unknown> : {};
+    return buildMetadata({
+      title: String(seo.title || trip.title || "Safari Trip"),
+      description: String(seo.description || trip.overview || "Plan this Kenya Tanzania safari adventure with Nature Romp Safaris."),
+      keywords: String(seo.keywords || "Kenya Tanzania safari adventure, safari trip, Nature Romp Safaris"),
+      path: `/trips/${trip.slug}`,
+      image: mediaUrl(seo.openGraphImage) || "/assets/img/banner1.webp",
+    });
+  } catch {
+    return {};
+  }
+}
+
+export default async function TripPage({ params }: Props) {
+  const { slug } = await params;
+  const trip = await getTrip(slug);
+  if (!trip) notFound();
+  const reviewSettings = await getReviewSettings();
+  const normalizedTrip = normalizeTrip(trip, reviewSettings);
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    name: normalizedTrip.title,
+    description: normalizedTrip.overview,
+    provider: { "@type": "TravelAgency", name: site.company, url: site.canonicalUrl },
+    touristType: ["Private safari guests", "Family travelers", "Wildlife travelers"],
+    itinerary: normalizedTrip.location,
+  };
+
+  return (
+    <main>
+      <JsonLd data={schema} />
+      <JsonLd data={breadcrumbSchema([
+        { name: "Home", url: "/" },
+        { name: "Trips", url: "/safari-packages" },
+        { name: normalizedTrip.title, url: `/trips/${normalizedTrip.slug}` },
+      ])} />
+      <TripDetailExperience trip={normalizedTrip} />
+    </main>
+  );
+}

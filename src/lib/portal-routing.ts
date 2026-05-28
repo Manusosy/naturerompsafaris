@@ -4,6 +4,7 @@ export type PortalRouteAction =
 
 const allowedPortalPrefixes = [
   "/admin",
+  "/cms-admin",
   "/api",
   "/_next",
   "/media",
@@ -36,6 +37,10 @@ export function resolvePortalRoute({
   const isMainHost = normalizedHost === siteHost;
   const pathname = nextUrl.pathname;
 
+  if (pathname === "/admin/create-first-user") {
+    return { type: "redirect", destination: new URL("/admin/register", nextUrl) };
+  }
+
   if (isPortalHost) {
     if (pathname === "/") {
       return { type: "redirect", destination: new URL("/admin", nextUrl) };
@@ -48,7 +53,11 @@ export function resolvePortalRoute({
     return { type: "redirect", destination: new URL("/admin", nextUrl) };
   }
 
-  if (isMainHost && pathname.startsWith("/admin") && !isLocalHost(normalizedHost)) {
+  if (
+    isMainHost &&
+    (pathname.startsWith("/admin") || pathname.startsWith("/cms-admin")) &&
+    !isLocalHost(normalizedHost)
+  ) {
     const destination = new URL(nextUrl);
     destination.protocol = new URL(siteUrl).protocol;
     destination.hostname = normalizedPortalHost;

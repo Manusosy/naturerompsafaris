@@ -1,6 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export function EnquiryForm({
@@ -10,6 +11,7 @@ export function EnquiryForm({
   subject?: string;
   variant?: "solid" | "light";
 }) {
+  const pathname = usePathname();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function submit(formData: FormData) {
@@ -45,7 +47,7 @@ export function EnquiryForm({
         </label>
       </div>
       <input name="subject" defaultValue={subject} type="hidden" />
-      <input name="sourcePage" defaultValue={typeof window !== "undefined" ? window.location.pathname : "/"} type="hidden" />
+      <input name="sourcePage" value={pathname} readOnly type="hidden" />
       <label>
         Message
         <textarea name="message" rows={5} placeholder="Tell us your travel dates, group size and preferred safari route." required />

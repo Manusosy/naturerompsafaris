@@ -1,10 +1,38 @@
-import type { CollectionConfig } from "payload";
+import { ValidationError, type CollectionConfig, type PayloadRequest } from "payload";
 
-import { adminFieldOnly, adminOnly, roleOptions, selfOrAdmin } from "@/lib/access";
+import { adminFieldOnly, adminOnly, roleOptions, selfOrAdmin } from "../lib/access";
+import {
+  assertAuthorizedAdminEmail,
+  prepareUserAuthData,
+  unauthorizedAdminEmailMessage,
+} from "../lib/admin-auth";
+import { getEnv } from "../lib/env";
+
+function throwUnauthorizedEmailValidation(req: PayloadRequest) {
+  throw new ValidationError({
+    collection: "users",
+    errors: [
+      {
+        message: unauthorizedAdminEmailMessage,
+        path: "email",
+      },
+    ],
+    req,
+  });
+}
 
 export const Users: CollectionConfig = {
   slug: "users",
-  auth: true,
+  auth: {
+    forgotPassword: {
+      generateEmailHTML: (args) => {
+        const token = args?.token ?? "";
+        const resetUrl = `${getEnv().PAYLOAD_SERVER_URL}/admin/reset-password/${token}`;
+        return `<p>You requested a password reset for the Nature Romp Safaris portal.</p><p><a href="${resetUrl}">Reset your password</a></p><p>If you did not request this, you can ignore this email.</p>`;
+      },
+      generateEmailSubject: () => "Reset your Nature Romp Safaris portal password",
+    },
+  },
   access: {
     read: selfOrAdmin,
     create: adminOnly,
@@ -15,15 +43,56 @@ export const Users: CollectionConfig = {
     useAsTitle: "email",
     group: "Portal",
   },
+  hooks: {
+    beforeValidate: [
+      ({ data, operation, req }) => {
+        if (operation !== "create" && operation !== "update") {
+          return data;
+        }
+
+        try {
+          return prepareUserAuthData(data, {
+            allowedDomain: getEnv().ADMIN_EMAIL_DOMAIN,
+            forceAdminRole: operation === "create" && !req.user,
+          });
+        } catch (error) {
+          if (error instanceof Error && error.message === unauthorizedAdminEmailMessage) {
+            throwUnauthorizedEmailValidation(req);
+          }
+
+          throw error;
+        }
+      },
+    ],
+    beforeLogin: [
+      ({ user }) => {
+        assertAuthorizedAdminEmail(user.email, getEnv().ADMIN_EMAIL_DOMAIN);
+      },
+    ],
+  },
   fields: [
+    {
+      name: "firstName",
+      type: "text",
+      required: true,
+      label: "First Name",
+    },
+    {
+      name: "lastName",
+      type: "text",
+      required: true,
+      label: "Second Name",
+    },
     {
       name: "name",
       type: "text",
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: "role",
       type: "select",
-      required: true,
       defaultValue: "admin",
       options: roleOptions,
       access: {
@@ -31,6 +100,7 @@ export const Users: CollectionConfig = {
         update: adminFieldOnly,
       },
       admin: {
+        condition: (_, __, { user }) => Boolean(user),
         description:
           "Admin manages users/settings, Editor manages content, Operations manages enquiries/bookings/stays.",
       },

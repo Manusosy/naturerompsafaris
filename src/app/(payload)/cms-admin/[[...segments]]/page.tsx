@@ -10,7 +10,7 @@ type Args = {
 export const generateMetadata = ({ params, searchParams }: Args) =>
   generatePageMetadata({ config: configPromise, params, searchParams });
 
-export default function AdminPage({ params, searchParams }: Args) {
+export default function CmsAdminPage({ params, searchParams }: Args) {
   return RootPage({
     config: configPromise,
     importMap,

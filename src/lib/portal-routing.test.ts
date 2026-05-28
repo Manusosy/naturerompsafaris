@@ -15,7 +15,7 @@ function resolve(host: string, path: string) {
 }
 
 describe("resolvePortalRoute", () => {
-  it("redirects the portal root to Payload admin", () => {
+  it("redirects the portal root to the custom admin portal", () => {
     const action = resolve(portalHost, "/");
 
     expect(action.type).toBe("redirect");
@@ -24,9 +24,19 @@ describe("resolvePortalRoute", () => {
     }
   });
 
-  it("keeps admin and API routes available on the portal host", () => {
+  it("keeps admin, CMS fallback, and API routes available on the portal host", () => {
     expect(resolve(portalHost, "/admin").type).toBe("next");
+    expect(resolve(portalHost, "/cms-admin").type).toBe("next");
     expect(resolve(portalHost, "/api/users/me").type).toBe("next");
+  });
+
+  it("redirects Payload's internal first-user URL to the portal register URL", () => {
+    const action = resolve("localhost:3000", "/admin/create-first-user");
+
+    expect(action.type).toBe("redirect");
+    if (action.type === "redirect") {
+      expect(action.destination.pathname).toBe("/admin/register");
+    }
   });
 
   it("keeps public routes off the portal host", () => {
@@ -45,6 +55,16 @@ describe("resolvePortalRoute", () => {
     if (action.type === "redirect") {
       expect(action.destination.host).toBe(portalHost);
       expect(action.destination.pathname).toBe("/admin");
+    }
+  });
+
+  it("redirects main-domain CMS fallback traffic to the portal host", () => {
+    const action = resolve("kenyatanzaniasafariadventure.com", "/cms-admin");
+
+    expect(action.type).toBe("redirect");
+    if (action.type === "redirect") {
+      expect(action.destination.host).toBe(portalHost);
+      expect(action.destination.pathname).toBe("/cms-admin");
     }
   });
 

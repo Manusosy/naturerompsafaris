@@ -5,10 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { navGroups, site } from "@/content/site";
+import { site } from "@/content/site";
+import type { PublicNavItem } from "@/lib/public-navigation";
 
-export function Header() {
+export function Header({ navItems }: { navItems: PublicNavItem[] }) {
   const [open, setOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   return (
     <header className="site-header">
@@ -31,7 +33,14 @@ export function Header() {
       <div className="navwrap">
         <div className="container nav">
           <Link href="/" className="logo" aria-label="Nature Romp Safaris home">
-            <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={126} height={82} priority />
+            <Image
+              src="/assets/img/logo.jpg"
+              alt="Nature Romp Safaris"
+              width={126}
+              height={82}
+              priority
+              style={{ height: "auto" }}
+            />
           </Link>
           <button
             className="menu-toggle"
@@ -43,26 +52,35 @@ export function Header() {
             {open ? <X /> : <Menu />}
           </button>
           <nav className={open ? "mainnav mainnav--open" : "mainnav"}>
-            <Link href="/">Home</Link>
-            <Link href="/about">About Us</Link>
-            {navGroups.map((group) => (
-              <div className="navgroup" key={group.label}>
-                <Link href={group.href}>
-                  {group.label} <ChevronDown size={14} />
-                </Link>
-                <div className="submenu">
-                  {group.items.map(([label, href]) => (
-                    <Link href={href} key={label}>
-                      {label}
-                    </Link>
-                  ))}
+            {navItems.map((item) => (
+              item.items?.length ? (
+                <div className={openGroup === item.label ? "navgroup navgroup--open" : "navgroup"} key={item.label}>
+                  <Link href={item.href}>
+                    {item.label}
+                  </Link>
+                  <button
+                    aria-expanded={openGroup === item.label}
+                    aria-label={`Toggle ${item.label} menu`}
+                    className="navgroup__toggle"
+                    onClick={() => setOpenGroup((value) => value === item.label ? null : item.label)}
+                    type="button"
+                  >
+                    <ChevronDown size={14} />
+                  </button>
+                  <div className="submenu">
+                    {item.items.map((child) => (
+                      <Link href={child.href} key={`${item.label}-${child.label}`}>
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <Link href={item.href} className={item.isPrimaryAction ? "book-btn" : undefined} key={item.label}>
+                  {item.label}
+                </Link>
+              )
             ))}
-            <Link href="/contact">Contact</Link>
-            <Link href="/contact" className="book-btn">
-              Book Now
-            </Link>
           </nav>
         </div>
       </div>

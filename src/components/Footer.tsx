@@ -3,14 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { createWhatsAppLink } from "@/lib/enquiry";
-import { navGroups, site } from "@/content/site";
+import { site } from "@/content/site";
+import type { PublicNavItem } from "@/lib/public-navigation";
 
-export function Footer() {
+export function Footer({ navItems }: { navItems: PublicNavItem[] }) {
+  const safariLinks = navItems.flatMap((item) => item.items ?? []).slice(0, 8);
   return (
     <footer className="footer">
       <div className="container footer__grid">
         <div>
-          <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={132} height={86} />
+          <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={132} height={86} style={{ height: "auto" }} />
           <p>
             Welcome to Nature Romp Safaris, your gateway to unforgettable Kenya
             Tanzania safari adventures, wildlife holidays, mountain climbing and
@@ -26,9 +28,9 @@ export function Footer() {
         </div>
         <div>
           <h3>Our Safaris</h3>
-          {navGroups.flatMap((group) => group.items.slice(0, 3)).map(([label, href]) => (
-            <Link href={href} key={label}>
-              {label}
+          {safariLinks.map((item) => (
+            <Link href={item.href} key={`${item.label}-${item.href}`}>
+              {item.label}
             </Link>
           ))}
         </div>

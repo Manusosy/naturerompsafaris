@@ -1,6 +1,6 @@
 import type { GlobalConfig } from "payload";
 
-import { anyone, editorOrAdmin } from "@/lib/access";
+import { anyone, editorOrAdmin } from "../lib/access";
 
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
@@ -23,5 +23,11 @@ export const SiteSettings: GlobalConfig = {
     { name: "instagram", type: "text" },
     { name: "twitter", type: "text" },
     { name: "youtube", type: "text" },
+    { name: "reviewHeading", type: "text", defaultValue: "We Are Highly Recommended" },
+    {
+      name: "trustindexEmbed",
+      label: "Trustindex embed code",
+      type: "textarea",
+    },
   ],
 };

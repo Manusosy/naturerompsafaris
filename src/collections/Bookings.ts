@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 
-import { operationsOrAdmin } from "@/lib/access";
+import { operationsOrAdmin } from "../lib/access";
 
 export const Bookings: CollectionConfig = {
   slug: "bookings",

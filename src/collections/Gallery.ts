@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 
-import { anyone, editorOrAdmin } from "@/lib/access";
+import { anyone, editorOrAdmin } from "../lib/access";
 
 export const Gallery: CollectionConfig = {
   slug: "gallery",

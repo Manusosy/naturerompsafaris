@@ -1,0 +1,2102 @@
+{
+  "body": {
+    "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+    "fontSize": "17px",
+    "lineHeight": "28.05px",
+    "color": "rgb(3, 3, 3)"
+  },
+  "header": {
+    "text": "info@naturerompsafaris.com +254 722 714812 / +254 739 206698 Home About UsDestinationsKenyaTanzaniaZanzibarEast Africa / Combined SafarisSafari ToursKenya Safar",
+    "tag": "HEADER",
+    "cls": "site-header",
+    "rect": {
+      "x": 0,
+      "y": -4498,
+      "w": 1440,
+      "h": 174
+    },
+    "style": {
+      "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+      "fontSize": "17px",
+      "fontWeight": "400",
+      "lineHeight": "28.05px",
+      "color": "rgb(3, 3, 3)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "padding": "0px",
+      "margin": "0px",
+      "boxShadow": "none",
+      "border": "0px solid rgb(3, 3, 3)",
+      "borderRadius": "0px"
+    }
+  },
+  "navLinks": [
+    {
+      "text": "info@naturerompsafaris.com",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": -4487,
+        "w": 242,
+        "h": 26
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "26.4px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "+254 722 714812 / +254 739 206698",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 416,
+        "y": -4487,
+        "w": 292,
+        "h": 26
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "26.4px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "A",
+      "cls": "logo",
+      "rect": {
+        "x": 80,
+        "y": -4414,
+        "w": 162,
+        "h": 56
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "BUTTON",
+      "cls": "menu-toggle",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(35, 77, 32)",
+        "padding": "0px",
+        "margin": "0px 0px 0px auto",
+        "boxShadow": "none",
+        "border": "0px none rgb(255, 255, 255)",
+        "borderRadius": "4px"
+      }
+    },
+    {
+      "text": "Home",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 319,
+        "y": -4424,
+        "w": 43,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "About Us",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 382,
+        "y": -4424,
+        "w": 71,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Destinations",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 473,
+        "y": -4424,
+        "w": 103,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "BUTTON",
+      "cls": "navgroup__toggle",
+      "rect": {
+        "x": 579,
+        "y": -4397,
+        "w": 22,
+        "h": 22
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px none rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Tanzania",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Zanzibar",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "East Africa / Combined Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Safari Tours",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 621,
+        "y": -4424,
+        "w": 99,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "BUTTON",
+      "cls": "navgroup__toggle",
+      "rect": {
+        "x": 724,
+        "y": -4397,
+        "w": 22,
+        "h": 22
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px none rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Tanzania Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya & Tanzania Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Mount Kenya Climbing",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Mount Kilimanjaro Climbing",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Safari & Beach Holidays",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Packages",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 766,
+        "y": -4424,
+        "w": 72,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "BUTTON",
+      "cls": "navgroup__toggle",
+      "rect": {
+        "x": 842,
+        "y": -4397,
+        "w": 22,
+        "h": 22
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px none rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Budget",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Mid Range",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Luxury",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "High End",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Experiences",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 884,
+        "y": -4424,
+        "w": 91,
+        "h": 75
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(31, 40, 31)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "26px 0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(31, 40, 31)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "BUTTON",
+      "cls": "navgroup__toggle",
+      "rect": {
+        "x": 980,
+        "y": -4397,
+        "w": 22,
+        "h": 22
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "lineHeight": "23.1px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px none rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Family Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Honeymoon Safaris",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "lineHeight": "21.45px",
+        "color": "rgb(39, 49, 39)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "10px 18px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(39, 49, 39)",
+        "borderRadius": "0px"
+      }
+    }
+  ],
+  "headings": [
+    {
+      "text": "Kenya and Tanzania Safari Adventures, Crafted Around You",
+      "tag": "H1",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": -4079,
+        "w": 920,
+        "h": 132
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "56px",
+        "fontWeight": "400",
+        "lineHeight": "66.08px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 28px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Nature Romp Safaris | Who We Are",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": -3472,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Our Services and Products",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": -2747,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Tours and Travel",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 174,
+        "y": -2621,
+        "w": 263,
+        "h": 46
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "28px",
+        "fontWeight": "400",
+        "lineHeight": "46.2px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Beach Safaris",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 511,
+        "y": -2621,
+        "w": 263,
+        "h": 46
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "28px",
+        "fontWeight": "400",
+        "lineHeight": "46.2px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Mountain Climbing",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 174,
+        "y": -2335,
+        "w": 263,
+        "h": 46
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "28px",
+        "fontWeight": "400",
+        "lineHeight": "46.2px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Short Trips and Excursions",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 511,
+        "y": -2335,
+        "w": 263,
+        "h": 92
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "28px",
+        "fontWeight": "400",
+        "lineHeight": "46.2px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Get In Touch",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 864,
+        "y": -2623,
+        "w": 396,
+        "h": 53
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "32px",
+        "fontWeight": "400",
+        "lineHeight": "52.8px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Our Featured Packages",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": -1826,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "6 Days Kenya Economy / Budget Safari",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 189,
+        "y": -1510,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Wild Wonders: 5-Day Private Safari Adventure",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 578,
+        "y": -1510,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "4 Days Amboseli, Tsavo West, Tsavo East & Mombasa",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 966,
+        "y": -1510,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Ultimate 3-Day Maasai Mara Affordable Family Safari",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 189,
+        "y": -941,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "3 Days Amboseli Kilimanjaro Views & Safari",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 578,
+        "y": -941,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "3 Days Amboseli to Tsavo West Safari Exploration",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 966,
+        "y": -941,
+        "w": 285,
+        "h": 62
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "20px",
+        "fontWeight": "800",
+        "lineHeight": "27px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Why the Off-road Jeep Safari?",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 749,
+        "y": -375,
+        "w": 541,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "East Africa Safari Routes",
+      "tag": "H2",
+      "cls": "africa-map-section__title",
+      "rect": {
+        "x": 400,
+        "y": 172,
+        "w": 640,
+        "h": 48
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "42px",
+        "fontWeight": "900",
+        "lineHeight": "48.3px",
+        "color": "rgb(26, 42, 26)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 14px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(26, 42, 26)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 914,
+        "y": 629,
+        "w": 332,
+        "h": 42
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "42px",
+        "fontWeight": "900",
+        "lineHeight": "42px",
+        "color": "rgb(23, 53, 20)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 14px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(23, 53, 20)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "What Our Clients Say",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": 1215,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Gallery From the Field",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": 1819,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Safari FAQs",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": 2480,
+        "w": 494,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Do you have any other questions?",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 178,
+        "y": 2712,
+        "w": 442,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 8px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "We're Here For You",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": 3324,
+        "w": 541,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Get In Touch",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 779,
+        "y": 3163,
+        "w": 481,
+        "h": 53
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "32px",
+        "fontWeight": "400",
+        "lineHeight": "52.8px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Our Blog",
+      "tag": "H2",
+      "cls": "",
+      "rect": {
+        "x": 150,
+        "y": 3960,
+        "w": 1140,
+        "h": 63
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "62.7px",
+        "color": "rgb(0, 0, 0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(0, 0, 0)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Masai Mara Serengeti Migration Safari Guide",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 184,
+        "y": 4365,
+        "w": 295,
+        "h": 85
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "24px",
+        "fontWeight": "800",
+        "lineHeight": "28.32px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya vs Tanzania Safari: How to Choose",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 573,
+        "y": 4365,
+        "w": 295,
+        "h": 85
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "24px",
+        "fontWeight": "800",
+        "lineHeight": "28.32px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Best Time for a Kenya Tanzania Safari Adventure",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 961,
+        "y": 4365,
+        "w": 295,
+        "h": 85
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "24px",
+        "fontWeight": "800",
+        "lineHeight": "28.32px",
+        "color": "rgb(34, 34, 34)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 12px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(34, 34, 34)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Quick Links",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 500,
+        "y": 4873,
+        "w": 226,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Our Safaris",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 760,
+        "y": 4873,
+        "w": 226,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Contact Us",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 1019,
+        "y": 4873,
+        "w": 271,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(255, 255, 255)",
+        "borderRadius": "0px"
+      }
+    }
+  ],
+  "map": {
+    "text": "DestinationsEast Africa Safari RoutesFocused Kenya, Tanzania and Zanzibar planning, with the map highlighting the countries and island extension guests ask abou",
+    "tag": "SECTION",
+    "cls": "africa-map-section",
+    "rect": {
+      "x": 0,
+      "y": 60,
+      "w": 1440,
+      "h": 1015
+    },
+    "style": {
+      "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+      "fontSize": "17px",
+      "fontWeight": "400",
+      "lineHeight": "28.05px",
+      "color": "rgb(3, 3, 3)",
+      "backgroundColor": "rgb(248, 250, 246)",
+      "padding": "80px 0px 70px",
+      "margin": "0px",
+      "boxShadow": "none",
+      "border": "0px solid rgb(3, 3, 3)",
+      "borderRadius": "0px"
+    }
+  },
+  "mapPieces": [
+    {
+      "text": "DestinationsEast Africa Safari RoutesFocused Kenya, Tanzania and Zanzibar planning, with the map highlighting the countries and island extension guests ask abou",
+      "tag": "DIV",
+      "cls": "africa-map-section__inner",
+      "rect": {
+        "x": 120,
+        "y": 140,
+        "w": 1200,
+        "h": 865
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 120px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "DestinationsEast Africa Safari RoutesFocused Kenya, Tanzania and Zanzibar planning, with the map highlighting the countries and island extension guests ask abou",
+      "tag": "DIV",
+      "cls": "africa-map-section__heading",
+      "rect": {
+        "x": 400,
+        "y": 140,
+        "w": 640,
+        "h": 145
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Destinations",
+      "tag": "P",
+      "cls": "africa-map-section__eyebrow",
+      "rect": {
+        "x": 400,
+        "y": 140,
+        "w": 640,
+        "h": 21
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "800",
+        "lineHeight": "21.45px",
+        "color": "rgb(35, 77, 32)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 10px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(35, 77, 32)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "East Africa Safari Routes",
+      "tag": "H2",
+      "cls": "africa-map-section__title",
+      "rect": {
+        "x": 400,
+        "y": 172,
+        "w": 640,
+        "h": 48
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "42px",
+        "fontWeight": "900",
+        "lineHeight": "48.3px",
+        "color": "rgb(26, 42, 26)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 14px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(26, 42, 26)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Focused Kenya, Tanzania and Zanzibar planning, with the map highlighting the countries and island extension guests ask about most.",
+      "tag": "P",
+      "cls": "africa-map-section__sub",
+      "rect": {
+        "x": 400,
+        "y": 234,
+        "w": 640,
+        "h": 51
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "25.5px",
+        "color": "rgb(85, 85, 85)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(85, 85, 85)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "KenyaTanzaniaZanzibar",
+      "tag": "DIV",
+      "cls": "africa-map-section__tabs",
+      "rect": {
+        "x": 541,
+        "y": 313,
+        "w": 357,
+        "h": 44
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "1px solid rgb(219, 229, 215)",
+        "borderRadius": "999px"
+      }
+    },
+    {
+      "text": "Kenya",
+      "tag": "BUTTON",
+      "cls": "is-active",
+      "rect": {
+        "x": 542,
+        "y": 314,
+        "w": 104,
+        "h": 42
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "800",
+        "lineHeight": "28.05px",
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(23, 53, 20)",
+        "padding": "0px 24px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Tanzania",
+      "tag": "BUTTON",
+      "cls": "",
+      "rect": {
+        "x": 646,
+        "y": 314,
+        "w": 128,
+        "h": 42
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "800",
+        "lineHeight": "28.05px",
+        "color": "rgb(81, 96, 77)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px 24px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Zanzibar",
+      "tag": "BUTTON",
+      "cls": "",
+      "rect": {
+        "x": 774,
+        "y": 314,
+        "w": 124,
+        "h": 42
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "800",
+        "lineHeight": "28.05px",
+        "color": "rgb(81, 96, 77)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px 24px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px none rgb(81, 96, 77)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya, Tanzania and Zanzibar GeoJSON destination mapKenyaTanzaniaZanzibarKenyaMasai Mara, Amboseli, Tsavo, Nairobi departures and classic savanna safari routes.",
+      "tag": "DIV",
+      "cls": "africa-map-section__body",
+      "rect": {
+        "x": 120,
+        "y": 385,
+        "w": 1200,
+        "h": 620
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya, Tanzania and Zanzibar GeoJSON destination mapKenyaTanzaniaZanzibar",
+      "tag": "DIV",
+      "cls": "africa-map-section__map",
+      "rect": {
+        "x": 194,
+        "y": 385,
+        "w": 620,
+        "h": 620
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya, Tanzania and Zanzibar GeoJSON destination mapKenyaTanzaniaZanzibar",
+      "tag": "svg",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 194,
+        "y": 385,
+        "w": 620,
+        "h": 620
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya, Tanzania and Zanzibar GeoJSON destination map",
+      "tag": "title",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "path",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 441,
+        "y": 385,
+        "w": 294,
+        "h": 358
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "path",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 273,
+        "y": 606,
+        "w": 409,
+        "h": 398
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "circle",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 626,
+        "y": 787,
+        "w": 21,
+        "h": 21
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "",
+      "tag": "circle",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 619,
+        "y": 780,
+        "w": 36,
+        "h": 36
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya",
+      "tag": "text",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 423,
+        "y": 506,
+        "w": 65,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "900",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Tanzania",
+      "tag": "text",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 427,
+        "y": 730,
+        "w": 94,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "900",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Zanzibar",
+      "tag": "text",
+      "cls": "[object SVGAnimatedString]",
+      "rect": {
+        "x": 654,
+        "y": 711,
+        "w": 91,
+        "h": 28
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "900",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(3, 3, 3)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "KenyaMasai Mara, Amboseli, Tsavo, Nairobi departures and classic savanna safari routes.Explore Kenya",
+      "tag": "DIV",
+      "cls": "africa-map-section__panel",
+      "rect": {
+        "x": 886,
+        "y": 583,
+        "w": 360,
+        "h": 223
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "400",
+        "lineHeight": "28.05px",
+        "color": "rgb(3, 3, 3)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "22px 0px 22px 24px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Kenya",
+      "tag": "H3",
+      "cls": "",
+      "rect": {
+        "x": 914,
+        "y": 629,
+        "w": 332,
+        "h": 42
+      },
+      "style": {
+        "fontFamily": "\"Playfair Display\", \"Playfair Display Fallback\", \"Playfair Display\", Georgia, serif",
+        "fontSize": "42px",
+        "fontWeight": "900",
+        "lineHeight": "42px",
+        "color": "rgb(23, 53, 20)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 14px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(23, 53, 20)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Masai Mara, Amboseli, Tsavo, Nairobi departures and classic savanna safari routes.",
+      "tag": "P",
+      "cls": "",
+      "rect": {
+        "x": 914,
+        "y": 685,
+        "w": 332,
+        "h": 51
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "15px",
+        "fontWeight": "400",
+        "lineHeight": "25.5px",
+        "color": "rgb(79, 93, 77)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px 0px 20px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(79, 93, 77)",
+        "borderRadius": "0px"
+      }
+    },
+    {
+      "text": "Explore Kenya",
+      "tag": "A",
+      "cls": "",
+      "rect": {
+        "x": 914,
+        "y": 762,
+        "w": 121,
+        "h": 18
+      },
+      "style": {
+        "fontFamily": "\"Open Sans\", \"Open Sans Fallback\", \"Open Sans\", Arial, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "lineHeight": "21.45px",
+        "color": "rgb(23, 53, 20)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "boxShadow": "none",
+        "border": "0px solid rgb(23, 53, 20)",
+        "borderRadius": "0px"
+      }
+    }
+  ]
+}

@@ -10,10 +10,12 @@ const roleCollections = {
     "posts",
     "post-categories",
     "article-tags",
+    "homepage-slides",
+    "faqs",
     "gallery",
+    "testimonials",
     "media",
     "enquiries",
-    "bookings",
     "accommodations",
   ]),
   editor: new Set([
@@ -25,10 +27,13 @@ const roleCollections = {
     "posts",
     "post-categories",
     "article-tags",
+    "homepage-slides",
+    "faqs",
     "gallery",
+    "testimonials",
     "media",
   ]),
-  operations: new Set(["enquiries", "bookings", "accommodations"]),
+  operations: new Set(["enquiries", "accommodations"]),
 };
 
 const roleGlobals = {
@@ -38,12 +43,14 @@ const roleGlobals = {
 };
 
 export function canManagePortalCollection(user: PortalUser, collection: string) {
-  const role = user.role === "editor" || user.role === "operations" ? user.role : "admin";
+  const role = user.role === "admin" || user.role === "editor" || user.role === "operations" ? user.role : undefined;
+  if (!role) return false;
   return roleCollections[role].has(collection);
 }
 
 export function canManagePortalGlobal(user: PortalUser, globalSlug: string) {
-  const role = user.role === "editor" || user.role === "operations" ? user.role : "admin";
+  const role = user.role === "admin" || user.role === "editor" || user.role === "operations" ? user.role : undefined;
+  if (!role) return false;
   return roleGlobals[role].has(globalSlug);
 }
 

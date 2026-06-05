@@ -21,7 +21,7 @@ export function buildMetadata({
   const fullTitle = `${title} | ${site.company}`;
 
   return {
-    title: fullTitle,
+    title,
     description,
     keywords,
     alternates: {

@@ -1,63 +1,142 @@
 import { getPayload } from "payload";
-import configPromise from "@/payload.config";
+import configPromise from "@payload-config";
 import { NextResponse } from "next/server";
-import { packages } from "@/content/site";
+import { packages as staticPackages } from "@/content/site";
+import { rawTrips } from "../../../../scripts/trips-data";
 
-export async function GET() {
-  const payload = await getPayload({ config: configPromise });
-  
-  const initialDestinations = [
-    { name: "Masai Mara National Reserve", slug: "masai-mara", country: "kenya", summary: "Kenya's most famous wildlife reserve, renowned for the Great Migration and dense big cat populations." },
-    { name: "Serengeti National Park", slug: "serengeti", country: "tanzania", summary: "Tanzania's vast plains, home to the Great Wildebeest Migration and spectacular predator sightings." },
-    { name: "Ngorongoro Crater", slug: "ngorongoro-crater", country: "tanzania", summary: "A breathtaking volcanic caldera boasting the highest density of wildlife in Africa." },
-    { name: "Amboseli National Park", slug: "amboseli", country: "kenya", summary: "Famous for its large elephant herds and iconic backdrop of Mount Kilimanjaro." },
-    { name: "Tsavo National Park", slug: "tsavo", country: "kenya", summary: "Kenya's largest park, known for its rugged landscapes, red elephants, and untamed wilderness." },
-    { name: "Lake Nakuru National Park", slug: "lake-nakuru", country: "kenya", summary: "A premier destination for bird watching and rhino conservation." },
-    { name: "Mount Kilimanjaro", slug: "mount-kilimanjaro", country: "tanzania", summary: "Africa's highest peak, offering unparalleled climbing adventures." },
-    { name: "Mount Kenya", slug: "mount-kenya", country: "kenya", summary: "Kenya's dramatic stratovolcano featuring rugged peaks, alpine valleys, and diverse wildlife." },
-  ];
+const packageCategories = [
+    "Kenya Safaris",
+    "Tanzania Safaris",
+    "Kenya Tanzania Combined Safaris",
+    "Kenya Adventure Safaris",
+    "Tanzania Adventure Safaris",
+] as const;
 
-  let results = [];
-  
-  for (const dest of initialDestinations) {
-    try {
-      const existing = await payload.find({ collection: "destinations", where: { slug: { equals: dest.slug } } });
-      if (existing.docs.length === 0) {
-        await payload.create({ collection: "destinations", data: { ...dest, status: "published" } as any });
-        results.push(`Created destination: ${dest.name}`);
-      } else {
-        results.push(`Destination exists: ${dest.name}`);
-      }
-    } catch (e: any) {
-      results.push(`Error dest ${dest.name}: ${e.message}`);
+const packageGroupsByTitle = new Map([
+    ["6 Days Kenya Economy / Budget Safari", "economy-private"],
+    ["Wild Wonders: 5-Day Private Safari Adventure", "4x4-safaris"],
+    ["4 Days Amboseli, Tsavo West, Tsavo East & Mombasa", "beach-extension"],
+    ["Ultimate 3-Day Maasai Mara Affordable Family Safari", "group-joining"],
+    ["3 Days Amboseli Kilimanjaro Views & Safari", "short-safaris"],
+    ["3 Days Amboseli to Tsavo West Safari Exploration", "short-safaris"],
+]);
+
+function normalizePackageCategory(category: string) {
+    return packageCategories.find((item) => item === category) ?? "Kenya Safaris";
+}
+
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get("secret");
+
+    if (secret !== "DevelopmentDraftSeed2026") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-  }
-  
-  for (const pkg of packages) {
-    try {
-      const existing = await payload.find({ collection: "packages", where: { slug: { equals: pkg.slug } } });
-      if (existing.docs.length === 0) {
-        await payload.create({
-          collection: "packages",
-          data: {
-            title: pkg.title,
-            slug: pkg.slug,
-            status: "published",
-            category: "Kenya Safaris",
-            duration: pkg.duration,
-            excerpt: pkg.excerpt,
-            destinationsText: pkg.destinations,
-            packageGroup: "economy-private",
-          } as any
-        });
-        results.push(`Created package: ${pkg.title}`);
-      } else {
-        results.push(`Package exists: ${pkg.title}`);
-      }
-    } catch (e: any) {
-      results.push(`Error pkg ${pkg.title}: ${e.message}`);
-    }
-  }
 
-  return NextResponse.json({ success: true, results });
+    try {
+        const payload = await getPayload({ config: configPromise });
+        const logs: string[] = [];
+
+        logs.push("Seeding Packages as DRAFT...");
+
+        try {
+            await payload.updateGlobal({
+                slug: "site-settings" as never,
+                data: {
+                    primaryEmail: "info@naturerompsafaris.com",
+                    phone: "+254 722 714812 / +254 739 206698",
+                    whatsapp: "+254 722 714812",
+                },
+                overrideAccess: true,
+            });
+            logs.push("Successfully updated site-settings.");
+        } catch (e) {
+            logs.push(`Failed to update site-settings: ${e}`);
+        }
+
+        for (const pkg of staticPackages) {
+            const existing = await payload.find({
+                collection: "packages",
+                where: { slug: { equals: pkg.slug } },
+                overrideAccess: true,
+                limit: 1,
+            });
+
+            const packageData = {
+                title: pkg.title,
+                slug: pkg.slug,
+                status: "draft" as const,
+                category: normalizePackageCategory(pkg.category),
+                duration: pkg.duration,
+                excerpt: pkg.excerpt,
+                destinationsText: pkg.destinations,
+                packageGroup: packageGroupsByTitle.get(pkg.title) ?? "economy-private",
+            };
+
+            if (existing.docs.length > 0) {
+                await payload.update({
+                    collection: "packages",
+                    id: existing.docs[0].id,
+                    data: packageData,
+                    overrideAccess: true,
+                });
+                logs.push(`Updated package: ${pkg.title}`);
+            } else {
+                await payload.create({
+                    collection: "packages",
+                    data: packageData,
+                    overrideAccess: true,
+                });
+                logs.push(`Created package: ${pkg.title}`);
+            }
+        }
+
+        logs.push("Seeding Trips as DRAFT...");
+        for (const trip of rawTrips) {
+            const existing = await payload.find({
+                collection: "trips",
+                where: { slug: { equals: trip.slug } },
+                overrideAccess: true,
+                limit: 1,
+            });
+
+            const tripData = {
+                title: trip.title,
+                slug: trip.slug,
+                status: "draft" as const,
+                availability: "available" as const,
+                days: trip.days,
+                nights: trip.nights,
+                location: trip.location,
+                startLocation: trip.startLocation,
+                endLocation: trip.endLocation,
+                overview: trip.overview,
+                itineraryDays: trip.itineraryDays,
+                included: trip.included.map(i => ({ item: i })),
+                excluded: trip.excluded.map(i => ({ item: i })),
+                priceSeasons: trip.priceSeasons,
+            };
+
+            if (existing.docs.length > 0) {
+                await payload.update({
+                    collection: "trips",
+                    id: existing.docs[0].id,
+                    data: tripData,
+                    overrideAccess: true,
+                });
+                logs.push(`Updated trip: ${trip.title}`);
+            } else {
+                await payload.create({
+                    collection: "trips",
+                    data: tripData,
+                    overrideAccess: true,
+                });
+                logs.push(`Created trip: ${trip.title}`);
+            }
+        }
+
+        return NextResponse.json({ success: true, logs });
+    } catch (error: any) {
+        return NextResponse.json({ success: false, error: error?.message || String(error) }, { status: 500 });
+    }
 }

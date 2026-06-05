@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 
 import type { PackageEnhancements } from "@/lib/portal-content";
 
@@ -52,7 +53,7 @@ export function PackageEnhancementsView({
             Book flights with our travel partner. Nature Romp Safaris may earn a commission.
           </p>
           <a href={flightAffiliate.href} className="btn btn--primary" rel="nofollow sponsored" target="_blank">
-            {flightAffiliate.ctaLabel}
+            {flightAffiliate.ctaLabel} <ExternalLink size={16} />
           </a>
         </div>
       )}

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { MapPin } from "lucide-react";
 
 type Waypoint = {
   place: string;

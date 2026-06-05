@@ -7,6 +7,8 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHeader } from "@/components/Sections";
 import { buildMetadata } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = buildMetadata({
   title: "Safari Destinations",
   description:
@@ -22,6 +24,14 @@ function mediaUrl(value: unknown) {
   return "";
 }
 
+type DestinationListDoc = {
+  country?: string;
+  heroImage?: unknown;
+  name?: string;
+  slug?: string;
+  summary?: string;
+};
+
 async function getPublishedDestinations() {
   try {
     const payload = await getPayload({ config: configPromise });
@@ -35,7 +45,7 @@ async function getPublishedDestinations() {
       sort: "name",
     });
     
-    return result.docs.map((doc: any) => ({
+    return (result.docs as DestinationListDoc[]).map((doc) => ({
       name: doc.name,
       slug: doc.slug,
       country: doc.country,

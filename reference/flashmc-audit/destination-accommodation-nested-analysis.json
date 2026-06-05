@@ -1,0 +1,996 @@
+[
+  {
+    "case": {
+      "top": "Destinations",
+      "childHref": "/destination/kenya/",
+      "name": "destinations-kenya"
+    },
+    "state": [
+      {
+        "text": "About UsSafari GuidesSafari VehiclesSustainabilityDestinationsKenyaTanzaniaUgandaRwandaEast AfricaZanzibarSafari ToursKenya Tours & SafarisTanzania Tours & SafarisUganda Tours & SafarisRwanda Tours & SafarisKenya Tanzania Tours & SafarisExperiencesTop ExperiencesAffordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation SafarisWildlife SafariMigration SafarisBig 5 SafarisBi",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "KenyaTanzaniaUgandaRwandaEast AfricaZanzibar",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 223,
+          "y": 225,
+          "w": 170,
+          "h": 234
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 390,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 640,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 769,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1019,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1019,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Destinations",
+      "childHref": "/destination/tanzania/",
+      "name": "destinations-tanzania"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Loading... Uganda Loading... Rwanda Loading... East AfricaZanzibar+Safari ToursKenya Tours & SafarisTanzania Tours & SafarisUganda Tours & SafarisRwanda Tours & SafarisKenya Tanzania Tours & Safaris+ExperiencesTop ExperiencesAffordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Sa",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Kenya Loading... Tanzania Loading... Uganda Loading... Rwanda Loading... East AfricaZanzibar",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 226,
+          "y": 225,
+          "w": 170,
+          "h": 234
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Destinations",
+      "childHref": "/destination/uganda/",
+      "name": "destinations-uganda"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,72",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Kenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,725 The Stunning Serengeti Safari 4 Days From $1,070 Hot Air Ballo",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 226,
+          "y": 225,
+          "w": 170,
+          "h": 234
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Destinations",
+      "childHref": "/destination/rwanda/",
+      "name": "destinations-rwanda"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,72",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Kenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,725 The Stunning Serengeti Safari 4 Days From $1,070 Hot Air Ballo",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 226,
+          "y": 225,
+          "w": 170,
+          "h": 234
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Accommodation",
+      "childHref": "/destination/kenya/kenya-safari-lodges/",
+      "name": "accommodation-kenya"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,72",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "KenyaTanzaniaUganda",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 751,
+          "y": 225,
+          "w": 170,
+          "h": 129
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Accommodation",
+      "childHref": "/destination/tanzania/tanzania-safari-lodges/",
+      "name": "accommodation-tanzania"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,72",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "KenyaTanzaniaUganda",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 751,
+          "y": 225,
+          "w": 170,
+          "h": 129
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  },
+  {
+    "case": {
+      "top": "Accommodation",
+      "childHref": "/destination/uganda/uganda-safari-lodges/",
+      "name": "accommodation-uganda"
+    },
+    "state": [
+      {
+        "text": "+About UsSafari GuidesSafari VehiclesSustainability+DestinationsKenya Loading... Tanzania Tanzania’s Plains to Pristine Beaches Safari 11 Days From $1,050 Craters and Lakes of Tanzania Safari 3 Days From $540 Plains of Tanzania Safari 4 Days From $720 Diversity of Tanzania Safari 5 Days From $1,065 Wonderful Wildlife of Tanzania Safari 6 Days From $1,505 Exploring Three Nations Mega Safari 14 Days From $5,550 Best of Tanzania Safari 7 Days From $2,300 Aspects of Tanzania Safari 9 Days From $3,72",
+        "cls": "menu",
+        "rect": {
+          "x": 86,
+          "y": 133,
+          "w": 1268,
+          "h": 74
+        },
+        "style": {
+          "display": "flex",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgba(0, 0, 0, 0)",
+          "transform": "none",
+          "transition": "all"
+        },
+        "visible": true
+      },
+      {
+        "text": "Affordable African SafarisHoneymoon SafarisFamily SafarisFly-In SafarisLuxury SafarisSafari & Beach HolidaysAccessible SafarisExcursionsPhotography SafarisWalking SafarisConservation Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 408,
+          "y": 276,
+          "w": 218,
+          "h": 297
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Migration SafarisBig 5 SafarisBird Watching Safaris4X4 Safari ToursMountain ClimbingMount KenyaMount KilimanjaroGorilla Trekking SafarisAll ToursTours in RwandaTours in UgandaHorse Riding SafariNight Game DrivesTailor-Made Safaris",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 658,
+          "y": 260,
+          "w": 218,
+          "h": 243
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "KenyaTanzaniaUganda",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 751,
+          "y": 225,
+          "w": 170,
+          "h": 129
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "matrix(1, 0, 0, 1, 0, 18)",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Aberdare National ParkAmboseli National ParkHell’s Gate National ParkKakamega National ParkLake Nakuru National ParkLewa Wildlife ConservancyMara Naboisho ConservancyMara North ConservancyMasai Mara National ReserveMeru National ParkOl Pejeta ConservancySamburu National ReserveSolio Ranch/ Game ReserveTsavo East National ParkTsavo West Safari ToursLake Naivasha",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 795,
+          "y": 276,
+          "w": 218,
+          "h": 432
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Serengeti National ParkNgorongoro CraterTarangire National ParkLake Manyara National ParkRuaha National ParkNyerere National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 276,
+          "w": 218,
+          "h": 162
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      },
+      {
+        "text": "Bwindi National ParkMurchison Falls National ParkQueen Elizabeth National ParkLake Mburo National ParkKibale National Park",
+        "cls": "sub-menu",
+        "rect": {
+          "x": 1045,
+          "y": 531,
+          "w": 218,
+          "h": 135
+        },
+        "style": {
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1",
+          "bg": "rgb(255, 255, 255)",
+          "transform": "none",
+          "transition": "0.5s"
+        },
+        "visible": true
+      }
+    ]
+  }
+]

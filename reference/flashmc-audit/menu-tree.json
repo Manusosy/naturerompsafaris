@@ -1,0 +1,1655 @@
+[
+  {
+    "text": "About Us",
+    "href": "https://flashmctours.com/about-us/",
+    "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-14845",
+    "aClass": "",
+    "rect": {
+      "x": 86,
+      "y": 133,
+      "w": 82,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Safari Guides",
+        "href": "https://flashmctours.com/safari-guides/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-36834",
+        "aClass": "",
+        "rect": {
+          "x": 86,
+          "y": 269,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Safari Vehicles",
+        "href": "https://flashmctours.com/vehicles/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-36836",
+        "aClass": "",
+        "rect": {
+          "x": 86,
+          "y": 304,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Sustainability",
+        "href": "https://flashmctours.com/sustainability/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-20900",
+        "aClass": "",
+        "rect": {
+          "x": 86,
+          "y": 339,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "Destinations",
+    "href": "https://flashmctours.com/destination/kenya/",
+    "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-14849",
+    "aClass": "",
+    "rect": {
+      "x": 223,
+      "y": 133,
+      "w": 117,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Kenya",
+        "href": "https://flashmctours.com/destination/kenya/",
+        "liClass": "js-show-tours menu-item menu-item-type-custom menu-item-object-custom menu-item-14850",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 269,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Tanzania",
+        "href": "https://flashmctours.com/destination/tanzania/",
+        "liClass": "js-show-tours menu-item menu-item-type-custom menu-item-object-custom menu-item-14851",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 304,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Uganda",
+        "href": "https://flashmctours.com/destination/uganda/",
+        "liClass": "js-show-tours menu-item menu-item-type-custom menu-item-object-custom menu-item-14852",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 339,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Rwanda",
+        "href": "https://flashmctours.com/destination/rwanda/",
+        "liClass": "js-show-tours menu-item menu-item-type-custom menu-item-object-custom menu-item-35161",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 374,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "East Africa",
+        "href": "https://flashmctours.com/safari-in-east-africa/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-21711",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 409,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Zanzibar",
+        "href": "https://flashmctours.com/zanzibar/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23638",
+        "aClass": "",
+        "rect": {
+          "x": 223,
+          "y": 444,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "Safari Tours",
+    "href": "https://flashmctours.com/tour/",
+    "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-14847",
+    "aClass": "",
+    "rect": {
+      "x": 395,
+      "y": 133,
+      "w": 117,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Kenya Tours & Safaris",
+        "href": "https://flashmctours.com/destination/kenya/kenya-safaris/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-destination menu-item-36830",
+        "aClass": "",
+        "rect": {
+          "x": 395,
+          "y": 269,
+          "w": 170,
+          "h": 52
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Tanzania Tours & Safaris",
+        "href": "https://flashmctours.com/destination/tanzania/tanzania-safaris/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-destination menu-item-36832",
+        "aClass": "",
+        "rect": {
+          "x": 395,
+          "y": 322,
+          "w": 170,
+          "h": 52
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Uganda Tours & Safaris",
+        "href": "https://flashmctours.com/destination/uganda/uganda-safaris/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-destination menu-item-36833",
+        "aClass": "",
+        "rect": {
+          "x": 395,
+          "y": 375,
+          "w": 170,
+          "h": 52
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Rwanda Tours & Safaris",
+        "href": "https://flashmctours.com/destination/rwanda/rwanda-safaris/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-destination menu-item-36831",
+        "aClass": "",
+        "rect": {
+          "x": 395,
+          "y": 428,
+          "w": 170,
+          "h": 52
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Kenya Tanzania Tours & Safaris",
+        "href": "https://flashmctours.com/destination/kenya-tanzania/kenya-tanzania-safaris/",
+        "liClass": "menu-item menu-item-type-post_type menu-item-object-destination menu-item-36829",
+        "aClass": "",
+        "rect": {
+          "x": 395,
+          "y": 481,
+          "w": 170,
+          "h": 52
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "Experiences",
+    "href": "https://flashmctours.com/experience/",
+    "liClass": "tpx-multicolumn-menu menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-34965",
+    "aClass": "",
+    "rect": {
+      "x": 567,
+      "y": 133,
+      "w": 114,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Top Experiences",
+        "href": "https://flashmctours.com/#",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-36837",
+        "aClass": "",
+        "rect": {
+          "x": 390,
+          "y": 243,
+          "w": 218,
+          "h": 27
+        },
+        "style": {
+          "color": "rgb(125, 125, 125)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "700 16px / 19.2px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "4px 0px",
+          "transition": "color 0.2s ease-in-out"
+        },
+        "children": [
+          {
+            "text": "Affordable African Safaris",
+            "href": "https://flashmctours.com/experience/affordable-african-safari/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-36823",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 276,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Honeymoon Safaris",
+            "href": "https://flashmctours.com/experience/honeymoon-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24877",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 303,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Family Safaris",
+            "href": "https://flashmctours.com/experience/family-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24876",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 330,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Fly-In Safaris",
+            "href": "https://flashmctours.com/experience/flight-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24873",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 357,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Luxury Safaris",
+            "href": "https://flashmctours.com/experience/luxury-safari-tours/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24749",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 384,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Safari & Beach Holidays",
+            "href": "https://flashmctours.com/experience/safari-beach-holiday/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-36824",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 411,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Accessible Safaris",
+            "href": "https://flashmctours.com/experience/accessible-safari-tours/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24882",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 438,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Excursions",
+            "href": "https://flashmctours.com/experience/excursions/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24879",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 465,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Photography Safaris",
+            "href": "https://flashmctours.com/experience/photography-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24872",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 492,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Walking Safaris",
+            "href": "https://flashmctours.com/experience/walking-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-36826",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 519,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Conservation Safaris",
+            "href": "https://flashmctours.com/experience/conservation-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24878",
+            "aClass": "",
+            "rect": {
+              "x": 390,
+              "y": 546,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "text": "Wildlife Safari",
+        "href": "https://flashmctours.com/#",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-36838",
+        "aClass": "",
+        "rect": {
+          "x": 640,
+          "y": 227,
+          "w": 218,
+          "h": 27
+        },
+        "style": {
+          "color": "rgb(125, 125, 125)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "700 16px / 19.2px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "4px 0px",
+          "transition": "color 0.2s ease-in-out"
+        },
+        "children": [
+          {
+            "text": "Migration Safaris",
+            "href": "https://flashmctours.com/experience/migration-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24875",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 260,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Big 5 Safaris",
+            "href": "https://flashmctours.com/experience/big-5-safari-tours/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24874",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 287,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Bird Watching Safaris",
+            "href": "https://flashmctours.com/experience/bird-watching-safari/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24881",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 314,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "4X4 Safari Tours",
+            "href": "https://flashmctours.com/experience/4x4-safari-tours/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24880",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 341,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Mountain Climbing",
+            "href": "https://flashmctours.com/mountain-climbing-tours/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-22121",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 368,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": [
+              {
+                "text": "Mount Kenya",
+                "href": "https://flashmctours.com/mountain-climbing-tours/mount-kenya/",
+                "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22123",
+                "aClass": "",
+                "rect": {
+                  "x": 858,
+                  "y": 430,
+                  "w": 170,
+                  "h": 26
+                },
+                "style": {
+                  "color": "rgb(125, 125, 125)",
+                  "bg": "rgba(255, 255, 255, 0)",
+                  "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+                  "padding": "4px 0px",
+                  "transition": "color 0.2s ease-in-out"
+                },
+                "children": []
+              },
+              {
+                "text": "Mount Kilimanjaro",
+                "href": "https://flashmctours.com/mountain-climbing-tours/mount-kilimanjaro/",
+                "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22122",
+                "aClass": "",
+                "rect": {
+                  "x": 858,
+                  "y": 457,
+                  "w": 170,
+                  "h": 26
+                },
+                "style": {
+                  "color": "rgb(125, 125, 125)",
+                  "bg": "rgba(255, 255, 255, 0)",
+                  "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+                  "padding": "4px 0px",
+                  "transition": "color 0.2s ease-in-out"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "text": "Gorilla Trekking Safaris",
+            "href": "https://flashmctours.com/gorilla-safari/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-21709",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 395,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": [
+              {
+                "text": "All Tours",
+                "href": "https://flashmctours.com/gorilla-safari/",
+                "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-21730",
+                "aClass": "",
+                "rect": {
+                  "x": 858,
+                  "y": 457,
+                  "w": 170,
+                  "h": 26
+                },
+                "style": {
+                  "color": "rgb(125, 125, 125)",
+                  "bg": "rgba(255, 255, 255, 0)",
+                  "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+                  "padding": "4px 0px",
+                  "transition": "color 0.2s ease-in-out"
+                },
+                "children": []
+              },
+              {
+                "text": "Tours in Rwanda",
+                "href": "https://flashmctours.com/gorilla-safari/rwanda/",
+                "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-21957",
+                "aClass": "",
+                "rect": {
+                  "x": 858,
+                  "y": 484,
+                  "w": 170,
+                  "h": 26
+                },
+                "style": {
+                  "color": "rgb(125, 125, 125)",
+                  "bg": "rgba(255, 255, 255, 0)",
+                  "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+                  "padding": "4px 0px",
+                  "transition": "color 0.2s ease-in-out"
+                },
+                "children": []
+              },
+              {
+                "text": "Tours in Uganda",
+                "href": "https://flashmctours.com/gorilla-safari/uganda/",
+                "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-21729",
+                "aClass": "",
+                "rect": {
+                  "x": 858,
+                  "y": 511,
+                  "w": 170,
+                  "h": 26
+                },
+                "style": {
+                  "color": "rgb(125, 125, 125)",
+                  "bg": "rgba(255, 255, 255, 0)",
+                  "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+                  "padding": "4px 0px",
+                  "transition": "color 0.2s ease-in-out"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "text": "Horse Riding Safari",
+            "href": "https://flashmctours.com/experience/african-horse-riding-safaris/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-36825",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 422,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Night Game Drives",
+            "href": "https://flashmctours.com/experience/night-game-drives/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-experience menu-item-24871",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 449,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Tailor-Made Safaris",
+            "href": "https://flashmctours.com/tailor-made-safari/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-20902",
+            "aClass": "",
+            "rect": {
+              "x": 640,
+              "y": 476,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Accommodation",
+    "href": "https://flashmctours.com/accommodation/",
+    "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-17737",
+    "aClass": "",
+    "rect": {
+      "x": 736,
+      "y": 133,
+      "w": 145,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Kenya",
+        "href": "https://flashmctours.com/destination/kenya/kenya-safari-lodges/",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-17627",
+        "aClass": "",
+        "rect": {
+          "x": 736,
+          "y": 269,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Tanzania",
+        "href": "https://flashmctours.com/destination/tanzania/tanzania-safari-lodges/",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-17623",
+        "aClass": "",
+        "rect": {
+          "x": 736,
+          "y": 304,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      },
+      {
+        "text": "Uganda",
+        "href": "https://flashmctours.com/destination/uganda/uganda-safari-lodges/",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-17624",
+        "aClass": "",
+        "rect": {
+          "x": 736,
+          "y": 339,
+          "w": 170,
+          "h": 34
+        },
+        "style": {
+          "color": "rgb(85, 83, 82)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "8px 24px",
+          "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+        },
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "National Parks",
+    "href": "https://flashmctours.com/national-parks/",
+    "liClass": "tpx-multicolumn-menu menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-22117",
+    "aClass": "",
+    "rect": {
+      "x": 935,
+      "y": 133,
+      "w": 136,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": [
+      {
+        "text": "Kenya",
+        "href": "https://flashmctours.com/#",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-23510",
+        "aClass": "",
+        "rect": {
+          "x": 769,
+          "y": 243,
+          "w": 218,
+          "h": 27
+        },
+        "style": {
+          "color": "rgb(125, 125, 125)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "700 16px / 19.2px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "4px 0px",
+          "transition": "color 0.2s ease-in-out"
+        },
+        "children": [
+          {
+            "text": "Aberdare National Park",
+            "href": "https://flashmctours.com/national-parks/aberdare/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22120",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 276,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Amboseli National Park",
+            "href": "https://flashmctours.com/national-parks/amboseli/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22119",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 303,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Hell’s Gate National Park",
+            "href": "https://flashmctours.com/national-parks/hells-gate/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23461",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 330,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Kakamega National Park",
+            "href": "https://flashmctours.com/national-parks/kakamega/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22118",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 357,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Lake Nakuru National Park",
+            "href": "https://flashmctours.com/national-parks/lake-nakuru/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22474",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 384,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Lewa Wildlife Conservancy",
+            "href": "https://flashmctours.com/national-parks/lewa-wildlife-conservancy/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23637",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 411,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Mara Naboisho Conservancy",
+            "href": "https://flashmctours.com/national-parks/mara-naboisho-conservancy/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23463",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 438,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Mara North Conservancy",
+            "href": "https://flashmctours.com/national-parks/mara-north-conservancy/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23636",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 465,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Masai Mara National Reserve",
+            "href": "https://flashmctours.com/national-parks/masai-mara/",
+            "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-33991",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 492,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Meru National Park",
+            "href": "https://flashmctours.com/national-parks/meru/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22475",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 519,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Ol Pejeta Conservancy",
+            "href": "https://flashmctours.com/national-parks/ol-pejeta/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22476",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 546,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Samburu National Reserve",
+            "href": "https://flashmctours.com/national-parks/samburu/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22477",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 573,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Solio Ranch/ Game Reserve",
+            "href": "https://flashmctours.com/national-parks/solio-ranch-game-reserve/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23635",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 600,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Tsavo East National Park",
+            "href": "https://flashmctours.com/national-parks/tsavo-east/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23460",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 627,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Tsavo West Safari Tours",
+            "href": "https://flashmctours.com/national-parks/tsavo-west/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22473",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 654,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Lake Naivasha",
+            "href": "https://flashmctours.com/national-parks/lake-naivasha/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-24682",
+            "aClass": "",
+            "rect": {
+              "x": 769,
+              "y": 681,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "text": "Tanzania",
+        "href": "https://flashmctours.com/#",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-23511",
+        "aClass": "",
+        "rect": {
+          "x": 1019,
+          "y": 243,
+          "w": 218,
+          "h": 27
+        },
+        "style": {
+          "color": "rgb(125, 125, 125)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "700 16px / 19.2px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "4px 0px",
+          "transition": "color 0.2s ease-in-out"
+        },
+        "children": [
+          {
+            "text": "Serengeti National Park",
+            "href": "https://flashmctours.com/national-parks/serengeti/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-26758",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 276,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Ngorongoro Crater",
+            "href": "https://flashmctours.com/national-parks/ngorongoro/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23459",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 303,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Tarangire National Park",
+            "href": "https://flashmctours.com/national-parks/tarangire/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23458",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 330,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Lake Manyara National Park",
+            "href": "https://flashmctours.com/national-parks/lake-manyara/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23457",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 357,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Ruaha National Park",
+            "href": "https://flashmctours.com/national-parks/ruaha/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-36828",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 384,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Nyerere National Park",
+            "href": "https://flashmctours.com/national-parks/nyerere/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-36827",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 411,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "text": "Uganda",
+        "href": "https://flashmctours.com/#",
+        "liClass": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-23512",
+        "aClass": "",
+        "rect": {
+          "x": 1019,
+          "y": 498,
+          "w": 218,
+          "h": 27
+        },
+        "style": {
+          "color": "rgb(125, 125, 125)",
+          "bg": "rgba(255, 255, 255, 0)",
+          "font": "700 16px / 19.2px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "padding": "4px 0px",
+          "transition": "color 0.2s ease-in-out"
+        },
+        "children": [
+          {
+            "text": "Bwindi National Park",
+            "href": "https://flashmctours.com/national-parks/bwindi/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22286",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 531,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Murchison Falls National Park",
+            "href": "https://flashmctours.com/national-parks/murchison-falls/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23462",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 558,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Queen Elizabeth National Park",
+            "href": "https://flashmctours.com/national-parks/queen-elizabeth/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-23456",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 585,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Lake Mburo National Park",
+            "href": "https://flashmctours.com/national-parks/lake-mburo/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-24418",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 612,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          },
+          {
+            "text": "Kibale National Park",
+            "href": "https://flashmctours.com/national-parks/kibale/",
+            "liClass": "menu-item menu-item-type-post_type menu-item-object-national_park menu-item-24419",
+            "aClass": "",
+            "rect": {
+              "x": 1019,
+              "y": 639,
+              "w": 218,
+              "h": 26
+            },
+            "style": {
+              "color": "rgb(125, 125, 125)",
+              "bg": "rgba(255, 255, 255, 0)",
+              "font": "15px / 18px \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+              "padding": "4px 0px",
+              "transition": "color 0.2s ease-in-out"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Blogs",
+    "href": "https://flashmctours.com/travel-blog/",
+    "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-16798",
+    "aClass": "",
+    "rect": {
+      "x": 1126,
+      "y": 133,
+      "w": 55,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": []
+  },
+  {
+    "text": "Contact Us",
+    "href": "https://flashmctours.com/contact-us/",
+    "liClass": "menu-item menu-item-type-post_type menu-item-object-page menu-item-22722",
+    "aClass": "",
+    "rect": {
+      "x": 1236,
+      "y": 133,
+      "w": 103,
+      "h": 74
+    },
+    "style": {
+      "color": "rgb(255, 255, 255)",
+      "bg": "rgba(255, 255, 255, 0)",
+      "font": "16px / 26px \"Open Sans\", sans-serif",
+      "padding": "24px 0px",
+      "transition": "background-color 0.55s cubic-bezier(0.77, 0, 0.175, 1), color 0.55s cubic-bezier(0.77, 0, 0.175, 1)"
+    },
+    "children": []
+  }
+]

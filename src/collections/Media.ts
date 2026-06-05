@@ -1,3 +1,4 @@
+import path from "path";
 import type { CollectionConfig } from "payload";
 
 import { anyone, editorOrAdmin } from "../lib/access";
@@ -11,7 +12,7 @@ export const Media: CollectionConfig = {
     delete: editorOrAdmin,
   },
   upload: {
-    staticDir: "public/media",
+    staticDir: path.resolve(process.cwd(), "public/media"),
     adminThumbnail: "thumb",
     mimeTypes: ["image/*"],
     formatOptions: {

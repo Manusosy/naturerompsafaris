@@ -1,12 +1,30 @@
 import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
 
+const siteHostname = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname
+  : "kenyatanzaniasafariadventure.com";
+const portalHostname = process.env.PORTAL_HOST || "portal.kenyatanzaniasafariadventure.com";
+
 const nextConfig: NextConfig = {
+  compress: true,
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "duencyitservices.in",
+      },
+      {
+        protocol: "https",
+        hostname: siteHostname,
+      },
+      {
+        protocol: "https",
+        hostname: portalHostname,
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
       },
     ],
   },

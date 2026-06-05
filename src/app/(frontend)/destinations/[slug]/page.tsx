@@ -7,21 +7,17 @@ import { getPayload } from "payload";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/PageHero";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { DestinationGallerySlider } from "@/components/DestinationGallerySlider";
+import { normalizeMediaUrl } from "@/lib/cms-media";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 type Props = { params: Promise<{ slug: string }> };
 
 function mediaUrl(value: unknown) {
   if (value && typeof value === "object" && "url" in value) {
-    return String((value as { url?: unknown }).url ?? "");
+    return normalizeMediaUrl(String((value as { url?: unknown }).url ?? ""));
   }
   return "";
-}
-
-function galleryEntryMediaUrl(value: unknown) {
-  if (value && typeof value === "object" && "image" in value) {
-    return mediaUrl((value as { image?: unknown }).image);
-  }
-  return mediaUrl(value);
 }
 
 async function getDestination(slug: string) {
@@ -91,15 +87,12 @@ export default async function DestinationPage({ params }: Props) {
           ) : null}
           <div className="destination-detail__intro">
             <p>{String(destination.summary || "")}</p>
-            {destination.content ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: String(destination.content) }} /> : null}
+            {destination.content ? <div className="rich-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(String(destination.content)) }} /> : null}
           </div>
           {gallery.length ? (
-            <div className="destination-gallery">
-              {gallery.map((mediaItem, index) => (
-                galleryEntryMediaUrl(mediaItem) ? (
-                  <Image alt={String(mediaItem.alt || destination.name)} height={360} key={index} src={galleryEntryMediaUrl(mediaItem)} width={540} />
-                ) : null
-              ))}
+            <div style={{ margin: "40px 0" }}>
+              <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#1c3d15", marginBottom: "20px" }}>Media Gallery</h2>
+              <DestinationGallerySlider gallery={gallery} destinationName={String(destination.name)} />
             </div>
           ) : null}
           {hasMapEmbed || hasCoordinates ? (

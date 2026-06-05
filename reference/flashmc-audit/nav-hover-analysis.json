@@ -1,0 +1,42 @@
+[
+  {
+    "label": "About Us",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Destinations",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Safari Tours",
+    "count": 3,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Experiences",
+    "count": 2,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Accommodation",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "National Parks",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Blogs",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "label": "Contact Us",
+    "count": 1,
+    "error": "Error: page.evaluate: ReferenceError: count is not defined\n    at eval (eval at evaluate (:302:30), <anonymous>:11:24)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  }
+]

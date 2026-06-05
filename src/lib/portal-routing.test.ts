@@ -30,12 +30,12 @@ describe("resolvePortalRoute", () => {
     expect(resolve(portalHost, "/api/users/me").type).toBe("next");
   });
 
-  it("redirects Payload's internal first-user URL to the portal register URL", () => {
+  it("redirects Payload's internal first-user URL to the portal login URL", () => {
     const action = resolve("localhost:3000", "/admin/create-first-user");
 
     expect(action.type).toBe("redirect");
     if (action.type === "redirect") {
-      expect(action.destination.pathname).toBe("/admin/register");
+      expect(action.destination.pathname).toBe("/admin/login");
     }
   });
 

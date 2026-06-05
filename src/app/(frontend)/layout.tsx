@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
-import { Merriweather, Nunito } from "next/font/google";
+import { Open_Sans, Playfair_Display } from "next/font/google";
 import "../globals.css";
+import { CookieConsent } from "@/components/CookieConsent";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
+import { ScrollAnimations } from "@/components/ScrollAnimations";
 import { organizationSchema } from "@/lib/seo";
 import { site } from "@/content/site";
+import { getPublishedDestinationsForNav } from "@/lib/public-destinations";
 import { getPublicNavigation } from "@/lib/public-navigation";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const merriweather = Merriweather({
-  variable: "--font-merriweather",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
   subsets: ["latin"],
-  weight: ["700", "900"],
+  weight: ["600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -34,17 +41,23 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const navItems = await getPublicNavigation();
+  const [navItems, siteSettings, destinations] = await Promise.all([
+    getPublicNavigation(),
+    getPublicSiteSettings(),
+    getPublishedDestinationsForNav(),
+  ]);
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${merriweather.variable}`}
+      className={`${openSans.variable} ${playfairDisplay.variable}`}
     >
       <body>
         <JsonLd data={organizationSchema()} />
-        <Header navItems={navItems} />
+        <ScrollAnimations />
+        <Header destinations={destinations} navItems={navItems} siteSettings={siteSettings} />
         {children}
-        <Footer navItems={navItems} />
+        <Footer navItems={navItems} siteSettings={siteSettings} />
+        <CookieConsent />
       </body>
     </html>
   );

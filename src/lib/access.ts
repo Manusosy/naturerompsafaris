@@ -47,3 +47,13 @@ export const selfOrAdmin: Access = ({ req }) => {
     },
   } satisfies Where;
 };
+
+export const publishedOrStaff: Access = ({ req }) => {
+  if (isStaffUser(req.user as UserWithRole)) return true;
+
+  return {
+    status: {
+      equals: "published",
+    },
+  } satisfies Where;
+};

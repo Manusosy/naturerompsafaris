@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 
 import { Hero } from "@/components/Hero";
+import { AfricaMap } from "@/components/AfricaMap";
 import {
   AboutPreview,
   BlogPreview,
-  ContactBand,
   FeaturedPackages,
   GalleryPreview,
+  HomepageFaqs,
   JeepSafari,
+  NewsletterSignup,
+  BookingSecurityPartners,
   Services,
   Testimonials,
 } from "@/components/Sections";
 import { buildMetadata } from "@/lib/seo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = buildMetadata({
   title: "Kenya Tanzania Safari Adventure",
@@ -29,10 +34,13 @@ export default function Home() {
       <Services />
       <FeaturedPackages />
       <JeepSafari />
+      <AfricaMap />
       <Testimonials />
       <GalleryPreview />
-      <ContactBand />
+      <HomepageFaqs />
+      <BookingSecurityPartners />
       <BlogPreview />
+      <NewsletterSignup />
     </main>
   );
 }

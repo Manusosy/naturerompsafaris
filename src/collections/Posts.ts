@@ -1,6 +1,6 @@
-import type { CollectionConfig, FieldHook } from "payload";
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldHook } from "payload";
 
-import { anyone, editorOrAdmin } from "../lib/access";
+import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
 
@@ -10,10 +10,53 @@ const canonicalUrlHook: FieldHook = ({ data, value }) => {
   return value as string | undefined;
 };
 
+const normalizeArticlePublishing: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
+  const next = { ...data };
+  const title = typeof next.title === "string" ? next.title : originalDoc?.title;
+  const excerpt = typeof next.excerpt === "string" ? next.excerpt : originalDoc?.excerpt;
+  const slug = typeof next.slug === "string" ? next.slug : originalDoc?.slug;
+  const status = typeof next.status === "string" ? next.status : originalDoc?.status;
+  const previousSeo = next.seo && typeof next.seo === "object" ? next.seo as Record<string, unknown> : {};
+
+  next.seo = {
+    ...previousSeo,
+    canonicalSlug: slug,
+    metaDescription: excerpt,
+    metaTitle: title,
+  };
+
+  if (status === "published" && !next.publishedAt && !originalDoc?.publishedAt) {
+    next.publishedAt = new Date().toISOString();
+  }
+
+  if (!next.category && !originalDoc?.category) {
+    try {
+      const cats = await req.payload.find({
+        collection: "post-categories",
+        where: { slug: { equals: "uncategorized" } },
+        limit: 1,
+      });
+      if (cats.docs.length > 0) {
+        next.category = cats.docs[0].id;
+      } else {
+        const newCat = await req.payload.create({
+          collection: "post-categories",
+          data: { name: "Uncategorized", slug: "uncategorized", description: "Default category" },
+        });
+        next.category = newCat.id;
+      }
+    } catch (err) {
+      console.error("Failed to assign default category", err);
+    }
+  }
+
+  return next;
+};
+
 export const Posts: CollectionConfig = {
   slug: "posts",
   access: {
-    read: anyone,
+    read: publishedOrStaff,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -23,12 +66,14 @@ export const Posts: CollectionConfig = {
     defaultColumns: ["title", "status", "category", "publishedAt"],
     group: "Content",
   },
+  hooks: {
+    beforeChange: [normalizeArticlePublishing],
+  },
   fields: [
-    { name: "title", type: "text", required: true },
+    { name: "title", type: "text" },
     {
       name: "slug",
       type: "text",
-      required: true,
       unique: true,
       index: true,
       admin: {
@@ -51,7 +96,7 @@ export const Posts: CollectionConfig = {
     { name: "image", type: "upload", relationTo: "media" },
     { name: "imageAlt", type: "text" },
     { name: "imageCaption", type: "text" },
-    { name: "excerpt", type: "textarea", required: true },
+    { name: "excerpt", type: "textarea" },
     {
       name: "body",
       type: "textarea",
@@ -65,20 +110,22 @@ export const Posts: CollectionConfig = {
       type: "group",
       label: "SEO & Metadata",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", admin: { hidden: true } },
+        { name: "metaDescription", type: "textarea", admin: { hidden: true } },
         { name: "keywords", type: "text" },
+        { name: "canonicalSlug", type: "text", admin: { hidden: true } },
         {
           name: "canonicalUrl",
           label: "Canonical URL (auto-filled)",
           type: "text",
           admin: {
+            hidden: true,
             readOnly: true,
             description: "Auto-generated from slug. Format: {site}/blog/{slug}",
           },
           hooks: { beforeChange: [canonicalUrlHook] },
         },
-        { name: "openGraphImage", type: "upload", relationTo: "media" },
+        { name: "openGraphImage", type: "upload", relationTo: "media", admin: { hidden: true } },
       ],
     },
 
@@ -101,7 +148,7 @@ export const Posts: CollectionConfig = {
       defaultValue: false,
       admin: { position: "sidebar" },
     },
-    { name: "publishedAt", type: "date", admin: { position: "sidebar" } },
+    { name: "publishedAt", type: "date", admin: { hidden: true, position: "sidebar" } },
     {
       name: "category",
       type: "relationship",

@@ -37,9 +37,7 @@ export default function ContactPage() {
             <ul className="info-list">
               <li><MapPin size={18} /> <span><strong>Main office</strong>{site.address}</span></li>
               <li><Mail size={18} /> <span><strong>Email Address</strong>{site.email}</span></li>
-              <li><Mail size={18} /> <span><strong>Email Address</strong>{site.secondaryEmail}</span></li>
               <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phone}</span></li>
-              <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phoneAlt.replace(" ", "")}</span></li>
               <li><Globe2 size={18} /> <span><strong>Website</strong>www.naturerompsafaris.com</span></li>
             </ul>
             <div className="contact-trust">

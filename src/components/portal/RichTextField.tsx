@@ -31,12 +31,7 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Underline from "@tiptap/extension-underline";
 
-type MediaOption = {
-  alt: string;
-  filename: string;
-  id: string;
-  url: string;
-};
+import { MediaPickerField, type PortalMediaOption } from "@/components/portal/MediaPickerField";
 
 export function RichTextField({
   defaultValue = "",
@@ -45,12 +40,12 @@ export function RichTextField({
   onChange,
 }: {
   defaultValue?: string;
-  media?: MediaOption[];
+  media?: PortalMediaOption[];
   name: string;
   onChange?: (value: string) => void;
 }) {
   const [value, setValue] = useState(defaultValue);
-  const [insertMediaId, setInsertMediaId] = useState(media[0]?.id ?? "__none");
+  const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false, underline: false }),
@@ -85,11 +80,11 @@ export function RichTextField({
     editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
   }
 
-  function insertSelectedImage() {
-    const selected = media.find((item) => item.id === insertMediaId);
-    const src = selected?.url || window.prompt("Paste image URL");
+  function insertImage(item: PortalMediaOption) {
+    const src = item.url || item.thumbUrl;
     if (!src) return;
-    editor?.chain().focus().setImage({ src, alt: selected?.alt || "" }).run();
+    editor?.chain().focus().setImage({ src, alt: item.alt || item.filename }).run();
+    setMediaDialogOpen(false);
   }
 
   return (
@@ -113,15 +108,25 @@ export function RichTextField({
         <button onClick={() => editor?.chain().focus().setHorizontalRule().run()} type="button"><Pilcrow size={17} /></button>
         <button onClick={() => setLink(false)} type="button"><LinkIcon size={17} /></button>
         <button onClick={() => setLink(true)} type="button"><ExternalLink size={17} /></button>
-        <select aria-label="Select media to insert" onChange={(event) => setInsertMediaId(event.target.value)} value={insertMediaId}>
-          <option value="__none">Media</option>
-          {media.map((item) => <option key={item.id} value={item.id}>{item.alt || item.filename}</option>)}
-        </select>
-        <button onClick={insertSelectedImage} type="button"><ImagePlus size={17} /></button>
+        <button onClick={() => setMediaDialogOpen(true)} title="Insert image from gallery" type="button"><ImagePlus size={17} /></button>
         <button onClick={() => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} type="button"><TableIcon size={17} /></button>
         <strong>{wordCount} words</strong>
       </div>
-      <EditorContent editor={editor} />
+      <div className="article-editor__content">
+        <EditorContent editor={editor} />
+      </div>
+      {mediaDialogOpen ? (
+        <MediaPickerField
+          autoOpen
+          label="Insert image into article"
+          onChange={(_, selected) => {
+            const item = selected[0];
+            if (item) insertImage(item);
+          }}
+          onClose={() => setMediaDialogOpen(false)}
+          options={media}
+        />
+      ) : null}
     </div>
   );
 }

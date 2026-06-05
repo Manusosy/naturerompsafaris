@@ -1,6 +1,6 @@
 import type { CollectionConfig, FieldHook } from "payload";
 
-import { anyone, editorOrAdmin } from "../lib/access";
+import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
 
@@ -13,7 +13,7 @@ const canonicalUrlHook: FieldHook = ({ data, value }) => {
 export const Trips: CollectionConfig = {
   slug: "trips",
   access: {
-    read: anyone,
+    read: publishedOrStaff,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -29,12 +29,10 @@ export const Trips: CollectionConfig = {
     {
       name: "title",
       type: "text",
-      required: true,
     },
     {
       name: "slug",
       type: "text",
-      required: true,
       unique: true,
       index: true,
       admin: {
@@ -56,10 +54,29 @@ export const Trips: CollectionConfig = {
       },
     },
     {
+      name: "heroEyebrow",
+      label: "Hero eyebrow / category",
+      type: "text",
+      admin: { placeholder: "e.g. Signature Kenya Safari" },
+    },
+    {
       name: "heroSubtitle",
       label: "Hero subtitle / tag line",
       type: "textarea",
       admin: { placeholder: "e.g. A once-in-a-lifetime Kenya wildlife expedition" },
+    },
+    {
+      name: "heroImage",
+      label: "Hero media image",
+      type: "upload",
+      relationTo: "media",
+      admin: { description: "Optional hero image override. If empty, the first gallery image is used." },
+    },
+    {
+      name: "heroVideoUrl",
+      label: "Hero video URL",
+      type: "text",
+      admin: { description: "Reserved for future video hero support. Public page falls back to images for now." },
     },
     {
       name: "overview",
@@ -74,6 +91,35 @@ export const Trips: CollectionConfig = {
       type: "relationship",
       relationTo: "packages",
       admin: { description: "Optionally link this trip to a parent package." },
+    },
+    {
+      name: "packageTier",
+      label: "Package tier",
+      type: "select",
+      options: [
+        { label: "Budget", value: "budget" },
+        { label: "Mid Range", value: "mid-range" },
+        { label: "Luxury", value: "luxury" },
+        { label: "High End", value: "high-end" },
+      ],
+      admin: { description: "Used by package filters and price table grouping." },
+    },
+    {
+      name: "experienceTypes",
+      label: "Experience types",
+      type: "select",
+      hasMany: true,
+      options: [
+        { label: "Family Safaris", value: "family" },
+        { label: "Honeymoon Safaris", value: "honeymoon" },
+        { label: "Group Joining Safaris", value: "group-joining" },
+        { label: "Private Safaris", value: "private" },
+        { label: "Fly-In Safaris", value: "fly-in" },
+        { label: "Safari & Beach Holidays", value: "safari-beach" },
+        { label: "Beach Extensions", value: "beach-extension" },
+        { label: "Mount Climbing", value: "mount-climbing" },
+      ],
+      admin: { description: "Used by Experiences navigation and public filters." },
     },
     {
       name: "destinations",
@@ -95,6 +141,12 @@ export const Trips: CollectionConfig = {
       name: "location",
       type: "text",
       admin: { placeholder: "e.g. Kenya & Tanzania" },
+    },
+    {
+      name: "routeLabel",
+      label: "Route label",
+      type: "text",
+      admin: { placeholder: "e.g. Nairobi to Zanzibar via Masai Mara and Serengeti" },
     },
     {
       name: "startLocation",
@@ -295,8 +347,22 @@ export const Trips: CollectionConfig = {
 
       fields: [
         { name: "title", type: "text", required: true },
+        {
+          name: "tier",
+          type: "select",
+          options: [
+            { label: "Budget", value: "budget" },
+            { label: "Mid Range", value: "mid-range" },
+            { label: "Luxury", value: "luxury" },
+            { label: "High End", value: "high-end" },
+          ],
+        },
         { name: "seasonLabel", label: "Season", type: "text" },
         { name: "dateRange", label: "Date range", type: "text" },
+        { name: "currency", type: "text", defaultValue: "USD" },
+        { name: "min", type: "number" },
+        { name: "max", type: "number" },
+        { name: "displayText", label: "Display price text", type: "text" },
         { name: "budgetText", label: "Budget / quote text", type: "text" },
         { name: "notes", type: "textarea" },
         { name: "ctaLabel", label: "CTA label", type: "text", defaultValue: "Request Quote" },
@@ -352,6 +418,18 @@ export const Trips: CollectionConfig = {
       fields: [{ name: "item", type: "text", required: true }],
     },
     {
+      name: "quoteIntro",
+      label: "Quote form intro",
+      type: "textarea",
+      admin: { description: "Short helper text shown above the trip sidebar quote form." },
+    },
+    {
+      name: "trustindexEmbedOverride",
+      label: "Trustindex override",
+      type: "textarea",
+      admin: { description: "Optional per-trip Trustindex widget embed. Leave empty to use site settings." },
+    },
+    {
       name: "discount",
       type: "group",
       fields: [
@@ -403,6 +481,9 @@ export const Trips: CollectionConfig = {
       name: "seo",
       type: "group",
       label: "SEO & Metadata",
+      admin: {
+        hidden: true,
+      },
 
       fields: [
         { name: "title", type: "text" },

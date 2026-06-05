@@ -113,6 +113,19 @@ function parseTitledBlocks(value: string, fields: string[] = ["description"]) {
     .filter(Boolean);
 }
 
+function parsePriceBlocks(value: string) {
+  return parseTitledBlocks(value, ["tier", "seasonLabel", "dateRange", "currency", "min", "max", "displayText", "budgetText", "notes", "ctaLabel"])
+    .map((item) => {
+      if (!item || typeof item !== "object") return item;
+      const record = item as Record<string, unknown>;
+      return {
+        ...record,
+        min: record.min ? Number(record.min) : undefined,
+        max: record.max ? Number(record.max) : undefined,
+      };
+    });
+}
+
 function parseLines(value: string) {
   return value
     .split(/\r?\n/)
@@ -185,8 +198,11 @@ export function TripBuilder({
   const [title, setTitle] = useState(fieldValue(document, "title"));
   const [slug, setSlug] = useState(fieldValue(document, "slug"));
   const [selectedDestinations, setSelectedDestinations] = useState(relationIds(document?.destinations));
+  const [heroEyebrow, setHeroEyebrow] = useState(fieldValue(document, "heroEyebrow"));
   const [heroSubtitle, setHeroSubtitle] = useState(fieldValue(document, "heroSubtitle"));
+  const [heroImage, setHeroImage] = useState(relationId(document?.heroImage) || "__none");
   const [location, setLocation] = useState(fieldValue(document, "location"));
+  const [routeLabel, setRouteLabel] = useState(fieldValue(document, "routeLabel"));
   const [startLocation, setStartLocation] = useState(fieldValue(document, "startLocation"));
   const [endLocation, setEndLocation] = useState(fieldValue(document, "endLocation"));
   const [status, setStatus] = useState(fieldValue(document, "status") || "draft");
@@ -194,6 +210,8 @@ export function TripBuilder({
   const [days, setDays] = useState(fieldValue(document, "days"));
   const [nights, setNights] = useState(fieldValue(document, "nights"));
   const [packageId, setPackageId] = useState(relationId(document?.package) || "__none");
+  const [packageTier, setPackageTier] = useState(fieldValue(document, "packageTier") || "budget");
+  const [experienceTypes, setExperienceTypes] = useState<string[]>(Array.isArray(document?.experienceTypes) ? document?.experienceTypes.map(String) : []);
   const [currency, setCurrency] = useState(fieldValue(document, "budget.currency") || "USD");
   const [budgetMin, setBudgetMin] = useState(fieldValue(document, "budget.min"));
   const [budgetMax, setBudgetMax] = useState(fieldValue(document, "budget.max"));
@@ -208,7 +226,7 @@ export function TripBuilder({
       : [],
   );
   const [destinationStopNotes, setDestinationStopNotes] = useState(arrayItems(document?.destinationStops, "description"));
-  const [priceSeasons, setPriceSeasons] = useState(titledBlocks(document?.priceSeasons, ["seasonLabel", "dateRange", "budgetText", "notes", "ctaLabel"]));
+  const [priceSeasons, setPriceSeasons] = useState(titledBlocks(document?.priceSeasons, ["tier", "seasonLabel", "dateRange", "currency", "min", "max", "displayText", "budgetText", "notes", "ctaLabel"]));
   const [overview, setOverview] = useState(fieldValue(document, "overview"));
   const [included, setIncluded] = useState(arrayItems(document?.included, "item"));
   const [excluded, setExcluded] = useState(arrayItems(document?.excluded, "item"));
@@ -218,6 +236,8 @@ export function TripBuilder({
   const [longitude, setLongitude] = useState(fieldValue(document, "longitude"));
   const [positiveImpact, setPositiveImpact] = useState(fieldValue(document, "positiveImpact"));
   const [whyBook, setWhyBook] = useState(arrayItems(document?.whyBook, "item"));
+  const [quoteIntro, setQuoteIntro] = useState(fieldValue(document, "quoteIntro"));
+  const [trustindexEmbedOverride, setTrustindexEmbedOverride] = useState(fieldValue(document, "trustindexEmbedOverride"));
   const [relatedTrips, setRelatedTrips] = useState(relationIds(document?.relatedTrips));
   const [discountEnabled, setDiscountEnabled] = useState(booleanValue(document, "discount.enabled"));
   const [discountLabel, setDiscountLabel] = useState(fieldValue(document, "discount.label"));
@@ -270,6 +290,7 @@ export function TripBuilder({
           },
           endLocation,
           excluded: parseLines(excluded),
+          experienceTypes,
           faqs: parseFaq(faqs),
           featured,
           gallery: galleryImages.map((image, index) => ({
@@ -277,6 +298,8 @@ export function TripBuilder({
             caption: captionLines[index] || "",
             image,
           })),
+          heroEyebrow,
+          heroImage: heroImage === "__none" ? undefined : heroImage,
           heroSubtitle,
           highlights: parseTitledBlocks(highlights),
           included: parseLines(included),
@@ -288,9 +311,12 @@ export function TripBuilder({
           nights: nights ? Number(nights) : undefined,
           overview,
           package: packageId === "__none" ? undefined : packageId,
+          packageTier,
           positiveImpact,
-          priceSeasons: parseTitledBlocks(priceSeasons, ["seasonLabel", "dateRange", "budgetText", "notes", "ctaLabel"]),
+          priceSeasons: parsePriceBlocks(priceSeasons),
+          quoteIntro,
           relatedTrips,
+          routeLabel,
           seo: {
             canonicalSlug,
             description: seoDescription,
@@ -301,6 +327,7 @@ export function TripBuilder({
           startLocation,
           status: nextStatus,
           title,
+          trustindexEmbedOverride,
           whyBook: parseLines(whyBook),
         },
         id: document?.id ? String(document.id) : undefined,
@@ -336,14 +363,31 @@ export function TripBuilder({
         </div>
       </div>
 
+      <nav className="trip-builder__tabs" aria-label="Trip editor sections">
+        {["Hero", "Route", "Media", "Overview", "Itinerary", "Pricing", "Inclusions", "SEO", "Publish"].map((item) => (
+          <a href={`#trip-${item.toLowerCase()}`} key={item}>{item}</a>
+        ))}
+      </nav>
+
       <div className="trip-builder__layout">
         <main className="trip-builder__main">
-          <section className="portal-panel">
-            <h3>Basics</h3>
+          <section className="portal-panel" id="trip-hero">
+            <h3>Hero</h3>
             <div className="portal-form__grid">
               <label className="portal-field is-wide">
                 <span>Trip title</span>
                 <input onBlur={() => setSlug((value) => value || slugify(title))} onChange={(event) => setTitle(event.target.value)} value={title} />
+              </label>
+              <label className="portal-field">
+                <span>Hero eyebrow</span>
+                <input onChange={(event) => setHeroEyebrow(event.target.value)} placeholder="Signature Kenya Safari" value={heroEyebrow} />
+              </label>
+              <label className="portal-field">
+                <span>Hero image</span>
+                <select onChange={(event) => setHeroImage(event.target.value)} value={heroImage}>
+                  <option value="__none">Use first gallery image</option>
+                  {media.map((item) => <option key={item.id} value={item.id}>{item.alt || item.filename}</option>)}
+                </select>
               </label>
               <label className="portal-field is-wide">
                 <span>Hero subtitle</span>
@@ -356,6 +400,10 @@ export function TripBuilder({
               <label className="portal-field">
                 <span>Location</span>
                 <input onChange={(event) => setLocation(event.target.value)} value={location} />
+              </label>
+              <label className="portal-field is-wide">
+                <span>Route label</span>
+                <input onChange={(event) => setRouteLabel(event.target.value)} placeholder="Nairobi to Zanzibar via Masai Mara and Serengeti" value={routeLabel} />
               </label>
               <label className="portal-field">
                 <span>Start location</span>
@@ -383,6 +431,28 @@ export function TripBuilder({
                   <option value="on-request">On Request</option>
                 </select>
               </label>
+              <label className="portal-field">
+                <span>Package tier</span>
+                <select onChange={(event) => setPackageTier(event.target.value)} value={packageTier}>
+                  <option value="budget">Budget</option>
+                  <option value="mid-range">Mid Range</option>
+                  <option value="luxury">Luxury</option>
+                  <option value="high-end">High End</option>
+                </select>
+              </label>
+              <label className="portal-field">
+                <span>Experiences</span>
+                <select multiple onChange={(event) => setExperienceTypes(Array.from(event.target.selectedOptions).map((option) => option.value))} value={experienceTypes}>
+                  <option value="family">Family Safaris</option>
+                  <option value="honeymoon">Honeymoon Safaris</option>
+                  <option value="group-joining">Group Joining Safaris</option>
+                  <option value="private">Private Safaris</option>
+                  <option value="fly-in">Fly-In Safaris</option>
+                  <option value="safari-beach">Safari & Beach Holidays</option>
+                  <option value="beach-extension">Beach Extensions</option>
+                  <option value="mount-climbing">Mount Climbing</option>
+                </select>
+              </label>
               <label className="portal-field is-wide">
                 <span>Destinations</span>
                 <select multiple onChange={(event) => setSelectedDestinations(Array.from(event.target.selectedOptions).map((option) => option.value))} value={selectedDestinations}>
@@ -392,7 +462,7 @@ export function TripBuilder({
             </div>
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-route">
             <h3>Highlights And Route</h3>
             <label className="portal-field">
               <span>Tour highlights</span>
@@ -417,7 +487,7 @@ export function TripBuilder({
             </div>
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-pricing">
             <h3>Budget And Duration</h3>
             <div className="portal-form__grid">
               <label className="portal-field">
@@ -449,14 +519,14 @@ export function TripBuilder({
               <span>Prices and seasons</span>
               <textarea
                 onChange={(event) => setPriceSeasons(event.target.value)}
-                placeholder={"Mid range options\nseasonLabel: High season\ndateRange: July to October\nbudgetText: Quote based on group size\nnotes: Lodge availability changes quickly.\nctaLabel: Request Quote"}
+                placeholder={"High season lodge quote\ntier: mid-range\nseasonLabel: High season\ndateRange: July to October\ncurrency: USD\nmin: 2800\nmax: 4200\ndisplayText: Quote based on group size\nnotes: Lodge availability changes quickly.\nctaLabel: Request Quote"}
                 rows={10}
                 value={priceSeasons}
               />
             </label>
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-media">
             <h3>Media Carousel</h3>
             <label className="portal-field">
               <span>Images</span>
@@ -484,25 +554,19 @@ export function TripBuilder({
             </div>
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-overview">
             <h3>Trip Content</h3>
             <label className="portal-field">
               <span>Overview</span>
               <RichTextField defaultValue={overview} media={media} name="overview" onChange={setOverview} />
             </label>
-            <div className="portal-form__grid">
-              <label className="portal-field">
-                <span>Included</span>
-                <textarea onChange={(event) => setIncluded(event.target.value)} placeholder="One item per line" rows={7} value={included} />
-              </label>
-              <label className="portal-field">
-                <span>Excluded</span>
-                <textarea onChange={(event) => setExcluded(event.target.value)} placeholder="One item per line" rows={7} value={excluded} />
-              </label>
-            </div>
             <label className="portal-field">
               <span>Positive impact</span>
               <RichTextField defaultValue={positiveImpact} media={media} name="positiveImpact" onChange={setPositiveImpact} />
+            </label>
+            <label className="portal-field">
+              <span>Quote form intro</span>
+              <textarea onChange={(event) => setQuoteIntro(event.target.value)} rows={3} value={quoteIntro} />
             </label>
             <label className="portal-field">
               <span>Why book / booking security</span>
@@ -510,7 +574,7 @@ export function TripBuilder({
             </label>
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-itinerary">
             <h3>Itinerary Builder</h3>
             <textarea
               className="trip-builder__itinerary"
@@ -521,7 +585,21 @@ export function TripBuilder({
             />
           </section>
 
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-inclusions">
+            <h3>Inclusions</h3>
+            <div className="portal-form__grid">
+              <label className="portal-field">
+                <span>Included</span>
+                <textarea onChange={(event) => setIncluded(event.target.value)} placeholder="One item per line" rows={7} value={included} />
+              </label>
+              <label className="portal-field">
+                <span>Excluded</span>
+                <textarea onChange={(event) => setExcluded(event.target.value)} placeholder="One item per line" rows={7} value={excluded} />
+              </label>
+            </div>
+          </section>
+
+          <section className="portal-panel" id="trip-seo">
             <h3>SEO, AEO, GEO</h3>
             <div className="portal-form__grid">
               <label className="portal-field">
@@ -549,11 +627,15 @@ export function TripBuilder({
                 <textarea onChange={(event) => setDirectAnswers(event.target.value)} placeholder={"Best time to visit?\nJune to October..."} rows={7} value={directAnswers} />
               </label>
             </div>
+            <label className="portal-field">
+              <span>Trustindex override</span>
+              <textarea onChange={(event) => setTrustindexEmbedOverride(event.target.value)} rows={4} value={trustindexEmbedOverride} />
+            </label>
           </section>
         </main>
 
         <aside className="trip-builder__side">
-          <section className="portal-panel">
+          <section className="portal-panel" id="trip-publish">
             <h3>Publish</h3>
             <label className="article-switch">
               <span>Featured</span>

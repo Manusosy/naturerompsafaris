@@ -1,5 +1,5 @@
 import { PortalShell } from "@/components/portal/PortalShell";
-import { requirePortalUser } from "@/lib/portal/data";
+import { countCollection, requirePortalUser } from "@/lib/portal/data";
 
 export default async function PortalDashboardLayout({
   children,
@@ -7,5 +7,6 @@ export default async function PortalDashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await requirePortalUser();
-  return <PortalShell user={user}>{children}</PortalShell>;
+  const notificationCount = await countCollection("enquiries", { status: { equals: "new" } });
+  return <PortalShell notificationCount={notificationCount} user={user}>{children}</PortalShell>;
 }

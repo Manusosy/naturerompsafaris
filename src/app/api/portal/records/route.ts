@@ -15,6 +15,25 @@ type PortalRecordRequest = {
   id?: string;
 };
 
+function getMutationErrorMessage(error: unknown) {
+  if (error && typeof error === "object") {
+    const maybeValidation = error as {
+      data?: Array<{ message?: string; path?: string }>;
+      message?: string;
+    };
+    if (Array.isArray(maybeValidation.data) && maybeValidation.data.length) {
+      return maybeValidation.data
+        .map((item) => [item.path, item.message].filter(Boolean).join(": "))
+        .filter(Boolean)
+        .join(" ");
+    }
+    if (maybeValidation.message) return maybeValidation.message;
+  }
+
+  if (error instanceof Error) return error.message;
+  return "Unable to save this record.";
+}
+
 export async function POST(request: Request) {
   const user = await getPortalUser();
   if (!user) {
@@ -81,6 +100,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ result });
   } catch (error) {
     console.error("Portal record mutation failed", error);
-    return NextResponse.json({ message: "Unable to save this record." }, { status: 400 });
+    return NextResponse.json({ message: getMutationErrorMessage(error) }, { status: 400 });
   }
 }

@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
 
-import { anyone, editorOrAdmin } from "../lib/access";
+import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
 export const Gallery: CollectionConfig = {
   slug: "gallery",
   access: {
-    read: anyone,
+    read: publishedOrStaff,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -20,6 +20,17 @@ export const Gallery: CollectionConfig = {
     { name: "category", type: "text", defaultValue: "Safari Moments" },
     { name: "image", type: "upload", relationTo: "media", required: true },
     { name: "alt", type: "text", required: true },
+    { name: "featured", type: "checkbox", defaultValue: false },
     { name: "sortOrder", type: "number", defaultValue: 0 },
+    {
+      name: "status",
+      type: "select",
+      defaultValue: "draft",
+      required: true,
+      options: [
+        { label: "Draft", value: "draft" },
+        { label: "Published", value: "published" },
+      ],
+    },
   ],
 };

@@ -11,7 +11,7 @@ describe("portal security helpers", () => {
     const user = { role: "operations" };
 
     expect(canManagePortalCollection(user, "enquiries")).toBe(true);
-    expect(canManagePortalCollection(user, "bookings")).toBe(true);
+    expect(canManagePortalCollection(user, "bookings")).toBe(false);
     expect(canManagePortalCollection(user, "trips")).toBe(false);
     expect(canManagePortalGlobal(user, "site-settings")).toBe(false);
   });

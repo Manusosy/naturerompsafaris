@@ -141,10 +141,7 @@ export function AuthPanel({
           <div className="portal-auth__links">
             {isRegister ? <Link href="/admin/login">Already have an account? Login</Link> : null}
             {mode === "login" ? (
-              <>
-                <Link href="/admin/register">Create account</Link>
-                <Link href="/admin/forgot-password">Forgot password?</Link>
-              </>
+              <Link href="/admin/forgot-password">Forgot password?</Link>
             ) : null}
             {isForgot || isReset ? <Link href="/admin/login">Back to login</Link> : null}
           </div>

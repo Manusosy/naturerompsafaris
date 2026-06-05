@@ -1,6 +1,6 @@
 import type { CollectionConfig, FieldHook } from "payload";
 
-import { anyone, editorOrAdmin } from "../lib/access";
+import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
 
@@ -14,7 +14,7 @@ const canonicalUrlHook: FieldHook = ({ data, value }) => {
 export const Packages: CollectionConfig = {
   slug: "packages",
   access: {
-    read: anyone,
+    read: publishedOrStaff,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -30,13 +30,11 @@ export const Packages: CollectionConfig = {
     {
       name: "title",
       type: "text",
-      required: true,
       admin: { description: "The full package title as shown to visitors." },
     },
     {
       name: "slug",
       type: "text",
-      required: true,
       unique: true,
       index: true,
       admin: {
@@ -60,18 +58,12 @@ export const Packages: CollectionConfig = {
     {
       name: "excerpt",
       type: "textarea",
-      required: true,
       admin: { description: "Short description shown on listing cards and in meta tags." },
     },
     {
       name: "image",
       type: "upload",
       relationTo: "media",
-    },
-    {
-      name: "imageAlt",
-      type: "text",
-      admin: { description: "Describe the image for screen readers and SEO." },
     },
     {
       name: "duration",
@@ -149,11 +141,15 @@ export const Packages: CollectionConfig = {
       name: "seo",
       type: "group",
       label: "SEO & Metadata",
-      admin: { description: "Search engine optimisation. Canonical URL is auto-generated from the slug." },
+      admin: {
+        hidden: true,
+        description: "Generated automatically outside articles. Canonical URL is auto-generated from the slug.",
+      },
       fields: [
         { name: "metaTitle", type: "text", admin: { placeholder: "Leave blank to use the package title" } },
         { name: "metaDescription", type: "textarea", admin: { placeholder: "155–160 characters recommended" } },
         { name: "keywords", type: "text", admin: { placeholder: "Comma-separated keywords" } },
+        { name: "canonicalSlug", type: "text" },
         {
           name: "canonicalUrl",
           type: "text",
@@ -196,13 +192,26 @@ export const Packages: CollectionConfig = {
     {
       name: "category",
       type: "select",
-      required: true,
       options: [
+        { label: "— Select category —", value: "" },
         "Kenya Safaris",
         "Tanzania Safaris",
+        "Zanzibar Holidays",
         "Kenya Tanzania Combined Safaris",
         "Kenya Adventure Safaris",
         "Tanzania Adventure Safaris",
+      ],
+      admin: { position: "sidebar" },
+    },
+    {
+      name: "packageTier",
+      label: "Package tier",
+      type: "select",
+      options: [
+        { label: "Budget", value: "budget" },
+        { label: "Mid Range", value: "mid-range" },
+        { label: "Luxury", value: "luxury" },
+        { label: "High End", value: "high-end" },
       ],
       admin: { position: "sidebar" },
     },

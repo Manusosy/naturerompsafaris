@@ -10,7 +10,9 @@ import { ArticleTags } from "./collections/ArticleTags";
 import { Bookings } from "./collections/Bookings";
 import { Destinations } from "./collections/Destinations";
 import { Enquiries } from "./collections/Enquiries";
+import { Faqs } from "./collections/Faqs";
 import { Gallery } from "./collections/Gallery";
+import { HomepageSlides } from "./collections/HomepageSlides";
 import { Itineraries } from "./collections/Itineraries";
 import { Media } from "./collections/Media";
 import { NavigationItems } from "./collections/NavigationItems";
@@ -50,6 +52,8 @@ export default buildConfig({
     PostCategories,
     ArticleTags,
     Posts,
+    HomepageSlides,
+    Faqs,
     Gallery,
     Testimonials,
     Enquiries,

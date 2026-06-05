@@ -19,14 +19,5 @@ export const PostCategories: CollectionConfig = {
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", required: true, unique: true, index: true },
     { name: "description", type: "textarea" },
-    {
-      name: "seo",
-      type: "group",
-      fields: [
-        { name: "description", type: "textarea" },
-        { name: "keywords", type: "text" },
-        { name: "canonicalSlug", type: "text" },
-      ],
-    },
   ],
 };

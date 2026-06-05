@@ -1,3 +1,5 @@
+import type React from "react";
+
 import Link from "next/link";
 
 export function PageHeader({
@@ -54,11 +56,28 @@ export function PageHeader({
   );
 }
 
-export function StatCard({ label, value }: { label: string; value: number | string }) {
+export function StatCard({
+  color = "green",
+  icon: Icon,
+  label,
+  value,
+}: {
+  color?: "green" | "gold" | "red" | "teal" | "indigo";
+  icon?: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  label: string;
+  value: number | string;
+}) {
   return (
-    <article className="portal-stat">
-      <span>{label}</span>
-      <strong>{value}</strong>
+    <article className={`portal-stat portal-stat--${color}`}>
+      {Icon ? (
+        <div className="portal-stat__icon">
+          <Icon size={20} strokeWidth={2} />
+        </div>
+      ) : null}
+      <div className="portal-stat__body">
+        <strong>{value}</strong>
+        <span>{label}</span>
+      </div>
     </article>
   );
 }
@@ -90,11 +109,42 @@ export function EmptyState({ label }: { label: string }) {
 
 export function StatusBadge({ value }: { value: unknown }) {
   const raw = String(value ?? "");
-  const label = typeof value === "boolean"
-    ? value ? "Yes" : "No"
-    : raw.replace(/-/g, " ");
+  const label =
+    typeof value === "boolean" ? (value ? "Yes" : "No") : raw.replace(/-/g, " ").toUpperCase();
   const slug = raw.toLowerCase();
+
+  const colorMap: Record<string, string> = {
+    available: "#00a32a",
+    booked: "#00a32a",
+    closed: "#646970",
+    contacted: "#2271b1",
+    confirmed: "#00a32a",
+    draft: "#646970",
+    limited: "#dba617",
+    new: "#d63638",
+    published: "#00a32a",
+    quoted: "#2271b1",
+    trashed: "#d63638",
+    unavailable: "#d63638",
+  };
+
+  const color = colorMap[slug] || "#646970";
+
   return (
-    <span className={`portal-badge portal-badge--${slug}`}>{label}</span>
+    <span
+      className={`portal-badge portal-badge--${slug}`}
+      style={{
+        background: "none",
+        border: `1px solid ${color}`,
+        color: color,
+        borderRadius: "3px",
+        padding: "0 4px",
+        fontSize: "11px",
+        fontWeight: 600,
+        textTransform: "uppercase",
+      }}
+    >
+      {label}
+    </span>
   );
 }

@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 
+import { AccommodationWizard } from "@/components/portal/AccommodationWizard";
+import { DestinationWizard } from "@/components/portal/DestinationWizard";
+import { PackageWizard } from "@/components/portal/PackageWizard";
 import { ArticleEditor } from "@/components/portal/ArticleEditor";
 import { CategoryEditor } from "@/components/portal/CategoryEditor";
 import { PageHeader } from "@/components/portal/PortalCards";
+import { EnquiryDetail } from "@/components/portal/EnquiryDetail";
 import { ResourceForm } from "@/components/portal/ResourceForm";
-import { TripBuilder } from "@/components/portal/TripBuilder";
-import { findDocument, getMediaOptions, getRelationOptions, requirePortalUser } from "@/lib/portal/data";
+import { TripWizard } from "@/components/portal/TripWizard";
+import { findDocument, getMediaOptions, getRelationOptions, getTripWizardRelations, requirePortalUser } from "@/lib/portal/data";
 import { getPortalModule } from "@/lib/portal/modules";
 
 export default async function EditPortalRecordPage({
@@ -22,6 +26,32 @@ export default async function EditPortalRecordPage({
 
   const document = (await findDocument(moduleDef.collection, id)) as Record<string, unknown>;
 
+  if (moduleSlug === "accommodations") {
+    const media = await getMediaOptions();
+    return <AccommodationWizard document={document} media={media} />;
+  }
+
+  if (moduleSlug === "packages") {
+    const [media, destinations, itineraries] = await Promise.all([
+      getMediaOptions(),
+      getRelationOptions("destinations"),
+      getRelationOptions("itineraries"),
+    ]);
+    return (
+      <PackageWizard
+        destinations={destinations}
+        document={document}
+        itineraries={itineraries}
+        media={media}
+      />
+    );
+  }
+
+  if (moduleSlug === "destinations") {
+    const media = await getMediaOptions();
+    return <DestinationWizard document={document} media={media} />;
+  }
+
   if (moduleSlug === "posts") {
     const [categories, tags, media] = await Promise.all([
       getRelationOptions("post-categories"),
@@ -32,17 +62,28 @@ export default async function EditPortalRecordPage({
   }
 
   if (moduleSlug === "trips") {
-    const [destinations, packages, media, tripOptions] = await Promise.all([
-      getRelationOptions("destinations"),
-      getRelationOptions("packages"),
+    const [relations, media] = await Promise.all([
+      getTripWizardRelations(),
       getMediaOptions(),
-      getRelationOptions("trips"),
     ]);
-    return <TripBuilder destinations={destinations} document={document} media={media} packages={packages} tripOptions={tripOptions} />;
+    return (
+      <TripWizard
+        destinations={relations.destinations}
+        document={document}
+        itineraries={relations.itineraries}
+        media={media}
+        packages={relations.packages}
+        trips={relations.trips}
+      />
+    );
   }
 
   if (moduleSlug === "post-categories") {
     return <CategoryEditor document={document} />;
+  }
+
+  if (moduleSlug === "enquiries") {
+    return <EnquiryDetail document={document} />;
   }
 
   const relationOptions = Object.fromEntries(

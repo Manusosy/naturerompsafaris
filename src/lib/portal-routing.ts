@@ -38,7 +38,7 @@ export function resolvePortalRoute({
   const pathname = nextUrl.pathname;
 
   if (pathname === "/admin/create-first-user") {
-    return { type: "redirect", destination: new URL("/admin/register", nextUrl) };
+    return { type: "redirect", destination: new URL("/admin/login", nextUrl) };
   }
 
   if (isPortalHost) {

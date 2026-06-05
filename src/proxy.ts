@@ -13,11 +13,16 @@ export function proxy(request: NextRequest) {
       "https://kenyatanzaniasafariadventure.com",
   });
 
-  if (action.type === "redirect") {
-    return NextResponse.redirect(action.destination);
-  }
+  const response = action.type === "redirect"
+    ? NextResponse.redirect(action.destination)
+    : NextResponse.next();
 
-  return NextResponse.next();
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+  return response;
 }
 
 export const config = {

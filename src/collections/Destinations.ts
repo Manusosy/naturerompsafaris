@@ -1,6 +1,6 @@
 import type { CollectionConfig, FieldHook } from "payload";
 
-import { anyone, editorOrAdmin } from "../lib/access";
+import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
 
@@ -13,7 +13,7 @@ const canonicalUrlHook: FieldHook = ({ data, value }) => {
 export const Destinations: CollectionConfig = {
   slug: "destinations",
   access: {
-    read: anyone,
+    read: publishedOrStaff,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -68,7 +68,6 @@ export const Destinations: CollectionConfig = {
             { 
               name: "summary", 
               type: "textarea", 
-              required: true,
               admin: { placeholder: "A brief, compelling summary of the destination..." },
             },
             { 
@@ -173,6 +172,9 @@ export const Destinations: CollectionConfig = {
         },
         {
           label: "SEO & Metadata",
+          admin: {
+            hidden: true,
+          },
           fields: [
             {
               name: "seo",
@@ -215,7 +217,6 @@ export const Destinations: CollectionConfig = {
     {
       name: "country",
       type: "select",
-      required: true,
       options: [
         { label: "Kenya", value: "kenya" },
         { label: "Tanzania", value: "tanzania" },

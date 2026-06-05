@@ -1,10 +1,11 @@
 import configPromise from "@payload-config";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { getPayload } from "payload";
 
 import { getEnv } from "@/lib/env";
-import { ensureDefaultNavigation } from "@/lib/public-navigation";
+import { normalizeMediaUrl } from "@/lib/cms-media";
 import { verifyPortalToken } from "@/lib/portal/session";
 
 export type PortalUser = {
@@ -58,7 +59,7 @@ export async function requirePortalUser() {
   return user;
 }
 
-export async function countCollection(collection: string, where?: Record<string, unknown>) {
+export const countCollection = cache(async (collection: string, where?: Record<string, unknown>) => {
   try {
     const payload = await getPayloadClient();
     const result = await payload.count({
@@ -70,43 +71,127 @@ export async function countCollection(collection: string, where?: Record<string,
   } catch {
     return 0;
   }
-}
+});
 
-export async function findCollection(
+export const findCollection = cache(async (
   collection: string,
   limit = 20,
   where?: Record<string, unknown>,
   page = 1,
-) {
+  sort = "-updatedAt",
+) => {
   try {
     const payload = await getPayloadClient();
-    if (collection === "navigation-items") {
-      await ensureDefaultNavigation(payload);
-    }
     return await payload.find({
       collection: collection as never,
       depth: 1,
       limit,
       overrideAccess: true,
       page,
-      sort: "-updatedAt",
+      sort,
       where: where as never,
     });
   } catch {
     return { docs: [], totalDocs: 0 };
   }
-}
+});
 
-export async function getRelationOptions(collection: string) {
+export const getRelationOptions = cache(async (collection: string) => {
   const result = await findCollection(collection, 100);
   return (result.docs as Array<Record<string, unknown>>).map((doc) => ({
     label: String(doc.title ?? doc.name ?? doc.email ?? doc.filename ?? doc.id),
     value: String(doc.id),
   }));
+});
+
+export type WizardLinkOption = {
+  dayCount?: number;
+  href?: string;
+  label: string;
+  mapPlace?: string;
+  meta?: string;
+  value: string;
+};
+
+function relationDocLabel(doc: Record<string, unknown>) {
+  return String(doc.title ?? doc.name ?? doc.id);
 }
 
-export async function getMediaOptions() {
-  const result = await findCollection("media", 100);
+function packageDocMeta(doc: Record<string, unknown>) {
+  return [doc.category, doc.duration, doc.priceText].filter(Boolean).join(" · ");
+}
+
+function destinationDocMeta(doc: Record<string, unknown>) {
+  const country = doc.country ? String(doc.country) : "";
+  const region = doc.region ? String(doc.region) : "";
+  return [country, region].filter(Boolean).join(" · ");
+}
+
+function destinationMapPlace(doc: Record<string, unknown>) {
+  const name = relationDocLabel(doc);
+  const country = doc.country === "kenya" ? "Kenya" : doc.country === "tanzania" ? "Tanzania" : "";
+  return country ? `${name}, ${country}` : name;
+}
+
+export const getTripWizardRelations = cache(async () => {
+  const [destinationResult, packageResult, tripResult, itineraryResult] = await Promise.all([
+    findCollection("destinations", 100),
+    findCollection("packages", 100),
+    findCollection("trips", 100),
+    findCollection("itineraries", 100),
+  ]);
+
+  const destinations = (destinationResult.docs as Array<Record<string, unknown>>)
+    .filter((doc) => doc.status === "published")
+    .map((doc) => ({
+      href: doc.slug ? `/destinations/${String(doc.slug)}` : undefined,
+      label: relationDocLabel(doc),
+      mapPlace: destinationMapPlace(doc),
+      meta: destinationDocMeta(doc),
+      value: String(doc.id),
+    }));
+
+  const packages = (packageResult.docs as Array<Record<string, unknown>>)
+    .filter((doc) => doc.status === "published")
+    .map((doc) => ({
+      href: doc.slug ? `/safari-packages/${String(doc.slug)}` : undefined,
+      label: relationDocLabel(doc),
+      meta: packageDocMeta(doc),
+      value: String(doc.id),
+    }));
+
+  const trips = (tripResult.docs as Array<Record<string, unknown>>)
+    .filter((doc) => doc.status === "published")
+    .map((doc) => ({
+      href: doc.slug ? `/trips/${String(doc.slug)}` : undefined,
+      label: relationDocLabel(doc),
+      meta: [doc.location, doc.days ? `${doc.days} days` : ""].filter(Boolean).join(" · "),
+      value: String(doc.id),
+    }));
+
+  const itineraries = (itineraryResult.docs as Array<Record<string, unknown>>).map((doc) => {
+    const linkedPackage =
+      doc.package && typeof doc.package === "object"
+        ? (doc.package as Record<string, unknown>)
+        : null;
+    return {
+      dayCount: doc.dayCount != null ? Number(doc.dayCount) : undefined,
+      label: relationDocLabel(doc),
+      meta: [
+        doc.dayCount ? `${doc.dayCount} days` : "",
+        linkedPackage ? `Package: ${relationDocLabel(linkedPackage)}` : "",
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      value: String(doc.id),
+    };
+  });
+
+  return { destinations, itineraries, packages, trips };
+});
+
+export const getMediaOptions = cache(async () => {
+  const result = await findCollection("media", 36);
   return (result.docs as Array<Record<string, unknown>>).map((doc) => {
     const sizes = doc.sizes && typeof doc.sizes === "object" ? doc.sizes as Record<string, unknown> : {};
     const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
@@ -116,13 +201,13 @@ export async function getMediaOptions() {
       caption: String(doc.caption ?? ""),
       filename: String(doc.filename ?? ""),
       id: String(doc.id),
-      thumbUrl: String(thumb.url ?? card.url ?? doc.url ?? ""),
-      url: String(card.url ?? doc.url ?? ""),
+      thumbUrl: normalizeMediaUrl(String(thumb.url ?? card.url ?? doc.url ?? "")),
+      url: normalizeMediaUrl(String(card.url ?? doc.url ?? "")),
     };
   });
-}
+});
 
-export async function findDocument(collection: string, id: string) {
+export const findDocument = cache(async (collection: string, id: string) => {
   const payload = await getPayloadClient();
   return payload.findByID({
     collection: collection as never,
@@ -130,16 +215,16 @@ export async function findDocument(collection: string, id: string) {
     id,
     overrideAccess: true,
   });
-}
+});
 
-export async function getGlobal(slug: string) {
+export const getGlobal = cache(async (slug: string) => {
   const payload = await getPayloadClient();
   return payload.findGlobal({
     depth: 1,
     overrideAccess: true,
     slug: slug as never,
   });
-}
+});
 
 export function portalHostLabel() {
   return getEnv().PORTAL_HOST;

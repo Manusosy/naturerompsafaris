@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { JsonLd } from "@/components/JsonLd";
 import { TripDetailExperience, type TripDetailData } from "@/components/TripDetailExperience";
 import { site } from "@/content/site";
+import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -13,9 +14,21 @@ type Props = { params: Promise<{ slug: string }> };
 function mediaUrl(value: unknown) {
   if (value && typeof value === "object") {
     const record = value as Record<string, unknown>;
-    return typeof record.url === "string" ? record.url : "";
+    return typeof record.url === "string" ? normalizeMediaUrl(record.url) : "";
   }
   return "";
+}
+
+function mediaImage(value: unknown, fallbackAlt: string) {
+  if (!value || typeof value !== "object") return undefined;
+  const record = value as Record<string, unknown>;
+  const src = mediaUrl(record);
+  if (!src) return undefined;
+  return {
+    alt: String(record.alt || record.filename || fallbackAlt),
+    caption: typeof record.caption === "string" ? record.caption : "",
+    src,
+  };
 }
 
 function relationName(value: unknown) {
@@ -81,11 +94,25 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
   const gallery = Array.isArray(doc.gallery) ? doc.gallery : [];
   const destinations = Array.isArray(doc.destinations) ? doc.destinations.map(relationName).filter(Boolean) : [];
   const itinerary = doc.itinerary && typeof doc.itinerary === "object" ? doc.itinerary as Record<string, unknown> : {};
-  const itineraryDays = Array.isArray(doc.itineraryDays)
-    ? doc.itineraryDays as TripDetailData["itineraryDays"]
+  const rawItineraryDays = Array.isArray(doc.itineraryDays)
+    ? doc.itineraryDays
     : Array.isArray(itinerary.days)
-      ? itinerary.days as TripDetailData["itineraryDays"]
+      ? itinerary.days
       : [];
+  const itineraryDays = rawItineraryDays.map((item, index) => {
+    const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+    return {
+      accommodation: typeof record.accommodation === "string" ? record.accommodation : undefined,
+      activities: typeof record.activities === "string" ? record.activities : undefined,
+      day: typeof record.day === "number" ? record.day : index + 1,
+      description: typeof record.description === "string" ? record.description : undefined,
+      experienceNotes: typeof record.experienceNotes === "string" ? record.experienceNotes : undefined,
+      image: mediaUrl(record.image),
+      location: typeof record.location === "string" ? record.location : undefined,
+      meals: typeof record.meals === "string" ? record.meals : undefined,
+      title: typeof record.title === "string" ? record.title : undefined,
+    };
+  });
   const budgetText = String(budget.displayText || doc.priceText || [
     budget.currency || "USD",
     budget.min && budget.max ? `${budget.min} - ${budget.max}` : "",
@@ -106,6 +133,7 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
       slug: relationSlug(destination),
       title: relationName(destination),
     })).filter((item) => item.title) : []);
+  const heroImage = mediaImage(doc.heroImage, String(doc.title || "Nature Romp Safaris trip"));
 
   return {
     availability: String(doc.availability ?? "on-request"),
@@ -124,6 +152,8 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
         src: src || "/assets/img/banner1.webp",
       };
     }),
+    heroEyebrow: typeof doc.heroEyebrow === "string" ? doc.heroEyebrow : undefined,
+    heroImage,
     heroSubtitle: typeof doc.heroSubtitle === "string" ? doc.heroSubtitle : undefined,
     highlights: Array.isArray(doc.highlights) ? doc.highlights.map((item) => {
       const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
@@ -141,8 +171,10 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
     mapEmbedUrl: typeof doc.mapEmbedUrl === "string" ? doc.mapEmbedUrl : undefined,
     nights: typeof doc.nights === "number" ? doc.nights : undefined,
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
+    packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
     positiveImpact: typeof doc.positiveImpact === "string" ? doc.positiveImpact : undefined,
     priceSeasons: Array.isArray(doc.priceSeasons) ? doc.priceSeasons as TripDetailData["priceSeasons"] : [],
+    quoteIntro: typeof doc.quoteIntro === "string" ? doc.quoteIntro : undefined,
     relatedTrips: Array.isArray(doc.relatedTrips) ? doc.relatedTrips.map((item) => {
       const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
       const relatedBudget = record.budget && typeof record.budget === "object" ? record.budget as Record<string, unknown> : {};
@@ -158,12 +190,23 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
       };
     }).filter((item) => item.slug && item.title) : [],
     reviewSettings: {
+      bookingSecurityHeading: typeof reviewSettings.bookingSecurityHeading === "string" ? reviewSettings.bookingSecurityHeading : undefined,
+      bookingSecurityItems: arrayItems(reviewSettings.bookingSecurityItems),
+      bookingSecurityText: typeof reviewSettings.bookingSecurityText === "string" ? reviewSettings.bookingSecurityText : undefined,
       heading: String(reviewSettings.reviewHeading || "We Are Highly Recommended"),
+      partnerLogos: Array.isArray(reviewSettings.partnerLogos) ? reviewSettings.partnerLogos.map((item) => {
+        const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+        const image = mediaImage(record.image, String(record.alt || "Booking partner"));
+        return image ? { ...image, alt: String(record.alt || image.alt) } : null;
+      }).filter(Boolean) as NonNullable<TripDetailData["reviewSettings"]>["partnerLogos"] : [],
       trustindexEmbed: typeof reviewSettings.trustindexEmbed === "string" ? reviewSettings.trustindexEmbed : "",
     },
+    routeLabel: typeof doc.routeLabel === "string" ? doc.routeLabel : undefined,
+    routeWaypoints: Array.isArray(doc.routeWaypoints) ? doc.routeWaypoints as TripDetailData["routeWaypoints"] : [],
     slug: String(doc.slug ?? ""),
     startLocation: typeof doc.startLocation === "string" ? doc.startLocation : undefined,
     title: String(doc.title ?? "Safari Trip"),
+    trustindexEmbedOverride: typeof doc.trustindexEmbedOverride === "string" ? doc.trustindexEmbedOverride : undefined,
     whyBook: arrayItems(doc.whyBook),
   };
 }

@@ -4,9 +4,9 @@ export const site = {
   canonicalUrl: "https://kenyatanzaniasafariadventure.com",
   email: "info@naturerompsafaris.com",
   secondaryEmail: "naturerompsafaris@gmail.com",
-  phone: "+254 742637176",
-  phoneAlt: "+254 722714812",
-  whatsapp: "+254742637176",
+  phone: "+254 722 714812 / +254 739 206698",
+  phoneAlt: "+254 739 206698",
+  whatsapp: "+254 722 714812",
   address:
     "Nature Romp Safaris, Embassy House, Mezazanine-Harambee Avenue, P.O Box 10323, 00100-GPO, Nairobi, Kenya",
 };

@@ -102,7 +102,7 @@ export const Users: CollectionConfig = {
       admin: {
         condition: (_, __, { user }) => Boolean(user),
         description:
-          "Admin manages users/settings, Editor manages content, Operations manages enquiries/bookings/stays.",
+          "Admin manages users/settings, Editor manages content, Operations manages enquiries/stays.",
       },
     },
   ],

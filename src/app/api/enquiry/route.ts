@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
-import { Resend } from "resend";
 
+import { buildEnquiryEmailBody, buildEnquiryEmailSubject } from "@/lib/enquiry-email";
 import { type Enquiry, validateEnquiry } from "@/lib/enquiry";
 import { getEnv } from "@/lib/env";
+import { sendEnquiryEmail } from "@/lib/mailer";
 
 const recentSubmissions = new Map<string, number>();
 
@@ -56,7 +57,6 @@ export async function POST(request: Request) {
   }
 
   const env = getEnv();
-  const apiKey = env.getResendApiKey();
   const payload = await getPayload({ config: configPromise });
 
   try {
@@ -86,42 +86,16 @@ export async function POST(request: Request) {
     });
   }
 
-  if (apiKey) {
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: env.ENQUIRY_FROM_EMAIL,
-      to: env.ENQUIRY_TO_EMAIL,
-      subject: `Safari enquiry: ${result.data.subject || "Kenya Tanzania Safari Adventure"}`,
-      replyTo: result.data.email,
-      text: [
-        `Name: ${result.data.name}`,
-        `Email: ${result.data.email}`,
-        `Phone: ${result.data.phone || "-"}`,
-        `WhatsApp: ${result.data.whatsapp || "-"}`,
-        `Nationality: ${result.data.nationality || "-"}`,
-        `Destination choice: ${result.data.destinationChoice || "-"}`,
-        `Subject: ${result.data.subject || "-"}`,
-        `Source: ${result.data.sourcePage || "-"}`,
-        `Trip ID: ${result.data.sourceTrip || "-"}`,
-        `Adults: ${result.data.adults || "-"}`,
-        `Children under 13: ${result.data.children || "-"}`,
-        `Infants: ${result.data.infants || "-"}`,
-        `Travel days: ${result.data.travelDays || "-"}`,
-        `Tour start date: ${result.data.tourStartDate || "-"}`,
-        `Preferred start date: ${result.data.startDate || "-"}`,
-        `Preferred end date: ${result.data.endDate || "-"}`,
-        `Flexible dates: ${result.data.flexibleDates ? "Yes" : "No"}`,
-        `Accommodation preference: ${result.data.accommodationPreference || "-"}`,
-        `Budget range: ${result.data.budgetRange || "-"}`,
-        `Budget per person: ${result.data.budgetPerPerson || "-"}`,
-        `Planning stage: ${result.data.planningStage || "-"}`,
-        `Trip type: ${result.data.tripType || "-"}`,
-        `Referral source: ${result.data.referralSource || "-"}`,
-        "",
-        result.data.message,
-        result.data.comments ? `\nAdditional comments:\n${result.data.comments}` : "",
-      ].join("\n"),
-    });
+  if (env.hasEmailProvider) {
+    try {
+      await sendEnquiryEmail({
+        replyTo: result.data.email,
+        subject: buildEnquiryEmailSubject(result.data),
+        text: buildEnquiryEmailBody(result.data),
+      });
+    } catch (error) {
+      console.error("Enquiry notification email failed.", error);
+    }
   }
 
   return NextResponse.json({ ok: true });

@@ -10,30 +10,41 @@ const envSchema = z.object({
   PORTAL_HOST: z.string().default("portal.kenyatanzaniasafariadventure.com"),
   PAYLOAD_SERVER_URL: z.string().url().optional(),
   RESEND_API_KEY: z.string().optional(),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().default(465),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
   ADMIN_EMAIL_DOMAIN: z.string().default("naturerompsafaris.com"),
   PAYLOAD_DEV_SCHEMA_PUSH: z.enum(["true", "false"]).default("false"),
   ENQUIRY_TO_EMAIL: z.string().email().default("info@naturerompsafaris.com"),
+  ENQUIRY_CC_EMAIL: z.string().email().default("inquiries@naturerompsafaris.com"),
   ENQUIRY_FROM_EMAIL: z
     .string()
-    .default("Nature Romp Safaris <onboarding@resend.dev>"),
-  WHATSAPP_NUMBER: z.string().default("+254742637176"),
+    .default("Nature Romp Safaris <inquiries@naturerompsafaris.com>"),
+  WHATSAPP_NUMBER: z.string().default("+254722714812"),
 });
 
 export type AppEnv = {
   DATABASE_URL: string;
+  ENQUIRY_CC_EMAIL: string;
+  ENQUIRY_FROM_EMAIL: string;
+  ENQUIRY_TO_EMAIL: string;
   NEXT_PUBLIC_SITE_URL: string;
   PORTAL_HOST: string;
   PAYLOAD_SERVER_URL: string;
-  ENQUIRY_TO_EMAIL: string;
-  ENQUIRY_FROM_EMAIL: string;
+  SMTP_HOST?: string;
+  SMTP_PORT: number;
+  SMTP_USER?: string;
   WHATSAPP_NUMBER: string;
   ADMIN_EMAIL_DOMAIN: string;
   PAYLOAD_DEV_SCHEMA_PUSH: boolean;
   hasEmailProvider: boolean;
-  getPayloadSecret: () => string;
-  getResendApiKey: () => string | undefined;
+  hasSmtpProvider: boolean;
   getEmailFromAddress: () => string;
   getEmailFromName: () => string;
+  getPayloadSecret: () => string;
+  getResendApiKey: () => string | undefined;
+  getSmtpPassword: () => string;
 };
 
 export function normalizeDatabaseUrl(databaseUrl: string) {
@@ -96,24 +107,33 @@ export function parseEnv(source: Record<string, string | undefined>): AppEnv {
   const values = parsed.data;
   const databaseUrl = normalizeDatabaseUrl(values.DATABASE_URL);
   const emailSender = parseEmailSender(values.ENQUIRY_FROM_EMAIL);
+  const hasSmtpProvider = Boolean(
+    values.SMTP_HOST?.trim() && values.SMTP_USER?.trim() && values.SMTP_PASSWORD?.trim(),
+  );
 
   return {
     DATABASE_URL: databaseUrl,
+    ENQUIRY_CC_EMAIL: values.ENQUIRY_CC_EMAIL,
+    ENQUIRY_FROM_EMAIL: values.ENQUIRY_FROM_EMAIL,
+    ENQUIRY_TO_EMAIL: values.ENQUIRY_TO_EMAIL,
     NEXT_PUBLIC_SITE_URL: values.NEXT_PUBLIC_SITE_URL.replace(/\/$/, ""),
     PORTAL_HOST: values.PORTAL_HOST.toLowerCase(),
     PAYLOAD_SERVER_URL:
       values.PAYLOAD_SERVER_URL?.replace(/\/$/, "") ??
       `https://${values.PORTAL_HOST.toLowerCase()}`,
-    ENQUIRY_TO_EMAIL: values.ENQUIRY_TO_EMAIL,
-    ENQUIRY_FROM_EMAIL: values.ENQUIRY_FROM_EMAIL,
+    SMTP_HOST: values.SMTP_HOST?.trim() || undefined,
+    SMTP_PORT: values.SMTP_PORT,
+    SMTP_USER: values.SMTP_USER?.trim() || undefined,
     WHATSAPP_NUMBER: values.WHATSAPP_NUMBER,
     ADMIN_EMAIL_DOMAIN: values.ADMIN_EMAIL_DOMAIN.toLowerCase().replace(/^@/, ""),
     PAYLOAD_DEV_SCHEMA_PUSH: values.PAYLOAD_DEV_SCHEMA_PUSH === "true",
-    hasEmailProvider: Boolean(values.RESEND_API_KEY),
+    hasEmailProvider: hasSmtpProvider || Boolean(values.RESEND_API_KEY?.trim()),
+    hasSmtpProvider,
     getPayloadSecret: () => values.PAYLOAD_SECRET,
-    getResendApiKey: () => values.RESEND_API_KEY,
+    getResendApiKey: () => values.RESEND_API_KEY?.trim() || undefined,
     getEmailFromAddress: () => emailSender.address,
     getEmailFromName: () => emailSender.name,
+    getSmtpPassword: () => values.SMTP_PASSWORD?.trim() ?? "",
   };
 }
 

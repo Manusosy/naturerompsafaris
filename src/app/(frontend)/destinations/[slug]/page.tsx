@@ -20,7 +20,7 @@ const COUNTRY_BADGE: Record<string, { label: string; cls: string }> = {
   tanzania: { label: "Tanzania", cls: "avail--request" },
 };
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "25472271481";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "254722714812";
 
 function buildWhatsApp(name: string) {
   const msg = encodeURIComponent(

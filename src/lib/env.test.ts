@@ -11,10 +11,14 @@ describe("parseEnv", () => {
       PORTAL_HOST: "portal.kenyatanzaniasafariadventure.com",
       PAYLOAD_SERVER_URL: "https://portal.kenyatanzaniasafariadventure.com",
       ADMIN_EMAIL_DOMAIN: "naturerompsafaris.com",
-      RESEND_API_KEY: "re_test_key",
+      SMTP_HOST: "mail.naturerompsafaris.com",
+      SMTP_PORT: "465",
+      SMTP_USER: "inquiries@naturerompsafaris.com",
+      SMTP_PASSWORD: "mailbox-password",
       ENQUIRY_TO_EMAIL: "info@naturerompsafaris.com",
-      ENQUIRY_FROM_EMAIL: "Nature Romp Safaris <onboarding@resend.dev>",
-      WHATSAPP_NUMBER: "+254742637176",
+      ENQUIRY_CC_EMAIL: "inquiries@naturerompsafaris.com",
+      ENQUIRY_FROM_EMAIL: "Nature Romp Safaris <inquiries@naturerompsafaris.com>",
+      WHATSAPP_NUMBER: "+254722714812",
     });
 
     expect(env.NEXT_PUBLIC_SITE_URL).toBe(
@@ -25,10 +29,12 @@ describe("parseEnv", () => {
       "https://portal.kenyatanzaniasafariadventure.com",
     );
     expect(env.ADMIN_EMAIL_DOMAIN).toBe("naturerompsafaris.com");
-    expect(env.getEmailFromAddress()).toBe("onboarding@resend.dev");
+    expect(env.getEmailFromAddress()).toBe("inquiries@naturerompsafaris.com");
     expect(env.getEmailFromName()).toBe("Nature Romp Safaris");
+    expect(env.ENQUIRY_CC_EMAIL).toBe("inquiries@naturerompsafaris.com");
     expect(JSON.stringify(env)).not.toContain("a-secure-secret");
     expect(env.hasEmailProvider).toBe(true);
+    expect(env.hasSmtpProvider).toBe(true);
   });
 
   it("rejects missing required server configuration", () => {

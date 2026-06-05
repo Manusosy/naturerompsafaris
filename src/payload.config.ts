@@ -1,4 +1,5 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import { resendAdapter } from "@payloadcms/email-resend";
 import path from "path";
 import { buildConfig } from "payload";
@@ -29,6 +30,34 @@ import { getEnv } from "./lib/env";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const env = getEnv();
+
+function emailAdapter() {
+  if (env.hasSmtpProvider) {
+    return nodemailerAdapter({
+      defaultFromAddress: env.getEmailFromAddress(),
+      defaultFromName: env.getEmailFromName(),
+      transportOptions: {
+        auth: {
+          pass: env.getSmtpPassword(),
+          user: env.SMTP_USER,
+        },
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT,
+        secure: env.SMTP_PORT === 465,
+      },
+    });
+  }
+
+  if (env.getResendApiKey()) {
+    return resendAdapter({
+      apiKey: env.getResendApiKey() ?? "",
+      defaultFromAddress: env.getEmailFromAddress(),
+      defaultFromName: env.getEmailFromName(),
+    });
+  }
+
+  return undefined;
+}
 
 export default buildConfig({
   routes: {
@@ -61,13 +90,7 @@ export default buildConfig({
     Accommodations,
   ],
   globals: [SiteSettings, FlightAffiliateSettings],
-  email: env.getResendApiKey()
-    ? resendAdapter({
-        apiKey: env.getResendApiKey() ?? "",
-        defaultFromAddress: env.getEmailFromAddress(),
-        defaultFromName: env.getEmailFromName(),
-      })
-    : undefined,
+  email: emailAdapter(),
   serverURL: env.PAYLOAD_SERVER_URL,
   sharp,
   secret: env.getPayloadSecret(),

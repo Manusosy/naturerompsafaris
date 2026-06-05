@@ -36,11 +36,21 @@ export default async function PortalModulePage({
   searchParams,
 }: {
   params: Promise<{ module: string }>;
-  searchParams: Promise<{ category?: string; page?: string; tag?: string }>;
+  searchParams: Promise<{ category?: string; page?: string; status?: string; tag?: string }>;
 }) {
   await requirePortalUser();
   const routeParams = await params;
   const query = await searchParams;
+  const enquiryStatusFilter =
+    query.status === "new"
+      ? "new"
+      : query.status === "open"
+        ? "__open"
+        : query.status === "quoted"
+          ? "quoted"
+          : query.status === "booked"
+            ? "booked"
+            : "__all";
   const moduleSlug = routeParams.module;
   const moduleDef = getPortalModule(moduleSlug);
   if (!moduleDef) notFound();
@@ -269,6 +279,7 @@ export default async function PortalModulePage({
         <EnquiryInbox
           docs={docs}
           emptyLabel={moduleDef.emptyLabel}
+          initialStatusFilter={enquiryStatusFilter}
           page={page}
           totalPages={totalPages}
         />

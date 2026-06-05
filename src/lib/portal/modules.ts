@@ -582,6 +582,8 @@ export const portalModules: Record<string, PortalModule> = {
       { label: "Phone", name: "phone", type: "text" },
       { label: "WhatsApp", name: "whatsapp", type: "text" },
       { label: "Address", name: "address", rows: 4, type: "textarea" },
+      { label: "Footer description", name: "footerDescription", rows: 5, type: "textarea" },
+      { label: "WhatsApp enquiry message", name: "whatsappEnquiryMessage", rows: 3, type: "textarea" },
       { label: "Trustindex heading", name: "reviewHeading", type: "text" },
       { label: "Trustindex embed code", name: "trustindexEmbed", rows: 6, type: "textarea" },
       { label: "Booking security heading", name: "bookingSecurityHeading", type: "text" },

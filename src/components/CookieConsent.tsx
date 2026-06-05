@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+import siteIcon from "@/app/icon.png";
 
 const consentKey = "nature-romp-cookie-consent";
 
@@ -25,7 +28,15 @@ export function CookieConsent() {
 
   return (
     <aside className="cookie-consent" aria-label="Cookie consent" aria-live="polite">
-      <div className="cookie-consent__mark" aria-hidden="true" />
+      <Image
+        alt=""
+        aria-hidden
+        className="cookie-consent__icon"
+        height={44}
+        priority
+        src={siteIcon}
+        width={44}
+      />
       <div className="cookie-consent__content">
         <strong>We use cookies</strong>
         <p>

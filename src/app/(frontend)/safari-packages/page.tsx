@@ -5,7 +5,6 @@ import configPromise from "@payload-config";
 import { PackageCard, type Package } from "@/components/Cards";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeader } from "@/components/Sections";
-import { packages as staticPackages } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +45,7 @@ export default async function PackagesPage(props: {
   const packages = result.docs as unknown as Package[];
 
   return (
-    <main>
+    <main className="packages-page">
       <PageHero title="Package Listing" />
       <section className="section">
         <div className="container">

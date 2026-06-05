@@ -80,10 +80,27 @@ export type Package = {
   };
 };
 
+function limitWords(value: string | undefined, maxWords: number) {
+  const text = (value || "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  const words = text.split(" ");
+  if (words.length <= maxWords) return text;
+  return `${words.slice(0, maxWords).join(" ")}...`;
+}
+
+function cleanFromPrice(value: string | undefined) {
+  return (value || "").replace(/^from\s+/i, "").trim();
+}
+
 export function PackageCard({ item }: { item: Package }) {
   const imageSrc = getImageUrl(item.image);
   const imageAlt = getMediaAlt(item.image, item.title || "Safari Package");
   const route = formatPackageDestinations(item, "");
+  const summary = limitWords(
+    item.excerpt || "Join Nature Romp Safaris on an unforgettable classic game viewing and exploration journey.",
+    28,
+  );
+  const price = cleanFromPrice(item.priceText);
 
   return (
     <article className="tour-card">
@@ -120,23 +137,25 @@ export function PackageCard({ item }: { item: Package }) {
           </p>
         ) : null}
         <p>
-          {item.excerpt || "Join Nature Romp Safaris on an unforgettable classic game viewing and exploration journey."}
+          {summary}
         </p>
-        <div className={item.priceText ? "tour-card__footer" : "tour-card__footer tour-card__footer--actions"}>
-          {item.priceText ? (
+        <div className="tour-card__footer tour-card__footer--listing">
+          {price ? (
             <div className="tour-card__price">
               <span>From</span>
-              <strong>{item.priceText}</strong>
+              <strong>{price}</strong>
             </div>
-          ) : null}
+          ) : (
+            <div className="tour-card__price tour-card__price--request">
+              <span>From</span>
+              <strong>Custom quote</strong>
+            </div>
+          )}
           <Link
             href={`/safari-packages/${item.slug}`}
             className="tour-card__button"
           >
             View Details
-          </Link>
-          <Link href={`/contact?package=${item.slug ?? ""}`} className="tour-card__button tour-card__button--outline">
-            Book Trip
           </Link>
         </div>
       </div>
@@ -226,7 +245,7 @@ export function TripCard({ item }: { item: Trip }) {
 }
 
 export type BlogSummary = {
-  category?: { title?: string } | string;
+  category?: { name?: string; title?: string } | string;
   excerpt: string;
   image: unknown;
   publishedAt?: string;
@@ -249,7 +268,7 @@ export function BlogCard({ item }: { item: BlogSummary }) {
         month: "short",
         year: "numeric",
       }).format(new Date(item.publishedAt))
-    : "Travel Blog";
+    : "";
 
   return (
     <article className="blog-card">
@@ -271,7 +290,7 @@ export function BlogCard({ item }: { item: BlogSummary }) {
         </h3>
         <p>{item.excerpt}</p>
         <div className="blog-card__foot">
-          <small>{date}</small>
+          {date ? <small>{date}</small> : <span />}
           <Link href={`/blog/${item.slug}`}>Read More</Link>
         </div>
       </div>

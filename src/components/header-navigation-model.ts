@@ -1,4 +1,4 @@
-import type { MegaColumn, PublicNavItem } from "@/lib/public-navigation";
+import type { PublicNavItem } from "@/lib/public-navigation";
 import type { PublicDestinationNavItem } from "@/lib/public-destinations";
 
 export type HeaderMenuVariant = "dynamic" | "mega" | "simple";
@@ -13,13 +13,6 @@ const accommodationItems: PublicNavItem[] = [
   { label: "Kenya", href: "/accommodations?country=kenya" },
   { label: "Tanzania", href: "/accommodations?country=tanzania" },
 ];
-
-function destinationNavItem(doc: PublicDestinationNavItem): PublicNavItem {
-  return {
-    href: `/destinations/${doc.slug}`,
-    label: doc.name,
-  };
-}
 
 function isZanzibarDestination(doc: PublicDestinationNavItem) {
   return (
@@ -55,47 +48,6 @@ export function buildDestinationPreviewByCountry(destinations: PublicDestination
   } satisfies Record<string, DestinationPreviewRow[]>;
 }
 
-function buildNationalParkColumns(destinations: PublicDestinationNavItem[]): MegaColumn[] {
-  const kenyaParkItems = destinations
-    .filter((doc) => doc.country === "kenya")
-    .map(destinationNavItem);
-  const tanzaniaParkItems = destinations
-    .filter((doc) => doc.country === "tanzania")
-    .map(destinationNavItem);
-
-  return [
-    { heading: "Kenya", items: kenyaParkItems },
-    { heading: "Tanzania", items: tanzaniaParkItems },
-  ].filter((column) => column.items.length > 0);
-}
-
-const experiencesMegaColumns: MegaColumn[] = [
-  {
-    heading: "Top Experiences",
-    items: [
-      { label: "Family Safaris", href: "/safari-packages?experience=family" },
-      { label: "Honeymoon Safaris", href: "/safari-packages?experience=honeymoon" },
-      { label: "Luxury Safaris", href: "/safari-packages?experience=luxury" },
-      { label: "Private Safaris", href: "/safari-packages?experience=private" },
-      { label: "Fly-In Safaris", href: "/safari-packages?group=kenya-fly-in" },
-      { label: "Safari & Beach Holidays", href: "/safari-packages?group=beach-extension" },
-      { label: "Group Joining Safaris", href: "/safari-packages?group=group-joining" },
-    ],
-  },
-  {
-    heading: "Wildlife Safari",
-    items: [
-      { label: "Migration Safaris", href: "/safari-packages?experience=migration" },
-      { label: "Big 5 Safaris", href: "/safari-packages?experience=big-5" },
-      { label: "Bird Watching Safaris", href: "/safari-packages?experience=birding" },
-      { label: "4x4 Safari Tours", href: "/safari-packages?experience=4x4" },
-      { label: "Mountain Climbing", href: "/safari-packages?group=mount-kenya-climbing" },
-      { label: "Gorilla Trekking", href: "/safari-packages?experience=gorilla-trekking" },
-      { label: "Tailor-Made Safaris", href: "/contact" },
-    ],
-  },
-];
-
 const fallbackItems: Record<string, PublicNavItem> = {
   "About Us": { label: "About Us", href: "/about" },
   Blog: { label: "Blog", href: "/blog" },
@@ -112,8 +64,14 @@ const fallbackItems: Record<string, PublicNavItem> = {
   Experiences: {
     label: "Experiences",
     href: "/safari-packages",
-    items: experiencesMegaColumns.flatMap((col) => col.items),
-    megaColumns: experiencesMegaColumns,
+    items: [
+      { label: "Family Safaris", href: "/safari-packages?experience=family" },
+      { label: "Honeymoon Safaris", href: "/safari-packages?experience=honeymoon" },
+      { label: "Group Joining Safaris", href: "/safari-packages?group=group-joining" },
+      { label: "Private Safaris", href: "/safari-packages?experience=private" },
+      { label: "Fly-In Safaris", href: "/safari-packages?group=kenya-fly-in" },
+      { label: "Beach Extensions", href: "/safari-packages?group=beach-extension" },
+    ],
   },
   "Safari Tours": {
     label: "Safari Tours",
@@ -156,7 +114,6 @@ function itemOrFallback(items: PublicNavItem[], label: keyof typeof fallbackItem
 
 export function getMenuVariant(label: string): HeaderMenuVariant {
   if (label === "Destinations") return "dynamic";
-  if (label === "Experiences" || label === "National Parks") return "mega";
   return "simple";
 }
 
@@ -164,30 +121,17 @@ export function buildHeaderNavigation(
   navItems: PublicNavItem[],
   destinations: PublicDestinationNavItem[] = [],
 ) {
-  const experiences = itemOrFallback(navItems, "Experiences");
-  if (!experiences.megaColumns) {
-    experiences.megaColumns = experiencesMegaColumns;
-    experiences.items = experiencesMegaColumns.flatMap((col) => col.items);
-  }
-
-  const nationalParkMegaColumns = buildNationalParkColumns(destinations);
-  const nationalParkItems = nationalParkMegaColumns.flatMap((column) => column.items);
+  void destinations;
 
   return [
     itemOrFallback(navItems, "About Us"),
     itemOrFallback(navItems, "Destinations"),
     itemOrFallback(navItems, "Safari Tours"),
-    experiences,
+    itemOrFallback(navItems, "Experiences"),
     {
       label: "Accommodation",
       href: "/accommodations",
       items: accommodationItems.map((item) => ({ ...item })),
-    },
-    {
-      label: "National Parks",
-      href: "/destinations",
-      items: nationalParkItems,
-      megaColumns: nationalParkMegaColumns,
     },
     itemOrFallback(navItems, "Blog"),
     itemOrFallback(navItems, "Contact Us"),

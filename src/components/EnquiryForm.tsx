@@ -6,10 +6,16 @@ import { useState } from "react";
 
 export function EnquiryForm({
   subject = "Kenya Tanzania safari adventure",
+  title = "Get In Touch",
   variant = "solid",
+  messagePlaceholder = "Tell us your travel dates, group size and preferred safari route.",
+  submitLabel = "Submit Query",
 }: {
+  messagePlaceholder?: string;
   subject?: string;
-  variant?: "solid" | "light";
+  submitLabel?: string;
+  title?: string;
+  variant?: "solid" | "light" | "package";
 }) {
   const pathname = usePathname();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -26,7 +32,7 @@ export function EnquiryForm({
 
   return (
     <form action={submit} className={`enquiry-form enquiry-form--${variant}`}>
-      <h3>Get In Touch</h3>
+      <h3>{title}</h3>
       <input name="company" className="honeypot" tabIndex={-1} autoComplete="off" />
       <div className="form-grid">
         <label>
@@ -50,10 +56,10 @@ export function EnquiryForm({
       <input name="sourcePage" value={pathname} readOnly type="hidden" />
       <label>
         Message
-        <textarea name="message" rows={5} placeholder="Tell us your travel dates, group size and preferred safari route." required />
+        <textarea name="message" rows={5} placeholder={messagePlaceholder} required />
       </label>
       <button className="btn btn--primary" type="submit" disabled={status === "sending"}>
-        <Send size={16} /> {status === "sending" ? "Sending..." : "Submit Query"}
+        <Send size={16} /> {status === "sending" ? "Sending..." : submitLabel}
       </button>
       {status === "sent" && <p className="form-status">Thank you. Nature Romp Safaris will respond shortly.</p>}
       {status === "error" && <p className="form-status form-status--error">Please check the required fields or contact us on WhatsApp.</p>}

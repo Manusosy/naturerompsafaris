@@ -1,5 +1,6 @@
 import type { GlobalConfig } from "payload";
 
+import { site } from "../content/site";
 import { anyone, editorOrAdmin } from "../lib/access";
 
 export const SiteSettings: GlobalConfig = {
@@ -53,8 +54,23 @@ export const SiteSettings: GlobalConfig = {
       name: "footerDescription",
       label: "Footer description",
       type: "textarea",
-      defaultValue:
-        "Nature Romp Safaris crafts private and small-group Kenya and Tanzania safari adventures with clear planning, local expertise, and custom quotes.",
+      defaultValue: site.footerDescription,
+    },
+    {
+      name: "footerQuickLinks",
+      label: "Footer quick links",
+      type: "array",
+      fields: [
+        { name: "label", type: "text", required: true },
+        { name: "href", type: "text", required: true },
+      ],
+      defaultValue: site.footerQuickLinks,
+    },
+    {
+      name: "whatsappEnquiryMessage",
+      label: "WhatsApp enquiry message",
+      type: "textarea",
+      defaultValue: `Hello ${site.company}, I would like to plan a ${site.name}.`,
     },
     { name: "reviewHeading", type: "text", defaultValue: "We Are Highly Recommended" },
     {

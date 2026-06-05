@@ -8,7 +8,7 @@ import configPromise from "@payload-config";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { PackageCard, type BlogSummary, type Package } from "@/components/Cards";
 import { HomepageFaqsExperience } from "@/components/HomepageFaqsExperience";
-import { packages as staticPackages, posts as staticPosts, serviceCards } from "@/content/site";
+import { posts as staticPosts, serviceCards } from "@/content/site";
 import { mediaAlt, mediaUrl } from "@/lib/cms-media";
 
 const serviceDetails: Record<string, { body: string; cta: string; href: string }> = {
@@ -108,25 +108,42 @@ export function Services() {
 
 export async function FeaturedPackages({ limit = 6 }: { limit?: number }) {
   const payload = await getPayload({ config: configPromise });
-  const result = await payload.find({
+  const featuredResult = await payload.find({
     collection: "packages",
     where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] },
     limit,
     depth: 1,
     overrideAccess: true,
+    sort: "-updatedAt",
   });
+  const result = featuredResult.docs.length
+    ? featuredResult
+    : await payload.find({
+        collection: "packages",
+        where: { status: { equals: "published" } },
+        limit,
+        depth: 1,
+        overrideAccess: true,
+        sort: "-updatedAt",
+      });
   
-  const packages = (result.docs.length > 0 ? result.docs : staticPackages.slice(0, limit)) as unknown as Package[];
+  const packages = result.docs as unknown as Package[];
 
   return (
-    <section className="section">
+    <section className="section homepage-packages">
       <div className="container">
         <SectionHeader title="Our Featured Packages" />
-        <div className="card-grid">
-          {packages.map((item) => (
-            <PackageCard item={item} key={item.slug} />
-          ))}
-        </div>
+        {packages.length ? (
+          <div className="card-grid">
+            {packages.map((item) => (
+              <PackageCard item={item} key={item.slug} />
+            ))}
+          </div>
+        ) : (
+          <div className="homepage-packages__empty">
+            Published safari packages will appear here once they are added from the dashboard.
+          </div>
+        )}
       </div>
     </section>
   );

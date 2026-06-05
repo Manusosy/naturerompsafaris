@@ -1,6 +1,15 @@
 export const site = {
   name: "Kenya Tanzania Safari Adventure",
   company: "Nature Romp Safaris",
+  footerDescription:
+    "Nature Romp Safaris crafts bespoke adventures across Kenya and Tanzania around you, your story, your pace, and your budget.",
+  footerQuickLinks: [
+    { label: "Photo Gallery", href: "/photo-gallery" },
+    { label: "Travel Information", href: "/blog" },
+    { label: "Safari Tours", href: "/trips" },
+    { label: "Safari Packages", href: "/safari-packages" },
+    { label: "Contact", href: "/contact" },
+  ],
   canonicalUrl: "https://kenyatanzaniasafariadventure.com",
   email: "info@naturerompsafaris.com",
   secondaryEmail: "naturerompsafaris@gmail.com",

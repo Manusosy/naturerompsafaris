@@ -52,7 +52,6 @@ describe("buildHeaderNavigation", () => {
       "Safari Tours",
       "Experiences",
       "Accommodation",
-      "National Parks",
       "Blog",
       "Contact Us",
     ]);
@@ -71,9 +70,8 @@ describe("getMenuVariant", () => {
     expect(getMenuVariant("About Us")).toBe("simple");
     expect(getMenuVariant("Destinations")).toBe("dynamic");
     expect(getMenuVariant("Safari Tours")).toBe("simple");
-    expect(getMenuVariant("Experiences")).toBe("mega");
+    expect(getMenuVariant("Experiences")).toBe("simple");
     expect(getMenuVariant("Accommodation")).toBe("simple");
-    expect(getMenuVariant("National Parks")).toBe("mega");
   });
 });
 
@@ -113,12 +111,9 @@ describe("buildDestinationPreviewByCountry", () => {
 });
 
 describe("buildHeaderNavigation with destinations", () => {
-  it("builds National Parks mega columns from published destinations", () => {
+  it("does not expose National Parks from destination data", () => {
     const items = buildHeaderNavigation(sampleNavigation, sampleDestinations);
-    const nationalParks = items.find((item) => item.label === "National Parks");
 
-    expect(nationalParks?.megaColumns?.map((column) => column.heading)).toEqual(["Kenya", "Tanzania"]);
-    expect(nationalParks?.megaColumns?.[0]?.items.map((item) => item.label)).toEqual(["Masai Mara"]);
-    expect(nationalParks?.megaColumns?.[1]?.items.map((item) => item.label)).toEqual(["Serengeti", "Zanzibar"]);
+    expect(items.some((item) => item.label === "National Parks")).toBe(false);
   });
 });

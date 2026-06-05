@@ -58,17 +58,21 @@ export function PageHeader({
 
 export function StatCard({
   color = "green",
+  detail,
+  href,
   icon: Icon,
   label,
   value,
 }: {
   color?: "green" | "gold" | "red" | "teal" | "indigo";
+  detail?: string;
+  href?: string;
   icon?: React.ComponentType<{ size?: number; strokeWidth?: number }>;
   label: string;
   value: number | string;
 }) {
-  return (
-    <article className={`portal-stat portal-stat--${color}`}>
+  const body = (
+    <>
       {Icon ? (
         <div className="portal-stat__icon">
           <Icon size={20} strokeWidth={2} />
@@ -77,9 +81,20 @@ export function StatCard({
       <div className="portal-stat__body">
         <strong>{value}</strong>
         <span>{label}</span>
+        {detail ? <em className="portal-stat__detail">{detail}</em> : null}
       </div>
-    </article>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link className={`portal-stat portal-stat--${color} portal-stat--link`} href={href}>
+        {body}
+      </Link>
+    );
+  }
+
+  return <article className={`portal-stat portal-stat--${color}`}>{body}</article>;
 }
 
 export function EmptyState({ label }: { label: string }) {

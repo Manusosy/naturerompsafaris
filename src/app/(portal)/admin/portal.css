@@ -1751,6 +1751,20 @@ a {
   gap: 14px;
 }
 
+.portal-stat--link {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.portal-stat--link:hover,
+.portal-stat--link:focus-visible {
+  border-color: var(--p-green-300);
+  box-shadow: 0 2px 8px rgba(18, 42, 14, 0.08);
+  transform: translateY(-1px);
+  outline: none;
+}
+
 .portal-stat__icon {
   width: 44px;
   height: 44px;
@@ -1774,6 +1788,17 @@ a {
   margin-top: 4px;
 }
 
+.portal-stat__detail {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: normal;
+  color: var(--p-muted);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .portal-stat strong {
   font-size: 28px;
   font-weight: 800;
@@ -1781,6 +1806,10 @@ a {
   line-height: 1;
   letter-spacing: -0.02em;
   display: block;
+}
+
+.portal-stat--link strong {
+  font-size: 24px;
 }
 
 .portal-stat--red    .portal-stat__icon { background: #fff1f1; color: #d63638; }

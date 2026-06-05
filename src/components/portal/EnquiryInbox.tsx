@@ -14,8 +14,11 @@ import {
 } from "@/lib/portal/enquiry-helpers";
 import { formatValue, getValue } from "@/lib/portal/format";
 
+const openEnquiryStatuses = new Set(["new", "contacted", "quoted"]);
+
 const statusFilters = [
   { label: "All", value: "__all" },
+  { label: "Open", value: "__open" },
   { label: "New", value: "new" },
   { label: "Contacted", value: "contacted" },
   { label: "Quoted", value: "quoted" },
@@ -26,18 +29,20 @@ const statusFilters = [
 export function EnquiryInbox({
   docs,
   emptyLabel,
+  initialStatusFilter = "__all",
   page = 1,
   totalPages = 1,
 }: {
   docs: Array<Record<string, unknown>>;
   emptyLabel: string;
+  initialStatusFilter?: string;
   page?: number;
   totalPages?: number;
 }) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("__all");
+  const [statusFilter, setStatusFilter] = useState(initialStatusFilter);
   const [typeFilter, setTypeFilter] = useState("__all");
 
   const visibleDocs = useMemo(() => {
@@ -57,9 +62,13 @@ export function EnquiryInbox({
         .join(" ")
         .toLowerCase();
 
+      const matchesStatus =
+        statusFilter === "__all" ||
+        (statusFilter === "__open" ? openEnquiryStatuses.has(status) : status === statusFilter);
+
       return (
         (!q || text.includes(q)) &&
-        (statusFilter === "__all" || status === statusFilter) &&
+        matchesStatus &&
         (typeFilter === "__all" || formType === typeFilter)
       );
     });

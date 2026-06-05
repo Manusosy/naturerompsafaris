@@ -1,8 +1,10 @@
-import { BedDouble, FileText, Inbox, MapPin, MessageSquare, Newspaper, Package, PackagePlus } from "lucide-react";
+import { Inbox, MapPin, Newspaper, Plane } from "lucide-react";
 import Link from "next/link";
 
-import { StatCard, StatusBadge } from "@/components/portal/PortalCards";
-import { countCollection, findCollection, requirePortalUser } from "@/lib/portal/data";
+import { DashboardSections } from "@/components/portal/DashboardSections";
+import { StatusBadge } from "@/components/portal/PortalCards";
+import { getDashboardSnapshot } from "@/lib/portal/dashboard";
+import { requirePortalUser } from "@/lib/portal/data";
 import { formatValue } from "@/lib/portal/format";
 
 function getKenyaGreeting(name?: string) {
@@ -17,26 +19,15 @@ function getKenyaGreeting(name?: string) {
 }
 
 const quickActions = [
-  { color: "var(--p-green-800)", bg: "var(--p-green-100)", href: "/admin/packages/new", icon: PackagePlus, label: "New package", sub: "Create a safari package" },
-  { color: "#0d9488", bg: "#f0fdfa", href: "/admin/trips/new", icon: MapPin, label: "New trip", sub: "Add an itinerary" },
-  { color: "var(--p-gold)", bg: "var(--p-gold-soft)", href: "/admin/destinations/new", icon: FileText, label: "New destination", sub: "Add a country page" },
-  { color: "#4f46e5", bg: "#eef2ff", href: "/admin/posts/new", icon: Newspaper, label: "New article", sub: "Write a blog post" },
+  { color: "var(--p-green-800)", bg: "var(--p-green-100)", href: "/admin/enquiries", icon: Inbox, label: "Review leads", sub: "Reply by email or WhatsApp" },
+  { color: "#0d9488", bg: "#f0fdfa", href: "/admin/trips/new", icon: MapPin, label: "New trip", sub: "Publish a safari itinerary" },
+  { color: "var(--p-gold)", bg: "var(--p-gold-soft)", href: "/admin/flight-settings", icon: Plane, label: "Flight affiliate", sub: "Manage booking partner link" },
+  { color: "#4f46e5", bg: "#eef2ff", href: "/admin/posts/new", icon: Newspaper, label: "New article", sub: "Publish safari content" },
 ] as const;
 
 export default async function PortalOverviewPage() {
   const user = await requirePortalUser();
-  const [newEnquiries, openEnquiries, publishedPackages, upcomingTrips, availableStays, recentEnquiries] =
-    await Promise.all([
-      countCollection("enquiries", { status: { equals: "new" } }),
-      countCollection("enquiries", { status: { in: ["new", "contacted", "quoted"] } }),
-      countCollection("packages", { status: { equals: "published" } }),
-      countCollection("trips", { status: { equals: "published" } }),
-      countCollection("accommodations", { availability: { equals: "available" } }),
-      findCollection("enquiries", 6, undefined, 1, "-createdAt"),
-    ]);
-  const recentEnquiryDocs = Array.isArray(recentEnquiries.docs)
-    ? recentEnquiries.docs as Array<Record<string, unknown>>
-    : [];
+  const snapshot = await getDashboardSnapshot();
 
   return (
     <div className="portal-stack">
@@ -52,23 +43,18 @@ export default async function PortalOverviewPage() {
         <div className="portal-hero__text">
           <p>{getKenyaGreeting(user.name || user.email)}</p>
           <h2>Safari Operations Portal.</h2>
-          <span>Manage content, safari leads, and trips.</span>
+          <span>Manage safari leads, content, and site settings.</span>
         </div>
-        <Link className="portal-button portal-hero__cta" href="/admin/trips/new">
+        <Link className="portal-button portal-hero__cta" href="/admin/enquiries">
           <svg fill="none" height="16" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" width="16">
-            <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+            <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M3 7l9 6 9-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          New trip
+          Open enquiries
         </Link>
       </section>
 
-      <div className="portal-stats">
-        <StatCard color="red"    icon={Inbox}         label="New enquiries"      value={newEnquiries} />
-        <StatCard color="gold"   icon={MessageSquare} label="Open enquiries"     value={openEnquiries} />
-        <StatCard color="green"  icon={Package}       label="Published packages" value={publishedPackages} />
-        <StatCard color="teal"   icon={MapPin}        label="Upcoming trips"     value={upcomingTrips} />
-        <StatCard color="indigo" icon={BedDouble}     label="Available stays"    value={availableStays} />
-      </div>
+      <DashboardSections snapshot={snapshot} />
 
       <section className="portal-section-card">
         <div className="portal-section-card__head">
@@ -105,7 +91,7 @@ export default async function PortalOverviewPage() {
               </tr>
             </thead>
             <tbody>
-              {recentEnquiryDocs.map((item) => (
+              {snapshot.recentEnquiries.map((item) => (
                 <tr key={String(item.id)}>
                   <td>
                     <Link className="enquiry-dashboard-link" href={`/admin/enquiries/${item.id}`}>
@@ -117,7 +103,7 @@ export default async function PortalOverviewPage() {
                   <td>{formatValue(item.createdAt)}</td>
                 </tr>
               ))}
-              {!recentEnquiryDocs.length ? (
+              {!snapshot.recentEnquiries.length ? (
                 <tr>
                   <td colSpan={4}>No recent enquiries are available yet.</td>
                 </tr>

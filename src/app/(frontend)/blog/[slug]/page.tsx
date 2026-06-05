@@ -2,13 +2,17 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CalendarDays, ChevronRight, Tag } from "lucide-react";
+import { CalendarDays, ChevronRight, Share2, Tag } from "lucide-react";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
-import { BlogCard, type BlogSummary } from "@/components/Cards";
+import { type BlogSummary } from "@/components/Cards";
+import { BlogArticleTableOfContents } from "@/components/BlogArticleTableOfContents";
+import { BlogRelatedCard } from "@/components/BlogRelatedCard";
+import { buildBlogShareLinks } from "@/components/BlogShareIcons";
 import { JsonLd } from "@/components/JsonLd";
 import { posts, site } from "@/content/site";
+import { articleTocItemListSchema, buildArticleToc } from "@/lib/article-toc";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize-html";
@@ -50,7 +54,7 @@ async function findCmsPost(slug: string): Promise<CmsPost | null> {
   }
 }
 
-async function findRelatedPosts(slug: string, limit = 3) {
+async function findRelatedPosts(slug: string, limit = 6) {
   try {
     const payload = await getPayload({ config: configPromise });
     const result = await payload.find({
@@ -107,6 +111,8 @@ function formatPublishedDate(value?: string) {
   }).format(new Date(value));
 }
 
+const articleAuthor = "Yvonne A.";
+
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
@@ -145,7 +151,8 @@ export default async function BlogDetailPage({ params }: Props) {
   const excerpt = post.excerpt || "";
   const publishedLabel = formatPublishedDate(cmsPost?.publishedAt);
   const categoryName = relationName(cmsPost?.category);
-  const categorySlug = relationSlug(cmsPost?.category);
+  const articleUrl = `${site.canonicalUrl}/blog/${post.slug || slug}`;
+  const shareLinks = buildBlogShareLinks(articleUrl, title);
   const tagItems = Array.isArray(cmsPost?.tags)
     ? cmsPost.tags.map((tag) => ({
         name: relationName(tag),
@@ -153,7 +160,8 @@ export default async function BlogDetailPage({ params }: Props) {
       })).filter((tag) => tag.name)
     : [];
   const relatedPosts = cmsPost ? await findRelatedPosts(slug) : [];
-  const bodyHtml = cmsPost?.body?.trim();
+  const sanitizedBody = cmsPost?.body?.trim() ? sanitizeHtml(cmsPost.body.trim()) : "";
+  const articleToc = sanitizedBody ? buildArticleToc(sanitizedBody) : null;
 
   return (
     <main className="blog-article-page">
@@ -161,13 +169,26 @@ export default async function BlogDetailPage({ params }: Props) {
         data={{
           "@context": "https://schema.org",
           "@type": "Article",
-          author: { "@type": "Organization", name: site.company },
+          author: { "@type": "Organization", name: "Nature Romp Safaris", url: site.canonicalUrl },
+          dateModified: cmsPost?.publishedAt,
           datePublished: cmsPost?.publishedAt,
           description: excerpt,
           headline: title,
           image: image.startsWith("http") ? image : `${site.canonicalUrl}${image}`,
+          mainEntityOfPage: articleUrl,
+          publisher: {
+            "@type": "Organization",
+            logo: {
+              "@type": "ImageObject",
+              url: `${site.canonicalUrl}/favicon.ico`,
+            },
+            name: "Nature Romp Safaris",
+          },
         }}
       />
+      {articleToc?.showToc ? (
+        <JsonLd data={articleTocItemListSchema(articleToc.items, articleUrl)} />
+      ) : null}
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", url: "/" },
@@ -177,16 +198,6 @@ export default async function BlogDetailPage({ params }: Props) {
       />
 
       <section className="blog-article-hero">
-        <Image
-          alt={mediaAlt(post.image, title)}
-          className="blog-article-hero__image"
-          fill
-          priority
-          sizes="100vw"
-          src={image}
-          unoptimized
-        />
-        <div className="blog-article-hero__overlay" />
         <div className="container blog-article-hero__content">
           <nav aria-label="Breadcrumb" className="blog-article-breadcrumb">
             <Link href="/">Home</Link>
@@ -195,28 +206,108 @@ export default async function BlogDetailPage({ params }: Props) {
             <ChevronRight aria-hidden size={14} />
             <span>{title}</span>
           </nav>
-          {categoryName ? (
-            <span className="blog-article-hero__category">{categoryName}</span>
-          ) : null}
+          <div className="blog-article-kickers">
+            <span className="blog-article-hero__category">{categoryName || "Safari Guide"}</span>
+            {tagItems.slice(0, 1).map((tag) => (
+              <span className="blog-article-hero__category" key={tag.slug || tag.name}>
+                {tag.name}
+              </span>
+            ))}
+          </div>
           <h1>{title}</h1>
-          {publishedLabel ? (
-            <p className="blog-article-hero__meta">
-              <CalendarDays aria-hidden size={16} />
-              <span>{publishedLabel}</span>
-            </p>
-          ) : null}
+          <div className="blog-article-byline">
+            <div className="blog-article-author" aria-label={`Article by ${articleAuthor}`}>
+              <Image
+                alt="Nature Romp Safaris"
+                className="blog-article-author__avatar"
+                height={58}
+                src="/favicon.ico"
+                unoptimized
+                width={58}
+              />
+              <span className="blog-article-author__meta">
+                <span>
+                  By <strong>{articleAuthor}</strong>
+                </span>
+                {publishedLabel ? (
+                  <span className="blog-article-hero__meta">
+                    <CalendarDays aria-hidden size={15} />
+                    Last updated: {publishedLabel}
+                  </span>
+                ) : (
+                  <span className="blog-article-hero__meta">Nature Romp Safaris</span>
+                )}
+              </span>
+            </div>
+            <div className="blog-article-share blog-article-share--top" aria-label="Share article">
+              <span className="blog-article-share__label">
+                <Share2 aria-hidden size={15} />
+                Share
+              </span>
+              <div className="blog-article-share__icons">
+                {shareLinks.map((item) => (
+                  <a
+                    aria-label={item.label}
+                    className={`blog-share-icon ${item.className}`}
+                    href={item.href}
+                    key={item.label}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {item.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="blog-article-body">
         <div className="container blog-article-layout">
+          <aside className="blog-article-share-rail" aria-label="Share article">
+            <span>
+              <Share2 aria-hidden size={18} />
+              Share
+            </span>
+            <div className="blog-article-share-rail__icons">
+              {shareLinks.map((item) => (
+                <a
+                  aria-label={item.label}
+                  className={`blog-share-icon ${item.className}`}
+                  href={item.href}
+                  key={item.label}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {item.icon}
+                </a>
+              ))}
+            </div>
+          </aside>
           <article className="blog-article-main">
+            <figure className="blog-article-featured">
+              <Image
+                alt={mediaAlt(post.image, title)}
+                className="blog-article-featured__image"
+                height={620}
+                priority
+                sizes="(max-width: 900px) 100vw, 780px"
+                src={image}
+                unoptimized
+                width={960}
+              />
+              <figcaption>{cmsPost?.imageCaption || title}</figcaption>
+            </figure>
+
             {excerpt ? <p className="blog-article-lead">{excerpt}</p> : null}
 
-            {bodyHtml ? (
+            {articleToc?.showToc ? <BlogArticleTableOfContents items={articleToc.items} /> : null}
+
+            {sanitizedBody ? (
               <div
                 className="blog-article-prose"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(bodyHtml) }}
+                dangerouslySetInnerHTML={{ __html: articleToc?.htmlWithIds ?? sanitizedBody }}
               />
             ) : (
               <div className="blog-article-prose">
@@ -232,10 +323,6 @@ export default async function BlogDetailPage({ params }: Props) {
                 </p>
               </div>
             )}
-
-            {cmsPost?.imageCaption ? (
-              <p className="blog-article-caption">{cmsPost.imageCaption}</p>
-            ) : null}
 
             {tagItems.length ? (
               <div className="blog-article-tags">
@@ -269,12 +356,15 @@ export default async function BlogDetailPage({ params }: Props) {
         <section className="blog-article-related">
           <div className="container">
             <div className="blog-article-related__head">
-              <h2>More from the Travel Blog</h2>
+              <div>
+                <p className="blog-article-related__eyebrow">Keep exploring</p>
+                <h2>More published articles</h2>
+              </div>
               <Link href="/blog">View all articles</Link>
             </div>
-            <div className="travel-blog-grid">
+            <div className="blog-related-grid">
               {relatedPosts.map((item) => (
-                <BlogCard item={item} key={item.slug} />
+                <BlogRelatedCard item={item} key={item.slug} />
               ))}
             </div>
           </div>

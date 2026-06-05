@@ -3,6 +3,11 @@ import { getPayload } from "payload";
 
 import { site } from "@/content/site";
 
+export type FooterQuickLink = {
+  href: string;
+  label: string;
+};
+
 export type PublicSiteSettings = {
   address: string;
   companyName: string;
@@ -11,10 +16,30 @@ export type PublicSiteSettings = {
   facebook?: string;
   instagram?: string;
   phone: string;
+  quickLinks: FooterQuickLink[];
+  siteName: string;
   twitter?: string;
   whatsapp: string;
+  whatsappEnquiryMessage: string;
   youtube?: string;
 };
+
+function parseQuickLinks(value: unknown): FooterQuickLink[] {
+  if (!Array.isArray(value)) return site.footerQuickLinks;
+
+  const links = value
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Record<string, unknown>;
+      const label = String(record.label ?? "").trim();
+      const href = String(record.href ?? "").trim();
+      if (!label || !href) return null;
+      return { href, label };
+    })
+    .filter((item): item is FooterQuickLink => item !== null);
+
+  return links.length ? links : site.footerQuickLinks;
+}
 
 export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
   try {
@@ -28,23 +53,31 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     return {
       address: String(settings.address || "Nairobi, Kenya"),
       companyName: String(settings.companyName || site.company),
-      description: String(settings.footerDescription || "Nature Romp Safaris crafts custom Kenya and Tanzania safari adventures with clear planning and local expertise."),
+      description: String(settings.footerDescription || site.footerDescription),
       email: String(settings.primaryEmail || "info@naturerompsafaris.com"),
       facebook: typeof settings.facebook === "string" ? settings.facebook : undefined,
       instagram: typeof settings.instagram === "string" ? settings.instagram : undefined,
       phone: String(settings.phone || site.phone),
+      quickLinks: parseQuickLinks(settings.footerQuickLinks),
+      siteName: String(settings.siteName || site.name),
       twitter: typeof settings.twitter === "string" ? settings.twitter : undefined,
       whatsapp: String(settings.whatsapp || site.whatsapp),
+      whatsappEnquiryMessage: String(
+        settings.whatsappEnquiryMessage || `Hello ${site.company}, I would like to plan a ${site.name}.`,
+      ),
       youtube: typeof settings.youtube === "string" ? settings.youtube : undefined,
     };
   } catch {
     return {
       address: "Nairobi, Kenya",
       companyName: site.company,
-      description: "Nature Romp Safaris crafts custom Kenya and Tanzania safari adventures with clear planning and local expertise.",
+      description: site.footerDescription,
       email: "info@naturerompsafaris.com",
       phone: site.phone,
+      quickLinks: site.footerQuickLinks,
+      siteName: site.name,
       whatsapp: site.whatsapp,
+      whatsappEnquiryMessage: `Hello ${site.company}, I would like to plan a ${site.name}.`,
     };
   }
 }

@@ -15,7 +15,7 @@ export function Footer({ navItems, siteSettings }: { navItems: PublicNavItem[]; 
         <div>
           <Image
             src="/assets/img/logo.jpg"
-            alt="Nature Romp Safaris"
+            alt={siteSettings.companyName}
             width={132}
             height={45}
             style={{ width: 132, height: "auto" }}
@@ -27,11 +27,11 @@ export function Footer({ navItems, siteSettings }: { navItems: PublicNavItem[]; 
         </div>
         <div>
           <h3>Quick Links</h3>
-          <Link href="/photo-gallery">Photo Gallery</Link>
-          <Link href="/blog">Travel Information</Link>
-          <Link href="/trips">Safari Tours</Link>
-          <Link href="/safari-packages">Safari Packages</Link>
-          <Link href="/contact">Contact</Link>
+          {siteSettings.quickLinks.map((link) => (
+            <Link href={link.href} key={`${link.label}-${link.href}`}>
+              {link.label}
+            </Link>
+          ))}
         </div>
         <div>
           <h3>Our Safaris</h3>
@@ -50,7 +50,7 @@ export function Footer({ navItems, siteSettings }: { navItems: PublicNavItem[]; 
             className="footer__whatsapp"
             href={createWhatsAppLink({
               phone: siteSettings.whatsapp,
-              message: "Hello Nature Romp Safaris, I would like to plan a Kenya Tanzania safari adventure.",
+              message: siteSettings.whatsappEnquiryMessage,
             })}
           >
             <MessageCircle size={16} /> WhatsApp Safari Expert
@@ -60,7 +60,7 @@ export function Footer({ navItems, siteSettings }: { navItems: PublicNavItem[]; 
       <div className="footer__bottom">
         <div className="container">
           <div className="footer__copyright">
-            Copyright &copy; {new Date().getFullYear()} {siteSettings.companyName}. Kenya Tanzania Safari Adventure.
+            Copyright &copy; {new Date().getFullYear()} {siteSettings.companyName}. {siteSettings.siteName}.
           </div>
           <div className="footer__legal-links">
             <Link href="/terms-of-service">Terms of Service</Link>

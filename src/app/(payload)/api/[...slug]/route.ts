@@ -8,6 +8,8 @@ import {
   REST_PUT,
 } from "@payloadcms/next/routes";
 
+export const maxDuration = 60;
+
 export const GET = REST_GET(configPromise);
 export const POST = REST_POST(configPromise);
 export const DELETE = REST_DELETE(configPromise);

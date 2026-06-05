@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Clock, MapPin, Compass, Sparkles, CheckCircle2, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight, Clock, Compass, MapPin } from "lucide-react";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
@@ -16,6 +16,36 @@ import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { getImageUrl, getMediaAlt } from "@/components/Cards";
 
 type Props = { params: Promise<{ slug: string }> };
+
+function routeEndpoints(route: string) {
+  const cleaned = route.replace(/\s+/g, " ").trim();
+  const explicitParts = cleaned
+    .split(/\s+(?:to|towards)\s+/i)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (explicitParts.length >= 2) {
+    return {
+      start: explicitParts[0],
+      end: explicitParts[explicitParts.length - 1],
+    };
+  }
+
+  const stops = cleaned
+    .split(/\s*(?:,|\/|→|->|–|-|\+)\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    start: "Nairobi",
+    end: stops[stops.length - 1] || cleaned || "East Africa",
+  };
+}
+
+function stripHtml(value: unknown) {
+  if (typeof value !== "string") return "";
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -75,9 +105,14 @@ export default async function PackageDetailPage({ params }: Props) {
   const enhancements = await getPackageEnhancements(slug);
   const imageSrc = getImageUrl(item.image);
   const imageAlt = getMediaAlt(item.image, item.title);
+  const route = routeEndpoints(destinationsLabel);
+  const overviewText =
+    stripHtml(item.content) ||
+    item.excerpt ||
+    `This ${item.duration || "custom"} safari package is planned around ${destinationsLabel}, with flexible pacing, private guiding and practical support from Nature Romp Safaris.`;
 
   return (
-    <main className="bg-gray-50/50 min-h-screen pb-16">
+    <main className="pkg-detail">
       <JsonLd data={schema} />
       <JsonLd data={breadcrumbSchema([
         { name: "Home", url: "/" },
@@ -85,165 +120,152 @@ export default async function PackageDetailPage({ params }: Props) {
         { name: item.title, url: `/safari-packages/${item.slug}` },
       ])} />
 
-      {/* Hero Section */}
-      <div className="relative h-[450px] md:h-[550px] w-full overflow-hidden">
+      <section className="pkg-detail__hero">
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
           priority
-          className="object-cover object-center scale-105"
+          className="pkg-detail__hero-image"
           unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-end">
-          <div className="container mx-auto px-4 md:px-6 pb-12">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-white uppercase tracking-wider mb-4 shadow">
-              <Sparkles size={12} /> {item.category}
-            </span>
-            <h1 className="text-3xl md:text-5xl font-black text-white leading-tight max-w-4xl tracking-tight drop-shadow-sm">
-              {item.title}
-            </h1>
-            <p className="mt-4 text-base md:text-lg text-gray-200/90 max-w-2xl font-medium leading-relaxed">
-              {item.excerpt}
-            </p>
+        <div className="pkg-detail__hero-overlay" />
+        <div className="container pkg-detail__hero-inner">
+          <span className="pkg-detail__category">{item.category || "Safari Package"}</span>
+          <h1>{item.title}</h1>
+          <div className="pkg-route-card" aria-label="Trip route">
+            <div className="pkg-route-card__stop">
+              <Compass aria-hidden size={58} />
+              <span>Starts in</span>
+              <strong>{route.start}</strong>
+            </div>
+            <span className="pkg-route-card__line" aria-hidden />
+            <div className="pkg-route-card__stop">
+              <MapPin aria-hidden size={58} />
+              <span>Ends in</span>
+              <strong>{route.end}</strong>
+            </div>
           </div>
         </div>
+      </section>
+
+      <div className="pkg-detail__breadcrumb-wrap">
+        <nav className="container pkg-detail__breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <ChevronRight size={12} />
+          <Link href="/safari-packages">Packages</Link>
+          <ChevronRight size={12} />
+          <span>{item.title}</span>
+        </nav>
       </div>
 
-      {/* Navigation Breadcrumb (Subtle overlay or standard line) */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="container mx-auto px-4 md:px-6 py-4 flex items-center gap-2 text-xs font-medium text-gray-500">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-          <ChevronRight size={12} />
-          <Link href="/safari-packages" className="hover:text-primary transition-colors">Packages</Link>
-          <ChevronRight size={12} />
-          <span className="text-gray-900 truncate max-w-[200px] md:max-w-sm">{item.title}</span>
-        </div>
-      </div>
-
-      {/* Main Container */}
-      <section className="mt-10">
-        <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
-          {/* Left Column: Premium Content Blocks */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* Quick Fact Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Clock size={20} />
-                </div>
-                <div>
-                  <span className="block text-2xs text-gray-400 font-bold uppercase tracking-wider">Duration</span>
-                  <span className="text-sm font-bold text-gray-800">{item.duration}</span>
-                </div>
+      <section className="pkg-detail__body">
+        <div className="container pkg-detail__layout">
+          <div className="pkg-detail__main">
+            <section className="pkg-facts" aria-label="Package quick facts">
+              <div className="pkg-fact">
+                <Clock aria-hidden size={20} />
+                <span>Duration</span>
+                <strong>{item.duration || "Custom duration"}</strong>
               </div>
-
-              <div className="flex items-center gap-3.5 col-span-1 md:col-span-2">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <span className="block text-2xs text-gray-400 font-bold uppercase tracking-wider">Destinations</span>
-                  <span className="text-sm font-bold text-gray-800 line-clamp-1">{destinationsLabel}</span>
-                </div>
+              <div className="pkg-fact pkg-fact--wide">
+                <MapPin aria-hidden size={20} />
+                <span>Route</span>
+                <strong>{destinationsLabel}</strong>
               </div>
-            </div>
+              <div className="pkg-fact">
+                <Compass aria-hidden size={20} />
+                <span>Style</span>
+                <strong>{item.packageTier || "Private safari"}</strong>
+              </div>
+            </section>
 
-            {/* Content Overview */}
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-              <h2 className="text-2xl font-black text-gray-900 border-l-4 border-primary pl-4">
-                Safari Overview
-              </h2>
-              <div className="prose max-w-none text-gray-600 leading-relaxed text-base space-y-4 font-medium">
+            <section className="pkg-panel">
+              <h2>Safari Overview</h2>
+              <div className="pkg-prose">
+                <p>{overviewText}</p>
                 <p>
-                  Embark on an outstanding adventure curated to give you premium exposure to East Africa&apos;s raw wildlife reserves. Nature Romp Safaris specializes in custom-made, immersive travel solutions, bringing you close to legendary natural spectacles, spectacular bird sanctuaries, and historic plains.
-                </p>
-                <p>
-                  This route covers <strong>{destinationsLabel}</strong> under a highly optimized scheduling plan. Game drives are private and flexible, ensuring photographers, families, and solo explorers secure their perfect sights in complete comfort.
+                  This route covers <strong>{destinationsLabel}</strong> with a plan that can be tuned for your travel season, comfort level, group size and pace.
                 </p>
               </div>
 
-              {/* Bullet Quick Facts */}
-              <div className="mt-8 bg-gray-50 rounded-xl p-6 border border-gray-100">
-                <h3 className="text-sm font-extrabold text-gray-800 uppercase tracking-wider mb-4">Highlights & Inclusions</h3>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <li className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <CheckCircle2 size={16} className="text-primary shrink-0 mt-0.5" />
+              <div className="pkg-inclusions">
+                <h3>Highlights & Inclusions</h3>
+                <ul>
+                  <li>
+                    <CheckCircle2 aria-hidden size={16} />
                     <span>Best For: Wildlife, Photography, Scenic landscapes</span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <CheckCircle2 size={16} className="text-primary shrink-0 mt-0.5" />
+                  <li>
+                    <CheckCircle2 aria-hidden size={16} />
                     <span>Transport: Custom-built 4x4 open-roof safari landcruiser/jeep</span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <CheckCircle2 size={16} className="text-primary shrink-0 mt-0.5" />
+                  <li>
+                    <CheckCircle2 aria-hidden size={16} />
                     <span>Pacing: Relaxed & custom-adjusted with expert guides</span>
                   </li>
-                  <li className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <CheckCircle2 size={16} className="text-primary shrink-0 mt-0.5" />
+                  <li>
+                    <CheckCircle2 aria-hidden size={16} />
                     <span>Support: Fully vetted team with emergency radio systems</span>
                   </li>
                 </ul>
               </div>
-            </div>
+            </section>
 
-            {/* Direct Answers Section */}
-            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-              <h2 className="text-2xl font-black text-gray-900 border-l-4 border-primary pl-4">
-                Frequently Asked Questions
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-6 divide-y divide-gray-100">
-                <div className="pt-0 pb-4">
-                  <h3 className="text-base font-extrabold text-gray-900 flex items-center gap-2 mb-2">
-                    <Compass size={16} className="text-primary" /> How many days do you need?
+            <section className="pkg-panel pkg-faq">
+              <h2>Frequently Asked Questions</h2>
+              <div className="pkg-faq__list">
+                <article>
+                  <h3>
+                    <Compass aria-hidden size={16} /> How many days do you need?
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium pl-6">
+                  <p>
                     This route is designed around {item.duration}, with pacing adjusted for travel season, group style and accommodation preference.
                   </p>
-                </div>
+                </article>
 
-                <div className="pt-6 pb-4">
-                  <h3 className="text-base font-extrabold text-gray-900 flex items-center gap-2 mb-2">
-                    <Compass size={16} className="text-primary" /> Can this be private or family-friendly?
+                <article>
+                  <h3>
+                    <Compass aria-hidden size={16} /> Can this be private or family-friendly?
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium pl-6">
+                  <p>
                     Yes. Nature Romp Safaris can adapt this package for private, family, budget, mid-range or comfort-focused travel. We offer child car seat mounts and custom meal pacing for family safaris.
                   </p>
-                </div>
+                </article>
 
-                <div className="pt-6 pb-0">
-                  <h3 className="text-base font-extrabold text-gray-900 flex items-center gap-2 mb-2">
-                    <Compass size={16} className="text-primary" /> Can it connect with Tanzania?
+                <article>
+                  <h3>
+                    <Compass aria-hidden size={16} /> Can it connect with Tanzania?
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium pl-6">
+                  <p>
                     Kenya routes can be extended into Tanzania for Serengeti, Ngorongoro and broader Kenya Tanzania safari adventure itineraries. Please check our combined package options or request custom adjustments in the booking form.
                   </p>
-                </div>
+                </article>
               </div>
-            </div>
+            </section>
 
-            {/* Accommodations and Enhancements (Dynamic) */}
-            <div className="space-y-6">
+            <div className="pkg-detail__enhancements">
               <PackageEnhancementsView {...enhancements} />
             </div>
-
           </div>
 
-          {/* Right Column: Premium Inquiry Card (Sticky) */}
-          <div className="lg:sticky lg:top-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-md">
-            <div className="mb-6 pb-4 border-b border-gray-50">
-              <span className="block text-2xs font-bold text-gray-400 uppercase tracking-widest mb-1">Tailored Inquiry</span>
-              <h3 className="text-lg font-black text-gray-900">Request Custom Quote</h3>
-              <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                Contact our expert safari coordinators to secure pricing, dates, and personalized customization.
+          <aside className="pkg-sidebar">
+            <div className="pkg-sidebar__summary">
+              <span>Package inquiry</span>
+              <h2>{item.title}</h2>
+              {item.priceText ? <p className="pkg-sidebar__price">{item.priceText}</p> : null}
+              <p>
+                Share your travel dates, group size and comfort level. We will respond with a specific quote for this safari.
               </p>
             </div>
-            <EnquiryForm subject={item.title} />
-          </div>
-
+            <EnquiryForm
+              messagePlaceholder={`I am interested in ${item.title}. My preferred travel dates, group size and accommodation level are...`}
+              subject={item.title}
+              submitLabel="Send Package Inquiry"
+              title="Request This Safari"
+              variant="package"
+            />
+          </aside>
         </div>
       </section>
     </main>

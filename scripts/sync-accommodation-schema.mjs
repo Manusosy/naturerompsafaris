@@ -54,7 +54,7 @@ FROM numbered
 WHERE a.id = numbered.id;
 
 UPDATE accommodations
-SET seo_canonical_url = 'https://kenyatanzaniasafariadventure.com/accommodations/' || slug
+SET seo_canonical_url = 'https://kenyatanzaniasafariadventures.com/accommodations/' || slug
 WHERE slug IS NOT NULL
   AND slug <> ''
   AND (seo_canonical_url IS NULL OR seo_canonical_url = '');

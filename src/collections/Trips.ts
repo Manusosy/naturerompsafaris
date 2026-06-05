@@ -2,7 +2,7 @@ import type { CollectionConfig, FieldHook } from "payload";
 
 import { editorOrAdmin, publishedOrStaff } from "../lib/access";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventures.com";
 
 const canonicalUrlHook: FieldHook = ({ data, value }) => {
   const slug = data?.slug as string | undefined;

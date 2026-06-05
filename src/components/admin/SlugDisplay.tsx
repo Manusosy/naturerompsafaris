@@ -15,7 +15,7 @@ export const SlugDisplay: React.FC<SlugDisplayProps> = ({ urlPrefix = '' }) => {
   const baseUrl =
     typeof window !== 'undefined'
       ? window.location.origin.replace('cms-admin', '').replace(/:\d+/, ':3000')
-      : 'https://kenyatanzaniasafariadventure.com'
+      : 'https://kenyatanzaniasafariadventures.com'
 
   const publicUrl = slugValue
     ? `${baseUrl}${urlPrefix}/${slugValue}`

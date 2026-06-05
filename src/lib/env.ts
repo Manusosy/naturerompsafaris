@@ -6,8 +6,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z
     .string()
     .url()
-    .default("https://kenyatanzaniasafariadventure.com"),
-  PORTAL_HOST: z.string().default("portal.kenyatanzaniasafariadventure.com"),
+    .default("https://kenyatanzaniasafariadventures.com"),
+  PORTAL_HOST: z.string().default("portal.kenyatanzaniasafariadventures.com"),
   PAYLOAD_SERVER_URL: z.string().url().optional(),
   RESEND_API_KEY: z.string().optional(),
   SMTP_HOST: z.string().optional(),

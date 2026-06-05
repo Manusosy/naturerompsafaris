@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { resolvePortalRoute } from "./portal-routing";
 
-const siteUrl = "https://kenyatanzaniasafariadventure.com";
-const portalHost = "portal.kenyatanzaniasafariadventure.com";
+const siteUrl = "https://kenyatanzaniasafariadventures.com";
+const portalHost = "portal.kenyatanzaniasafariadventures.com";
 
 function resolve(host: string, path: string) {
   return resolvePortalRoute({
@@ -49,7 +49,7 @@ describe("resolvePortalRoute", () => {
   });
 
   it("redirects main-domain admin traffic to the portal host", () => {
-    const action = resolve("kenyatanzaniasafariadventure.com", "/admin");
+    const action = resolve("kenyatanzaniasafariadventures.com", "/admin");
 
     expect(action.type).toBe("redirect");
     if (action.type === "redirect") {
@@ -59,7 +59,7 @@ describe("resolvePortalRoute", () => {
   });
 
   it("redirects main-domain CMS fallback traffic to the portal host", () => {
-    const action = resolve("kenyatanzaniasafariadventure.com", "/cms-admin");
+    const action = resolve("kenyatanzaniasafariadventures.com", "/cms-admin");
 
     expect(action.type).toBe("redirect");
     if (action.type === "redirect") {
@@ -72,5 +72,14 @@ describe("resolvePortalRoute", () => {
     const action = resolve("localhost:3000", "/admin");
 
     expect(action.type).toBe("next");
+  });
+
+  it("treats the www main domain the same as the apex domain", () => {
+    const action = resolve("www.kenyatanzaniasafariadventures.com", "/admin");
+
+    expect(action.type).toBe("redirect");
+    if (action.type === "redirect") {
+      expect(action.destination.host).toBe(portalHost);
+    }
   });
 });

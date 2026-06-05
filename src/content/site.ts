@@ -10,7 +10,7 @@ export const site = {
     { label: "Safari Packages", href: "/safari-packages" },
     { label: "Contact", href: "/contact" },
   ],
-  canonicalUrl: "https://kenyatanzaniasafariadventure.com",
+  canonicalUrl: "https://kenyatanzaniasafariadventures.com",
   email: "info@naturerompsafaris.com",
   secondaryEmail: "naturerompsafaris@gmail.com",
   phone: "+254 722 714812 / +254 739 206698",

@@ -2,7 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from "payload";
 
 import { anyone, operationsOrAdmin } from "../lib/access";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventure.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventures.com";
 
 export const availabilityOptions = [
   { label: "Available", value: "available" },

@@ -36,6 +36,7 @@ function emailAdapter() {
     return nodemailerAdapter({
       defaultFromAddress: env.getEmailFromAddress(),
       defaultFromName: env.getEmailFromName(),
+      skipVerify: true,
       transportOptions: {
         auth: {
           pass: env.getSmtpPassword(),

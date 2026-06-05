@@ -7,9 +7,9 @@ describe("parseEnv", () => {
     const env = parseEnv({
       DATABASE_URL: "postgresql://user:pass@db.neon.tech/neondb?sslmode=require",
       PAYLOAD_SECRET: "a-secure-secret-with-enough-length",
-      NEXT_PUBLIC_SITE_URL: "https://kenyatanzaniasafariadventure.com",
-      PORTAL_HOST: "portal.kenyatanzaniasafariadventure.com",
-      PAYLOAD_SERVER_URL: "https://portal.kenyatanzaniasafariadventure.com",
+      NEXT_PUBLIC_SITE_URL: "https://kenyatanzaniasafariadventures.com",
+      PORTAL_HOST: "portal.kenyatanzaniasafariadventures.com",
+      PAYLOAD_SERVER_URL: "https://portal.kenyatanzaniasafariadventures.com",
       ADMIN_EMAIL_DOMAIN: "naturerompsafaris.com",
       SMTP_HOST: "mail.naturerompsafaris.com",
       SMTP_PORT: "465",
@@ -22,11 +22,11 @@ describe("parseEnv", () => {
     });
 
     expect(env.NEXT_PUBLIC_SITE_URL).toBe(
-      "https://kenyatanzaniasafariadventure.com",
+      "https://kenyatanzaniasafariadventures.com",
     );
-    expect(env.PORTAL_HOST).toBe("portal.kenyatanzaniasafariadventure.com");
+    expect(env.PORTAL_HOST).toBe("portal.kenyatanzaniasafariadventures.com");
     expect(env.PAYLOAD_SERVER_URL).toBe(
-      "https://portal.kenyatanzaniasafariadventure.com",
+      "https://portal.kenyatanzaniasafariadventures.com",
     );
     expect(env.ADMIN_EMAIL_DOMAIN).toBe("naturerompsafaris.com");
     expect(env.getEmailFromAddress()).toBe("inquiries@naturerompsafaris.com");

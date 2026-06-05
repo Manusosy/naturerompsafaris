@@ -3,8 +3,8 @@ import { withPayload } from "@payloadcms/next/withPayload";
 
 const siteHostname = process.env.NEXT_PUBLIC_SITE_URL
   ? new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname
-  : "kenyatanzaniasafariadventure.com";
-const portalHostname = process.env.PORTAL_HOST || "portal.kenyatanzaniasafariadventure.com";
+  : "kenyatanzaniasafariadventures.com";
+const portalHostname = process.env.PORTAL_HOST || "portal.kenyatanzaniasafariadventures.com";
 
 const nextConfig: NextConfig = {
   compress: true,

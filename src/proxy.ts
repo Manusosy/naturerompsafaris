@@ -7,10 +7,10 @@ export function proxy(request: NextRequest) {
     host: request.headers.get("host"),
     nextUrl: request.nextUrl,
     portalHost:
-      process.env.PORTAL_HOST ?? "portal.kenyatanzaniasafariadventure.com",
+      process.env.PORTAL_HOST ?? "portal.kenyatanzaniasafariadventures.com",
     siteUrl:
       process.env.NEXT_PUBLIC_SITE_URL ??
-      "https://kenyatanzaniasafariadventure.com",
+      "https://kenyatanzaniasafariadventures.com",
   });
 
   const response = action.type === "redirect"

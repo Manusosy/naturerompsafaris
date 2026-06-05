@@ -19,6 +19,10 @@ function isLocalHost(host: string) {
   return host === "localhost" || host === "127.0.0.1" || host === "::1";
 }
 
+function isMainSiteHost(host: string, siteHost: string) {
+  return host === siteHost || host === `www.${siteHost}`;
+}
+
 export function resolvePortalRoute({
   host,
   nextUrl,
@@ -34,7 +38,7 @@ export function resolvePortalRoute({
   const normalizedPortalHost = normalizeHost(portalHost);
   const siteHost = normalizeHost(new URL(siteUrl).host);
   const isPortalHost = normalizedHost === normalizedPortalHost;
-  const isMainHost = normalizedHost === siteHost;
+  const isMainHost = isMainSiteHost(normalizedHost, siteHost);
   const pathname = nextUrl.pathname;
 
   if (pathname === "/admin/create-first-user") {

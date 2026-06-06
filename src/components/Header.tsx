@@ -182,10 +182,13 @@ export function Header({
             <Mail size={14} /> {siteSettings.email}
           </a>
           <div className="topbar__mobile-phones">
-            {phoneNumbers.map((number) => (
-              <a href={`tel:${phoneHref(number)}`} key={number}>
-                <Phone size={14} /> {number}
-              </a>
+            {phoneNumbers.map((number, index) => (
+              <span className="topbar__mobile-phone" key={number}>
+                {index > 0 ? <span aria-hidden="true" className="topbar__mobile-sep">/</span> : null}
+                <a href={`tel:${phoneHref(number)}`}>
+                  <Phone size={13} /> {number}
+                </a>
+              </span>
             ))}
           </div>
         </div>

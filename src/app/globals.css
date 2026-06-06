@@ -91,8 +91,20 @@ img {
 }
 
 .topbar__mobile-phones {
-  display: grid;
-  gap: 4px;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.topbar__mobile-phone {
+  display: inline-flex;
+  align-items: center;
+}
+
+.topbar__mobile-sep {
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 6px;
 }
 
 .topbar__inner {
@@ -2811,34 +2823,45 @@ textarea {
 
 @media (max-width: 980px) {
   .site-header--flash {
-    --mobile-header-offset: 118px;
+    --mobile-header-offset: 100px;
   }
 
   .topbar__mobile-contact {
-    display: grid;
-    gap: 6px;
-    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
     border-bottom: 1px solid var(--header-line);
-    font-size: 12px;
-    line-height: 1.35;
+    font-size: 11px;
+    line-height: 1.2;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .topbar__mobile-contact::-webkit-scrollbar {
+    display: none;
   }
 
   .topbar__mobile-contact a {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: rgba(255, 255, 255, 0.92);
     min-width: 0;
+    white-space: nowrap;
   }
 
   .topbar__mobile-email {
+    flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: 46vw;
   }
 
-  .topbar__mobile-phones a {
-    white-space: nowrap;
+  .topbar__mobile-phones {
+    margin-left: auto;
+    flex-shrink: 0;
   }
 
   .topbar__mobile-contact a:hover {
@@ -3116,7 +3139,7 @@ textarea {
 
 @media (max-width: 680px) {
   .site-header--flash {
-    --mobile-header-offset: 124px;
+    --mobile-header-offset: 96px;
   }
 
   .hero {
@@ -8945,8 +8968,17 @@ textarea {
   }
 
   .topbar__mobile-contact {
-    padding-inline: 12px;
-    font-size: 11px;
+    padding-inline: 10px;
+    font-size: 10px;
+    gap: 8px;
+  }
+
+  .topbar__mobile-email {
+    max-width: 42vw;
+  }
+
+  .topbar__mobile-sep {
+    margin: 0 4px;
   }
 
   .accdet__gallery-grid--2,

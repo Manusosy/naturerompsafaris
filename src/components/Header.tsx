@@ -15,7 +15,14 @@ import type { PublicDestinationNavItem } from "@/lib/public-destinations";
 import type { PublicSiteSettings } from "@/lib/public-site-settings";
 
 function phoneHref(phone: string) {
-  return phone.split("/")[0].replace(/[^\d+]/g, "");
+  return phone.replace(/[^\d+]/g, "");
+}
+
+function parsePhoneNumbers(phone: string) {
+  return phone
+    .split("/")
+    .map((value) => value.trim())
+    .filter(Boolean);
 }
 
 function whatsappHref(whatsapp: string) {
@@ -162,16 +169,25 @@ export function Header({
     );
   };
 
+  const phoneNumbers = parsePhoneNumbers(siteSettings.phone);
+
   return (
-    <header className="site-header site-header--flash" data-navigation-ready="flashmc">
+    <header
+      className={open ? "site-header site-header--flash site-header--nav-open" : "site-header site-header--flash"}
+      data-navigation-ready="flashmc"
+    >
       <div className="topbar">
         <div className="topbar__mobile-contact" aria-label="Contact Nature Romp Safaris">
-          <a href={`mailto:${siteSettings.email}`}>
+          <a className="topbar__mobile-email" href={`mailto:${siteSettings.email}`}>
             <Mail size={14} /> {siteSettings.email}
           </a>
-          <a href={`tel:${phoneHref(siteSettings.phone)}`}>
-            <Phone size={14} /> {siteSettings.phone}
-          </a>
+          <div className="topbar__mobile-phones">
+            {phoneNumbers.map((number) => (
+              <a href={`tel:${phoneHref(number)}`} key={number}>
+                <Phone size={14} /> {number}
+              </a>
+            ))}
+          </div>
         </div>
         <div className="container topbar__inner">
           <Link href="/" className="logo logo--topbar" aria-label="Nature Romp Safaris home" onClick={closeNav}>

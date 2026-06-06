@@ -52,6 +52,7 @@ export default function ContactPage() {
         </div>
       </section>
       <iframe
+        className="contact-map-embed"
         title="Nature Romp Safaris map"
         src="https://maps.google.com/maps?width=100%25&height=500&hl=en&q=Nature%20Romp%20Safaris,%20Embassy%20House,%20Mezazanine-Harambee%20Avenue,%20P.O%20Box%2010323,00100-GPO,%20Nairobi,%20Kenya+(nature%20romp%20safari)&t=&z=14&ie=UTF8&iwloc=B&output=embed"
         width="100%"

@@ -3,7 +3,7 @@
 import { ChevronDown, Mail, Menu, Phone, Star, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   buildDestinationPreviewByCountry,
@@ -60,6 +60,25 @@ export function Header({
   const [activePreviewKey, setActivePreviewKey] = useState(defaultPreviewKey);
   const headerNavItems = buildHeaderNavigation(navItems, destinations);
 
+  const closeNav = () => {
+    setOpen(false);
+    setOpenGroup(null);
+  };
+
+  const toggleNav = () => {
+    setOpen((value) => {
+      if (value) setOpenGroup(null);
+      return !value;
+    });
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const socialLinks = [
     ["Facebook", siteSettings.facebook],
     ["Instagram", siteSettings.instagram],
@@ -82,7 +101,7 @@ export function Header({
                 <span className="submenu__col-heading">{col.heading}</span>
                 <div className="submenu__links">
                   {col.items.map((child) => (
-                    <Link href={child.href} key={`${item.label}-${child.label}`}>
+                    <Link href={child.href} key={`${item.label}-${child.label}`} onClick={closeNav}>
                       {child.label}
                     </Link>
                   ))}
@@ -101,6 +120,7 @@ export function Header({
             <Link
               href={child.href}
               key={`${item.label}-${child.label}`}
+              onClick={closeNav}
               onFocus={() => setActivePreviewKey(previewKeyFor(child.label))}
               onMouseEnter={() => setActivePreviewKey(previewKeyFor(child.label))}
             >
@@ -121,7 +141,12 @@ export function Header({
             <div className="submenu-preview__rows">
               {previewRows.length ? (
                 previewRows.map((row) => (
-                  <Link className="submenu-preview__row" href={row.href} key={`${activePreviewKey}-${row.label}`}>
+                  <Link
+                    className="submenu-preview__row"
+                    href={row.href}
+                    key={`${activePreviewKey}-${row.label}`}
+                    onClick={closeNav}
+                  >
                     {row.label}
                   </Link>
                 ))
@@ -141,7 +166,7 @@ export function Header({
     <header className="site-header site-header--flash" data-navigation-ready="flashmc">
       <div className="topbar">
         <div className="container topbar__inner">
-          <Link href="/" className="logo logo--topbar" aria-label="Nature Romp Safaris home">
+          <Link href="/" className="logo logo--topbar" aria-label="Nature Romp Safaris home" onClick={closeNav}>
             <Image
               src="/assets/img/logo.jpg"
               alt="Nature Romp Safaris"
@@ -186,7 +211,7 @@ export function Header({
       </div>
       <div className="navwrap">
         <div className="container nav">
-          <Link href="/" className="logo logo--compact" aria-label="Nature Romp Safaris home">
+          <Link href="/" className="logo logo--compact" aria-label="Nature Romp Safaris home" onClick={closeNav}>
             <Image
               src="/assets/img/logo.jpg"
               alt="Nature Romp Safaris"
@@ -200,7 +225,7 @@ export function Header({
           <button
             className="menu-toggle"
             type="button"
-            onClick={() => setOpen((value) => !value)}
+            onClick={toggleNav}
             aria-label="Toggle navigation"
             aria-expanded={open}
           >
@@ -213,7 +238,7 @@ export function Header({
                   className={`navgroup navgroup--${getMenuVariant(item.label)}${openGroup === item.label ? " navgroup--open" : ""}`}
                   key={item.label}
                 >
-                  <Link href={item.href}>{item.label}</Link>
+                  <Link href={item.href} onClick={closeNav}>{item.label}</Link>
                   <button
                     aria-expanded={openGroup === item.label}
                     aria-label={`Toggle ${item.label} menu`}
@@ -226,11 +251,19 @@ export function Header({
                   {renderSubmenu(item)}
                 </div>
               ) : (
-                <Link href={item.href} className={item.isPrimaryAction ? "book-btn" : undefined} key={item.label}>
+                <Link
+                  href={item.href}
+                  className={item.isPrimaryAction ? "book-btn" : undefined}
+                  key={item.label}
+                  onClick={closeNav}
+                >
                   {item.label}
                 </Link>
               )
             ))}
+            <a className="mainnav__mobile-cta" href={whatsappHref(siteSettings.whatsapp)} onClick={closeNav}>
+              Tailor Make Safari
+            </a>
           </nav>
         </div>
       </div>

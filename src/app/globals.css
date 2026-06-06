@@ -2822,7 +2822,14 @@ textarea {
   }
 
   .logo--topbar {
-    padding: 8px 10px;
+    display: none;
+  }
+
+  .navwrap .container.nav {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    padding-inline: 16px;
   }
 
   .nav {
@@ -2858,10 +2865,45 @@ textarea {
     display: grid;
     align-items: stretch;
     gap: 0;
+    left: -16px;
+    right: -16px;
+    width: calc(100% + 32px);
+    max-height: calc(100dvh - 152px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mainnav__mobile-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 12px;
+    padding: 0 18px;
+    border: 1px solid var(--header-green, var(--brand-hover));
+    border-radius: 3px;
+    color: var(--header-green, var(--brand-hover));
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .mainnav__mobile-cta:hover {
+    background: var(--brand-hover);
+    color: var(--brand-accent-ink);
+  }
+
+  .navgroup__toggle {
+    width: 44px;
+    height: 44px;
+    margin-right: -4px;
   }
 
   .mainnav>a,
   .navgroup>a {
+    min-height: 48px;
     padding: 14px 0;
     color: white;
     border-bottom: none !important;
@@ -7254,8 +7296,8 @@ textarea {
     justify-content: center;
   }
 
-  .hero__actions {
-    justify-content: flex-start;
+  .hero--cms .hero__actions {
+    justify-content: center;
   }
 
   .hero__actions .btn {
@@ -7923,6 +7965,11 @@ textarea {
 
 @media (max-width: 860px) {
   .acc-page__layout { grid-template-columns: 1fr; }
+
+  .acc-sidebar {
+    position: static;
+    top: auto;
+  }
 }
 
 .acc-sidebar {
@@ -8674,6 +8721,94 @@ textarea {
 
   .cookie-consent__actions button {
     flex: 1 1 120px;
+  }
+}
+
+/* ==========================================================================
+   PUBLIC RESPONSIVE REFINEMENTS
+   ========================================================================== */
+
+.mainnav__mobile-cta {
+  display: none;
+}
+
+@media (max-width: 1100px) and (min-width: 981px) {
+  .mainnav {
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .mainnav > a,
+  .navgroup > a {
+    padding: 20px 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-hero {
+    padding: 80px 0 56px;
+  }
+
+  .contact-map-embed {
+    height: min(360px, 55vw) !important;
+  }
+
+  .blog-article-prose table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar__contact {
+    font-size: 11px;
+  }
+
+  .navwrap .container.nav {
+    padding-inline: 12px;
+  }
+
+  .mainnav--open {
+    left: -12px;
+    right: -12px;
+    width: calc(100% + 24px);
+    max-height: calc(100dvh - 136px);
+  }
+
+  .accdet__gallery-grid--2,
+  .accdet__gallery-grid--3,
+  .accdet__gallery-grid--4,
+  .accdet__gallery-grid--5 {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    height: auto;
+  }
+
+  .accdet__gallery-cell--0 {
+    grid-row: auto;
+  }
+
+  .accdet__gallery-cell {
+    min-height: 220px;
+  }
+
+  .accdet__layout {
+    padding-inline: 16px;
+  }
+
+  .acc-page__layout {
+    padding-inline: 16px;
+  }
+
+  .about-review-marquee-container {
+    width: 100%;
+    left: auto;
+    transform: none;
   }
 }
 

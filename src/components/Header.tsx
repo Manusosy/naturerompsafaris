@@ -165,6 +165,14 @@ export function Header({
   return (
     <header className="site-header site-header--flash" data-navigation-ready="flashmc">
       <div className="topbar">
+        <div className="topbar__mobile-contact" aria-label="Contact Nature Romp Safaris">
+          <a href={`mailto:${siteSettings.email}`}>
+            <Mail size={14} /> {siteSettings.email}
+          </a>
+          <a href={`tel:${phoneHref(siteSettings.phone)}`}>
+            <Phone size={14} /> {siteSettings.phone}
+          </a>
+        </div>
         <div className="container topbar__inner">
           <Link href="/" className="logo logo--topbar" aria-label="Nature Romp Safaris home" onClick={closeNav}>
             <Image

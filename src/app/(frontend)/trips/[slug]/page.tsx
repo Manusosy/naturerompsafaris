@@ -8,6 +8,7 @@ import { TripDetailExperience, type TripDetailData } from "@/components/TripDeta
 import { site } from "@/content/site";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { formatTripPrice } from "@/lib/trip-pricing";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -113,10 +114,14 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
       title: typeof record.title === "string" ? record.title : undefined,
     };
   });
-  const budgetText = String(budget.displayText || doc.priceText || [
-    budget.currency || "USD",
-    budget.min && budget.max ? `${budget.min} - ${budget.max}` : "",
-  ].filter(Boolean).join(" "));
+  const budgetText = formatTripPrice({
+    currency: typeof budget.currency === "string" ? budget.currency : "USD",
+    displayText: typeof budget.displayText === "string" ? budget.displayText : undefined,
+    max: typeof budget.max === "number" ? budget.max : undefined,
+    min: typeof budget.min === "number" ? budget.min : undefined,
+    priceText: typeof doc.priceText === "string" ? doc.priceText : undefined,
+    pricingBasis: typeof budget.pricingBasis === "string" ? budget.pricingBasis : undefined,
+  });
   const destinationStops = Array.isArray(doc.destinationStops) && doc.destinationStops.length
     ? doc.destinationStops.map((item) => {
       const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
@@ -183,7 +188,14 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
         ? mediaUrl((relatedGallery[0] as Record<string, unknown>).image)
         : "";
       return {
-        budgetText: String(relatedBudget.displayText || record.priceText || ""),
+        budgetText: formatTripPrice({
+          currency: typeof relatedBudget.currency === "string" ? relatedBudget.currency : "USD",
+          displayText: typeof relatedBudget.displayText === "string" ? relatedBudget.displayText : undefined,
+          max: typeof relatedBudget.max === "number" ? relatedBudget.max : undefined,
+          min: typeof relatedBudget.min === "number" ? relatedBudget.min : undefined,
+          priceText: typeof record.priceText === "string" ? record.priceText : undefined,
+          pricingBasis: typeof relatedBudget.pricingBasis === "string" ? relatedBudget.pricingBasis : undefined,
+        }),
         image: firstImage,
         slug: String(record.slug || ""),
         title: String(record.title || ""),

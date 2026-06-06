@@ -325,12 +325,26 @@ export const Trips: CollectionConfig = {
       label: "Budget range",
       fields: [
         { name: "currency", type: "text", defaultValue: "USD", admin: { width: "25%" } },
-        { name: "min", type: "number", admin: { width: "37.5%" } },
-        { name: "max", type: "number", admin: { width: "37.5%" } },
+        { name: "min", type: "number", admin: { width: "25%" } },
+        { name: "max", type: "number", admin: { width: "25%" } },
+        {
+          name: "pricingBasis",
+          label: "Pricing basis",
+          type: "select",
+          defaultValue: "per-person",
+          options: [
+            { label: "Per person", value: "per-person" },
+            { label: "Per person sharing", value: "per-person-sharing" },
+          ],
+          admin: { width: "25%" },
+        },
         {
           name: "displayText",
           type: "text",
-          admin: { placeholder: "e.g. From USD 2,800 per person", description: "Overrides the min/max if set." },
+          admin: {
+            readOnly: true,
+            description: "Auto-generated from currency, min, max, and pricing basis.",
+          },
         },
       ],
     },

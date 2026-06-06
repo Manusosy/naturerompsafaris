@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, MapPin } from "lucide-react";
+import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
+
+import { getTripDesignationLabel } from "@/lib/trip-labels";
+import { getTripPriceParts } from "@/lib/trip-pricing";
 
 import { formatPackageDestinations } from "@/lib/cms-relations";
 import { mediaAlt, mediaUrl } from "@/lib/cms-media";
@@ -170,73 +173,114 @@ export type Trip = {
   days?: number;
   nights?: number;
   availability?: string;
+  packageTier?: string;
+  experienceTypes?: string[];
   budget?: {
     displayText?: string;
     currency?: string;
     min?: number;
     max?: number;
+    pricingBasis?: string;
   };
   priceText?: string;
   galleryImages?: unknown[];
+  heroImage?: unknown;
   overview?: string;
   featured?: boolean;
 };
 
-export function TripCard({ item }: { item: Trip }) {
-  const firstImageValue = Array.isArray(item.galleryImages) && item.galleryImages[0] ? item.galleryImages[0] : null;
-  const imageSrc = firstImageValue ? getImageUrl(firstImageValue) : "/assets/img/banner1.webp";
-  const imageAlt = firstImageValue ? getMediaAlt(firstImageValue, item.title || "Safari Trip") : item.title || "Safari Trip";
+const TRIP_AVAILABILITY_LABELS: Record<string, { label: string; cls: string }> = {
+  available: { label: "Available", cls: "avail--available" },
+  limited: { label: "Limited", cls: "avail--limited" },
+  "on-request": { label: "On Request", cls: "avail--request" },
+  unavailable: { label: "Unavailable", cls: "avail--unavailable" },
+};
 
-  const budgetText = item.budget?.displayText || item.priceText || (item.budget?.min ? `${item.budget?.currency || "USD"} ${item.budget.min}` : "");
+function tripDurationLabel(days?: number, nights?: number) {
+  if (!days && !nights) return "Custom duration";
+  if (days && nights) return `${days} days / ${nights} nights`;
+  if (days) return `${days} days`;
+  return `${nights} nights`;
+}
+
+function TripCardPrice({ item }: { item: Trip }) {
+  const parts = getTripPriceParts({
+    currency: item.budget?.currency,
+    displayText: item.budget?.displayText,
+    max: item.budget?.max,
+    min: item.budget?.min,
+    priceText: item.priceText,
+    pricingBasis: item.budget?.pricingBasis,
+  });
+
+  if (parts.kind === "quote") {
+    return <span className="acc-card__price-quote">{parts.label}</span>;
+  }
 
   return (
-    <article className="tour-card group h-full flex flex-col justify-between overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <div className="relative overflow-hidden aspect-[1.6/1]">
-        <Link href={`/trips/${item.slug}`} className="block h-full w-full">
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            width={640}
-            height={420}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            unoptimized
-          />
-        </Link>
-        <span className="absolute top-4 left-4 z-10 rounded-full bg-black/70 px-4 py-1.5 text-sm font-bold text-white backdrop-blur-sm">
-          {item.days ? `${item.days} Days` : "Custom"} {item.nights ? `/ ${item.nights} Nights` : ""}
-        </span>
-        {item.availability && (
-          <span className="absolute top-4 right-4 z-10 rounded-full bg-green-600/90 px-3 py-1.5 text-xs font-bold text-white uppercase tracking-wider backdrop-blur-sm shadow-sm">
-            {item.availability === "on-request" ? "On Request" : item.availability}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col flex-grow p-6">
-        <span className="mb-2 text-sm font-bold uppercase tracking-wider text-primary">
-          {item.location || "East Africa"}
-        </span>
-        <h3 className="mb-3 text-2xl font-black text-gray-900 transition-colors duration-300 hover:text-primary line-clamp-2">
+    <>
+      <span className="acc-card__price-kicker">From</span>
+      <strong className="acc-card__price-amount">{parts.amount}</strong>
+      <span className="acc-card__price-basis">{parts.basis}</span>
+    </>
+  );
+}
+
+export function TripCard({ item }: { item: Trip }) {
+  const firstGalleryImage =
+    Array.isArray(item.galleryImages) && item.galleryImages[0] ? item.galleryImages[0] : null;
+  const imageValue = item.heroImage || firstGalleryImage;
+  const imageSrc = imageValue ? getImageUrl(imageValue) : "/assets/img/banner1.webp";
+  const imageAlt = imageValue
+    ? getMediaAlt(imageValue, item.title || "Safari Trip")
+    : item.title || "Safari Trip";
+  const availability =
+    TRIP_AVAILABILITY_LABELS[item.availability || "on-request"] ?? TRIP_AVAILABILITY_LABELS["on-request"];
+  const designationLabel = getTripDesignationLabel({
+    experienceTypes: item.experienceTypes,
+    packageTier: item.packageTier,
+  });
+  const overview = item.overview ? item.overview.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+
+  return (
+    <article className="acc-card">
+      <Link className="acc-card__img-wrap" href={`/trips/${item.slug}`}>
+        <Image
+          alt={imageAlt}
+          fill
+          sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 400px"
+          src={imageSrc}
+          style={{ objectFit: "cover" }}
+          unoptimized
+        />
+        <span className={`acc-card__avail ${availability.cls}`}>{availability.label}</span>
+        {designationLabel ? <span className="acc-card__type">{designationLabel}</span> : null}
+      </Link>
+
+      <div className="acc-card__body">
+        <div className="acc-card__location">
+          <MapPin size={12} />
+          {[item.location || "East Africa", tripDurationLabel(item.days, item.nights)]
+            .filter(Boolean)
+            .join(" · ")}
+        </div>
+        <h2 className="acc-card__name">
           <Link href={`/trips/${item.slug}`}>{item.title}</Link>
-        </h3>
-        <p className="mb-6 text-base text-gray-600 line-clamp-3 leading-relaxed flex-grow">
-          {item.overview ? item.overview.replace(/<[^>]*>/g, "") : "Experience the raw majesty of East African wild reserves, luxury camps, and scenic landscapes."}
+        </h2>
+        <p className="acc-card__desc">
+          {overview
+            ? overview.length > 120
+              ? `${overview.slice(0, 120)}…`
+              : overview
+            : "Experience the raw majesty of East African wild reserves, luxury camps, and scenic landscapes."}
         </p>
-        <div className="pt-5 border-t border-gray-100 flex items-center justify-between mt-auto">
-          <div>
-            {budgetText ? (
-              <div>
-                <span className="block text-xs text-gray-400 font-bold uppercase">From</span>
-                <span className="text-xl font-black text-primary">{budgetText}</span>
-              </div>
-            ) : (
-              <span className="text-base font-bold text-gray-500">Inquire Price</span>
-            )}
+        <div className="acc-card__footer">
+          <div className="acc-card__price acc-card__price--trip">
+            <TripCardPrice item={item} />
           </div>
-          <Link
-            href={`/trips/${item.slug}`}
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-primary-dark shadow-sm hover:shadow"
-          >
-            Explore Itinerary
+          <Link className="acc-card__explore" href={`/trips/${item.slug}`}>
+            <span>View Details</span>
+            <ArrowRight aria-hidden className="acc-card__explore-icon" size={14} strokeWidth={2.5} />
           </Link>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import { getAllDestinations, getDestinationRegions } from "@/lib/destination-content";
 import { buildMetadata } from "@/lib/seo";
@@ -179,7 +180,8 @@ export default async function DestinationsPage({
                           {item.region || countryBadge.label}
                         </div>
                         <Link className="acc-card__explore" href={`/destinations/${item.slug}`}>
-                          Explore
+                          <span>Explore</span>
+                          <ArrowRight aria-hidden className="acc-card__explore-icon" size={14} strokeWidth={2.5} />
                         </Link>
                       </div>
                     </div>

@@ -9,6 +9,7 @@ import { MediaPickerField, type PortalMediaOption } from "@/components/portal/Me
 import { PlaceSearchInput } from "@/components/portal/PlaceSearchInput";
 import { slugify } from "@/lib/portal/format";
 import type { WizardLinkOption } from "@/lib/portal/data";
+import { buildTripBudgetPayload, formatTripPrice, type TripPricingBasis } from "@/lib/trip-pricing";
 
 type QaItem = { question: string; answer: string };
 type ItineraryDay = {
@@ -71,6 +72,7 @@ type WizardData = {
   budgetCurrency: string;
   budgetMin: string;
   budgetMax: string;
+  pricingBasis: TripPricingBasis;
   budgetDisplay: string;
   priceText: string;
   priceSeasons: PriceSeason[];
@@ -360,6 +362,8 @@ function buildFromDoc(doc: Record<string, unknown>): WizardData {
     budgetCurrency: String(budget.currency ?? "USD"),
     budgetMin: budget.min != null ? String(budget.min) : "",
     budgetMax: budget.max != null ? String(budget.max) : "",
+    pricingBasis:
+      budget.pricingBasis === "per-person-sharing" ? "per-person-sharing" : "per-person",
     budgetDisplay: String(budget.displayText ?? ""),
     priceText: String(doc.priceText ?? ""),
     priceSeasons: seasonsRaw.length
@@ -656,6 +660,7 @@ export function TripWizard({
           budgetCurrency: "USD",
           budgetMin: "",
           budgetMax: "",
+          pricingBasis: "per-person",
           budgetDisplay: "",
           priceText: "",
           priceSeasons: [],
@@ -780,6 +785,12 @@ export function TripWizard({
     const mapUrl = normalizeMapEmbedUrl(data.mapEmbedUrl);
     const linkedItinerary = itineraries.find((it) => it.value === data.itineraryId);
     const { days, nights } = computeTripDuration(data.itineraryMode, data.itineraryDays, linkedItinerary);
+    const budgetPayload = buildTripBudgetPayload({
+      currency: data.budgetCurrency.trim() || "USD",
+      max: data.budgetMax ? Number(data.budgetMax) : undefined,
+      min: data.budgetMin ? Number(data.budgetMin) : undefined,
+      pricingBasis: data.pricingBasis,
+    });
 
     const payload: Record<string, unknown> = {
       title: data.title.trim(),
@@ -799,18 +810,13 @@ export function TripWizard({
       overview: data.overview.trim(),
       positiveImpact: data.positiveImpact.trim(),
       quoteIntro: data.quoteIntro.trim(),
-      priceText: data.priceText.trim(),
       mapEmbedUrl: mapUrl,
       notes: data.notes.trim(),
       trustindexEmbedOverride: data.trustindexEmbedOverride.trim(),
       featured: data.featured,
       status: targetStatus,
-      budget: {
-        currency: data.budgetCurrency.trim() || "USD",
-        min: data.budgetMin ? Number(data.budgetMin) : undefined,
-        max: data.budgetMax ? Number(data.budgetMax) : undefined,
-        displayText: data.budgetDisplay.trim(),
-      },
+      budget: budgetPayload,
+      priceText: budgetPayload.displayText || "",
       discount: {
         enabled: data.discountEnabled,
         label: data.discountLabel.trim(),
@@ -1386,13 +1392,28 @@ export function TripWizard({
             </div>
 
             <div className="acc-field">
-              <label className="acc-label">Budget Display Text</label>
-              <input className="acc-input" onChange={(e) => set("budgetDisplay", e.target.value)} placeholder="From USD 2,800 per person" type="text" value={data.budgetDisplay} />
+              <label className="acc-label">Pricing Basis</label>
+              <select
+                className="acc-select"
+                onChange={(e) => set("pricingBasis", e.target.value as TripPricingBasis)}
+                value={data.pricingBasis}
+              >
+                <option value="per-person">Per person</option>
+                <option value="per-person-sharing">Per person sharing</option>
+              </select>
             </div>
 
             <div className="acc-field">
-              <label className="acc-label">Legacy Price Text</label>
-              <input className="acc-input" onChange={(e) => set("priceText", e.target.value)} type="text" value={data.priceText} />
+              <label className="acc-label">Public price line</label>
+              <p className="acc-hint" style={{ color: "#111827", fontWeight: 700, margin: 0 }}>
+                {formatTripPrice({
+                  currency: data.budgetCurrency,
+                  max: data.budgetMax ? Number(data.budgetMax) : undefined,
+                  min: data.budgetMin ? Number(data.budgetMin) : undefined,
+                  pricingBasis: data.pricingBasis,
+                })}
+              </p>
+              <p className="acc-hint">Generated automatically from currency, min, max, and pricing basis.</p>
             </div>
 
             <div className="acc-field">
@@ -1559,7 +1580,7 @@ export function TripWizard({
               <div className="acc-review__row"><span className="acc-review__label">Package</span><span className="acc-review__value">{packages.find((p) => p.value === data.packageId)?.label ?? <em>None</em>}</span></div>
               <div className="acc-review__row"><span className="acc-review__label">Destinations</span><span className="acc-review__value">{data.destinationIds.length || <em>None</em>}</span></div>
               <div className="acc-review__row"><span className="acc-review__label">Itinerary</span><span className="acc-review__value">{data.itineraryMode === "linked" ? (itineraries.find((i) => i.value === data.itineraryId)?.label ?? <em>Not linked</em>) : `${data.itineraryDays.filter((d) => d.title.trim()).length} day(s)`}</span></div>
-              <div className="acc-review__row"><span className="acc-review__label">Budget</span><span className="acc-review__value">{data.budgetDisplay || (data.budgetMin ? `${data.budgetCurrency} ${data.budgetMin}–${data.budgetMax}` : <em>Not set</em>)}</span></div>
+              <div className="acc-review__row"><span className="acc-review__label">Budget</span><span className="acc-review__value">{formatTripPrice({ currency: data.budgetCurrency, max: data.budgetMax ? Number(data.budgetMax) : undefined, min: data.budgetMin ? Number(data.budgetMin) : undefined, pricingBasis: data.pricingBasis })}</span></div>
               <div className="acc-review__row"><span className="acc-review__label">Gallery</span><span className="acc-review__value">{data.galleryImageIds.length} image(s)</span></div>
               <div className="acc-review__row"><span className="acc-review__label">Featured</span><span className="acc-review__value">{data.featured ? "Yes" : "No"}</span></div>
             </div>

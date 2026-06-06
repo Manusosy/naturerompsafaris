@@ -1,8 +1,9 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 type AuthMode = "forgot" | "login" | "register" | "reset";
 
@@ -12,6 +13,45 @@ const endpointByMode: Record<AuthMode, string> = {
   register: "/api/portal/register",
   reset: "/api/users/reset-password",
 };
+
+function PasswordField({
+  autoComplete,
+  label,
+  name,
+  required = true,
+}: {
+  autoComplete: string;
+  label: string;
+  name: string;
+  required?: boolean;
+}) {
+  const inputId = useId();
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <label className="portal-auth__password" htmlFor={inputId}>
+      {label}
+      <span className="portal-auth__password-wrap">
+        <input
+          autoComplete={autoComplete}
+          id={inputId}
+          name={name}
+          required={required}
+          type={visible ? "text" : "password"}
+        />
+        <button
+          aria-label={visible ? "Hide password" : "Show password"}
+          aria-pressed={visible}
+          className="portal-auth__password-toggle"
+          onClick={() => setVisible((value) => !value)}
+          type="button"
+        >
+          {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </span>
+    </label>
+  );
+}
 
 export function AuthPanel({
   mode,
@@ -141,7 +181,10 @@ export function AuthPanel({
           <div className="portal-auth__links">
             {isRegister ? <Link href="/admin/login">Already have an account? Login</Link> : null}
             {mode === "login" ? (
-              <Link href="/admin/forgot-password">Forgot password?</Link>
+              <>
+                <Link href="/admin/forgot-password">Forgot password?</Link>
+                <Link href="/admin/register">Don&apos;t have an account? Register</Link>
+              </>
             ) : null}
             {isForgot || isReset ? <Link href="/admin/login">Back to login</Link> : null}
           </div>

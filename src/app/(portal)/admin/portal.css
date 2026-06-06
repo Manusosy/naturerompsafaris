@@ -243,6 +243,38 @@ a {
   font-weight: 700;
 }
 
+.portal-auth__password-wrap {
+  position: relative;
+  display: block;
+}
+
+.portal-auth__password-wrap input {
+  padding-right: 48px;
+}
+
+.portal-auth__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--p-radius-sm);
+  background: transparent;
+  color: var(--p-ink-3);
+  cursor: pointer;
+}
+
+.portal-auth__password-toggle:hover,
+.portal-auth__password-toggle:focus-visible {
+  color: var(--p-green-800);
+  background: var(--p-green-100);
+  outline: none;
+}
+
 .portal-auth__error,
 .portal-form__error {
   border: 1.5px solid #f3c8bc;
@@ -3911,5 +3943,33 @@ a {
 
   .article-side {
     position: static;
+  }
+
+  .portal-auth {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-auth__image {
+    min-height: 220px;
+    padding: 32px 24px;
+  }
+
+  .portal-auth__image h1 {
+    font-size: clamp(24px, 6vw, 32px);
+  }
+
+  .portal-auth__panel {
+    min-height: auto;
+    padding: 28px 16px 40px;
+  }
+
+  .portal-auth__card {
+    width: min(100%, 420px);
+  }
+
+  .portal-auth__links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 }

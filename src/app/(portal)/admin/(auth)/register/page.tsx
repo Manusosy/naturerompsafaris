@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { AuthPanel } from "@/components/portal/AuthPanel";
 
 export default function RegisterPage() {
-  redirect("/admin/login");
+  return <AuthPanel mode="register" />;
 }

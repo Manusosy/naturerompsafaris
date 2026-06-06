@@ -161,32 +161,48 @@ export function AuthPanel({
               </label>
             ) : null}
             {!isForgot ? (
-              <label>
-                Password
-                <input autoComplete={isRegister ? "new-password" : "current-password"} name="password" required type="password" />
-              </label>
+              <PasswordField
+                autoComplete={isRegister ? "new-password" : "current-password"}
+                label="Password"
+                name="password"
+              />
             ) : null}
             {isRegister || isReset ? (
-              <label>
-                Repeat password
-                <input autoComplete="new-password" name="confirmPassword" required type="password" />
-              </label>
+              <PasswordField
+                autoComplete="new-password"
+                label="Repeat password"
+                name="confirmPassword"
+              />
             ) : null}
             {error ? <p className="portal-auth__error">{error}</p> : null}
             {message ? <p className="portal-auth__message">{message}</p> : null}
-            <button disabled={loading} type="submit">
+            <button className="portal-auth__submit" disabled={loading} type="submit">
               {loading ? "Please wait..." : isRegister ? "Create account" : isForgot ? "Send reset link" : isReset ? "Update password" : "Login"}
             </button>
           </form>
           <div className="portal-auth__links">
-            {isRegister ? <Link href="/admin/login">Already have an account? Login</Link> : null}
+            {isRegister ? (
+              <p className="portal-auth__meta">
+                Already have an account?{" "}
+                <Link className="portal-auth__link" href="/admin/login">Login</Link>
+              </p>
+            ) : null}
             {mode === "login" ? (
               <>
-                <Link href="/admin/forgot-password">Forgot password?</Link>
-                <Link href="/admin/register">Don&apos;t have an account? Register</Link>
+                <p className="portal-auth__meta">
+                  <Link className="portal-auth__link" href="/admin/forgot-password">Forgot password?</Link>
+                </p>
+                <p className="portal-auth__meta">
+                  Don&apos;t have an account?{" "}
+                  <Link className="portal-auth__link" href="/admin/register">Register</Link>
+                </p>
               </>
             ) : null}
-            {isForgot || isReset ? <Link href="/admin/login">Back to login</Link> : null}
+            {isForgot || isReset ? (
+              <p className="portal-auth__meta">
+                <Link className="portal-auth__link" href="/admin/login">Back to login</Link>
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

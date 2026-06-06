@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   Camera,
   CalendarCheck,
-  Compass,
   Globe,
   MapPin,
   PawPrint,
@@ -12,7 +11,9 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 
-import { AboutPageMotion } from "@/components/AboutPageMotion";
+import { AboutReviewsSlider } from "@/components/AboutReviewsSlider";
+import { PageHero } from "@/components/PageHero";
+import { SectionHeader } from "@/components/Sections";
 import { JsonLd } from "@/components/JsonLd";
 import { site } from "@/content/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
@@ -42,39 +43,89 @@ const whyItems = [
 
 const stats = [
   { icon: Globe, number: "15+", label: "Destinations" },
-  { icon: MapPin, number: "20+", label: "Amazing Tours" },
+  { icon: MapPin, number: "20+", label: "Safari Routes" },
   { icon: Camera, number: "12+", label: "Tour Types" },
-  { icon: Users, number: "86+", label: "Happy Customers" },
+  { icon: Users, number: "86+", label: "Happy Travelers" },
+];
+
+const featureImages = [
+  {
+    alt: "Elephant herd on the savanna",
+    className: "about-features__cell--hero",
+    height: 640,
+    src: "/assets/img/about/about-elephants.jpg",
+    width: 720,
+  },
+  {
+    alt: "Cheetah in the grass",
+    className: "",
+    height: 320,
+    src: "/assets/img/about/about-cheetah.jpg",
+    width: 480,
+  },
+  {
+    alt: "Lion resting in the bush",
+    className: "",
+    height: 320,
+    src: "/assets/img/about/about-lion.jpg",
+    width: 480,
+  },
+  {
+    alt: "Scenic East Africa landscape",
+    className: "about-features__cell--wide",
+    height: 320,
+    src: "/assets/img/about/about-scenic.jpg",
+    width: 960,
+  },
+  {
+    alt: "Zebra on safari",
+    className: "",
+    height: 280,
+    src: "/assets/img/about/about-zebra.jpg",
+    width: 480,
+  },
+  {
+    alt: "Birdlife in East Africa",
+    className: "",
+    height: 280,
+    src: "/assets/img/about/about-birds.jpg",
+    width: 480,
+  },
+  {
+    alt: "Nature Romp Safaris vehicle on safari",
+    className: "",
+    height: 280,
+    src: "/assets/img/about/about-jeep.jpg",
+    width: 480,
+  },
 ];
 
 const googleReviews = [
   {
     avatar: "CO",
-    date: "2024.11.26.",
+    date: "Nov 26, 2024",
     name: "Charles Otieno",
     text: "I initially asked for 3 quotations for my 7-days safari in Kenya covering Masai Mara, Amboseli, Nakuru and Naivasha. Ms Yvonne from Nature Romp Safaris was by far the most patient and outstanding in answering my questions.",
   },
   {
     avatar: "P",
-    date: "2024.03.09.",
+    date: "Mar 9, 2024",
     name: "Paola",
     text: "Great experience, I recommend it.",
   },
   {
     avatar: "G",
-    date: "2024.03.09.",
+    date: "Mar 9, 2024",
     name: "Gayatri Rawat",
     text: "They were so kind and helpful. Really appreciate the care and support.",
   },
   {
     avatar: "AV",
-    date: "2025.02.",
+    date: "Feb 2025",
     name: "Ajith Vasudevan",
     text: "We opted for a private tour covering Masai Mara, Nakuru and Amboseli. We instantly felt at home, and our guide Maxwell was excellent with birds, animals and safe driving.",
   },
 ];
-
-const reviewsDouble = [...googleReviews, ...googleReviews, ...googleReviews, ...googleReviews];
 
 export const metadata: Metadata = buildMetadata({
   title: "Expert Kenya & East Africa Safari Operators",
@@ -112,118 +163,114 @@ export default function AboutPage() {
   };
 
   return (
-    <main className="about-page-redesign">
-      <AboutPageMotion />
-      <JsonLd data={breadcrumbSchema([
-        { name: "Home", url: "/" },
-        { name: "About Us", url: "/about" },
-      ])} />
+    <main className="about-page">
+      <PageHero
+        eyebrow="Who we are"
+        subtitle="A Nairobi safari company crafting tailor-made journeys across Kenya, Tanzania, and East Africa."
+        title="About Nature Romp Safaris"
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "About Us", url: "/about" },
+        ])}
+      />
       <JsonLd data={aboutSchema} />
 
-      {/* Hero Section */}
-      <section className="about-hero" data-animate="hero">
-        <Image
-          alt="East Africa safari landscape with wildlife"
-          className="about-hero__image"
-          fill
-          priority
-          sizes="100vw"
-          src="/assets/img/about/about-lion.jpg"
-        />
-        <div className="about-hero__overlay" />
-        <div className="container about-hero__content">
-          <h1>About Us</h1>
-        </div>
-      </section>
-
-      {/* Our Journey Section */}
-      <section className="about-journey-section">
-        <div className="container about-journey-grid">
-          <div className="about-journey-content">
-            <span className="about-kicker">Who We Are</span>
-            <h2>Our Journey</h2>
-            <div className="about-journey-text">
-              <p>
-                Most travelers dream of Africa through sunrise game drives, endless plains,
-                the Serengeti horizon, and the first quiet moment when a lion appears in the grass.
-                The harder question is where to begin, who to trust, and how to make every day feel
-                worth the distance traveled.
-              </p>
-              <p>
-                That is where Nature Romp Safaris comes in.
-              </p>
-              <p>
-                We are a professionally established Nairobi safari company creating personalized,
-                authentic, and carefully planned African safari experiences. Our work covers tailor-made
-                safaris across Kenya, Tanzania, Uganda, Rwanda, and Zanzibar, matching different budgets,
-                lodge styles, routes, seasons, and expectations without losing the feeling of being looked after.
-              </p>
-              <p>
-                More than just a tour provider, Nature Romp Safaris guides travelers through
-                once-in-a-lifetime African journeys with expertise, attention to detail, and a deep respect
-                for wildlife and culture. Our local safari experts understand hidden gems, migration timing,
-                road realities, and carefully selected lodges to ensure every traveler feels at home in the
-                heart of the wild.
-              </p>
-              <p>
-                When you travel with us, you do not just see Africa. You feel it.
-              </p>
-            </div>
-            <Link href="/trips" className="btn--primary about-btn">
-              View Our Tours
+      <section className="section about-intro">
+        <div className="container about-intro__grid">
+          <div className="about-intro__copy">
+            <div className="section-kicker">Our journey</div>
+            <h2>Wild Africa, your way.</h2>
+            <p>
+              Most travelers dream of Africa through sunrise game drives, endless plains,
+              the Serengeti horizon, and the first quiet moment when a lion appears in the grass.
+              The harder question is where to begin, who to trust, and how to make every day feel
+              worth the distance traveled.
+            </p>
+            <p>That is where Nature Romp Safaris comes in.</p>
+            <p>
+              We are a professionally established Nairobi safari company creating personalized,
+              authentic, and carefully planned African safari experiences. Our work covers tailor-made
+              safaris across Kenya, Tanzania, Uganda, Rwanda, and Zanzibar, matching different budgets,
+              lodge styles, routes, seasons, and expectations without losing the feeling of being looked after.
+            </p>
+            <p>
+              More than just a tour provider, Nature Romp Safaris guides travelers through
+              once-in-a-lifetime African journeys with expertise, attention to detail, and a deep respect
+              for wildlife and culture.
+            </p>
+            <Link className="btn btn--primary" href="/trips">
+              View our tours
             </Link>
           </div>
-          <figure className="about-journey-media">
+          <figure className="about-intro__figure">
             <Image
-              alt="Nature Romp Safaris team and vehicles"
-              height={500}
-              width={600}
+              alt="Nature Romp Safaris team preparing a safari vehicle"
+              className="about-intro__image"
+              height={620}
+              priority
               src="/assets/img/about/about-jeep.jpg"
-              className="about-journey-img"
+              width={560}
             />
           </figure>
         </div>
       </section>
 
-      {/* Why Travel With Us Section */}
-      <section className="about-why-section">
+      <section className="about-features" aria-label="Safari moments from the field">
         <div className="container">
-          <div className="about-section-header">
-            <span className="about-kicker about-kicker--center">Why Travel With Us</span>
-            <h2>We Make Your Safari a Story Worth Telling.</h2>
+          <div className="about-features__head">
+            <div className="section-kicker">From the field</div>
+            <h2>East Africa through our lens.</h2>
           </div>
-          <div className="about-why-grid">
+          <div className="about-features__mosaic">
+            {featureImages.map((image) => (
+              <figure className={`about-features__cell ${image.className}`.trim()} key={image.src}>
+                <Image
+                  alt={image.alt}
+                  className="about-features__image"
+                  height={image.height}
+                  src={image.src}
+                  width={image.width}
+                />
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section about-values">
+        <div className="container">
+          <SectionHeader
+            eyebrow="Why travel with us"
+            title="We make your safari a story worth telling."
+          />
+          <div className="about-values__list">
             {whyItems.map((item) => {
               const Icon = item.icon;
               return (
-                <div className="about-why-card" key={item.title}>
-                  <div className="about-why-icon">
-                    <Icon size={40} strokeWidth={1.5} />
+                <article className="about-values__item" key={item.title}>
+                  <div className="about-values__icon" aria-hidden="true">
+                    <Icon size={22} strokeWidth={1.75} />
                   </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </article>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="about-stats-section">
-        <Image
-          alt="Gazelles in the wild"
-          fill
-          src="/assets/img/about/about-scenic.jpg"
-          className="about-stats-bg"
-        />
-        <div className="about-stats-overlay" />
-        <div className="container about-stats-grid">
-          {stats.map((stat, i) => {
+      <section className="about-metrics" aria-label="Safari experience highlights">
+        <div className="container about-metrics__grid">
+          {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div className="about-stat-item" key={i}>
-                <Icon size={48} strokeWidth={1} />
+              <div className="about-metrics__item" key={stat.label}>
+                <Icon size={24} strokeWidth={1.5} />
                 <strong>{stat.number}</strong>
                 <span>{stat.label}</span>
               </div>
@@ -232,33 +279,33 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Customer Reviews Section */}
-      <section className="about-reviews-section">
+      <section className="about-statement-band">
         <div className="container">
-          <div className="about-section-header">
-            <span className="about-kicker about-kicker--center">Testimonials</span>
-            <h2>Our Customer Reviews</h2>
-          </div>
-          <div className="about-review-track-container">
-            <div className="about-review-track">
-              {reviewsDouble.map((review, idx) => (
-                <article className="about-review-card-modern" key={`${review.name}-${idx}`}>
-                  <div className="about-review-modern-top">
-                    <div className="about-review-avatar-modern">{review.avatar}</div>
-                    <div className="about-review-meta">
-                      <h4>{review.name}</h4>
-                      <span>{review.date}</span>
-                    </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="about-review-google-icon" />
-                  </div>
-                  <div className="about-review-stars">
-                    ★★★★★
-                  </div>
-                  <p>{review.text}</p>
-                  <Link href="#" className="about-review-read-more">Read more</Link>
-                </article>
-              ))}
-            </div>
+          <p>When you travel with us, you do not just see Africa. You feel it.</p>
+        </div>
+      </section>
+
+      <section className="section about-reviews-clean">
+        <div className="container">
+          <SectionHeader eyebrow="Google reviews" title="What travelers say about us" />
+          <AboutReviewsSlider reviews={googleReviews} />
+        </div>
+      </section>
+
+      <section className="about-cta-band">
+        <div className="container about-cta-band__inner">
+          <h2>Ready to plan your safari?</h2>
+          <p>
+            Share your route ideas, travel dates, and comfort level. We will prepare a practical
+            quote-first proposal for your Kenya or Tanzania adventure.
+          </p>
+          <div className="about-cta-band__actions">
+            <Link className="btn btn--primary" href="/contact">
+              Request a quote
+            </Link>
+            <Link className="btn about-cta-band__secondary" href="/trips">
+              Browse tours
+            </Link>
           </div>
         </div>
       </section>

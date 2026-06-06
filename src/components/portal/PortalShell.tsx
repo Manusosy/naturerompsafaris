@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search, Settings, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { notificationLink, sidebarGroups, sidebarItems } from "@/lib/portal/modules";
 
@@ -116,6 +116,15 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [drawerOpen]);
+
   const [openGroup, setOpenGroup] = useState<string | null>(() => {
     const active = sidebarGroups.find(
       (g) =>
@@ -207,11 +216,21 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
 
   return (
     <div className={collapsed ? "portal-app has-collapsed-sidebar" : "portal-app"}>
-      <div className={drawerOpen ? "portal-drawer is-open" : "portal-drawer"}>
-        <button className="portal-drawer__close" onClick={() => setDrawerOpen(false)} type="button">
-          <X size={20} />
-        </button>
-        {sidebar}
+      <div
+        className={drawerOpen ? "portal-drawer is-open" : "portal-drawer"}
+        onClick={() => setDrawerOpen(false)}
+      >
+        <div className="portal-drawer__panel" onClick={(event) => event.stopPropagation()}>
+          <button
+            aria-label="Close menu"
+            className="portal-drawer__close"
+            onClick={() => setDrawerOpen(false)}
+            type="button"
+          >
+            <X size={20} />
+          </button>
+          {sidebar}
+        </div>
       </div>
       <div className="portal-desktop-sidebar">{sidebar}</div>
 

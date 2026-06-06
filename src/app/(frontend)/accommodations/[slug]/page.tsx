@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+import { DetailGallerySlider } from "@/components/DetailGallerySlider";
 import { getAccommodationBySlug } from "@/lib/accommodation-content";
 
 export const dynamic = "force-dynamic";
@@ -79,6 +80,13 @@ export default async function AccommodationDetailPage({
 
       {/* Hero Gallery */}
       <section className="accdet__gallery">
+        <DetailGallerySlider
+          className="accdet__gallery-slider"
+          images={allImages.map((url, index) => ({
+            alt: `${item.name} — photo ${index + 1}`,
+            src: url,
+          }))}
+        />
         {allImages.length > 0 ? (
           <div className={`accdet__gallery-grid accdet__gallery-grid--${Math.min(allImages.length, 5)}`}>
             {allImages.slice(0, 5).map((url, i) => (
@@ -93,9 +101,9 @@ export default async function AccommodationDetailPage({
                 />
               </div>
             ))}
-            {allImages.length > 5 && (
+            {allImages.length > 5 ? (
               <div className="accdet__gallery-more">+{allImages.length - 5} more</div>
-            )}
+            ) : null}
           </div>
         ) : (
           <div className="accdet__gallery-placeholder">No photos available</div>

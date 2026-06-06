@@ -24,6 +24,7 @@ export const SiteSettings: GlobalConfig = {
     { name: "instagram", type: "text" },
     { name: "twitter", type: "text" },
     { name: "youtube", type: "text" },
+    { name: "tiktok", type: "text" },
     {
       name: "heroSlides",
       label: "Homepage hero slides",

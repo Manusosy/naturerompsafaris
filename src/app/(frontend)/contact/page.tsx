@@ -18,27 +18,50 @@ export default function ContactPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Safari planning"
-        title="Request a Free Quote"
-        subtitle="Share your preferred route, dates, travelers, comfort level, and budget range. Nature Romp Safaris will prepare a quote-first Kenya and Tanzania safari plan."
+        eyebrow="Get in touch"
+        title="Contact Nature Romp Safaris"
+        subtitle="Choose the enquiry type that fits you best. General questions, safari quotes, and follow-up requests each have a shorter form so you only fill in what matters."
       />
       <section className="contact-quote-section">
         <div className="container contact-quote-layout">
           <div className="contact-quote-main">
-            <div className="section-kicker">Plan your safari</div>
-            <h2>Tell us what kind of Kenya or Tanzania adventure you want.</h2>
+            <div className="section-kicker">How can we help?</div>
+            <h2>Send the right message without filling everything at once.</h2>
             <p>
-              No payment is collected on the website. This form gives the team enough context to prepare a practical safari proposal and follow up with the right options.
+              Use General Contact for quick questions, Safari Quote when you want a tailored proposal, or Other Enquiry for booking follow-ups. No payment is collected on the website.
             </p>
             <SafariQuoteForm subject="Website safari quote request" />
           </div>
           <aside className="contact-panel contact-panel--sticky">
             <h2>Contact Details</h2>
             <ul className="info-list">
-              <li><MapPin size={18} /> <span><strong>Main office</strong>{site.address}</span></li>
-              <li><Mail size={18} /> <span><strong>Email Address</strong>{site.email}</span></li>
-              <li><Phone size={18} /> <span><strong>Call Us</strong>{site.phone}</span></li>
-              <li><Globe2 size={18} /> <span><strong>Website</strong>www.naturerompsafaris.com</span></li>
+              <li>
+                <MapPin size={18} />{" "}
+                <span>
+                  <strong>Main office</strong>
+                  {site.address}
+                </span>
+              </li>
+              <li>
+                <Mail size={18} />{" "}
+                <span>
+                  <strong>Email Address</strong>
+                  {site.email}
+                </span>
+              </li>
+              <li>
+                <Phone size={18} />{" "}
+                <span>
+                  <strong>Call Us</strong>
+                  {site.phone}
+                </span>
+              </li>
+              <li>
+                <Globe2 size={18} />{" "}
+                <span>
+                  <strong>Website</strong>www.naturerompsafaris.com
+                </span>
+              </li>
             </ul>
             <div className="contact-trust">
               <h3>Why travelers enquire with us</h3>

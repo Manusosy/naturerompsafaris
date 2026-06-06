@@ -10,6 +10,7 @@
     "build": "next build",
     "db:sync-accommodations": "node scripts/sync-accommodation-schema.mjs",
     "db:sync:flash-trip": "node scripts/sync-flash-trip-schema.mjs",
+    "db:sync:portal-signup": "node scripts/sync-portal-signup-schema.mjs",
     "db:migrate:production-cms": "node scripts/migrate-production-cms-redesign.mjs",
     "secret:scan": "node scripts/secret-scan.mjs",
     "test": "vitest run",

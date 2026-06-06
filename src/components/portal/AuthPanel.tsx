@@ -53,6 +53,8 @@ function PasswordField({
   );
 }
 
+type RegisterPhase = "details" | "verify";
+
 export function AuthPanel({
   mode,
   token,
@@ -63,6 +65,43 @@ export function AuthPanel({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registerPhase, setRegisterPhase] = useState<RegisterPhase>("verify");
+  const [registerEmail, setRegisterEmail] = useState("");
+
+  async function requestVerificationCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+    setLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+    try {
+      const res = await fetch("/api/portal/register/request-code", {
+        body: JSON.stringify({ email }),
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+
+      const data = await res.json().catch(() => null);
+      const apiMessage =
+        data?.message ||
+        "If this email is authorized for portal access, a verification code has been sent.";
+
+      if (!res.ok) {
+        setError("We could not send a verification code right now. Try again shortly.");
+        return;
+      }
+
+      setRegisterEmail(email);
+      setRegisterPhase("details");
+      setMessage(apiMessage);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,10 +119,27 @@ export function AuthPanel({
       return;
     }
 
+    if (mode === "register") {
+      if (password.length < 12) {
+        setError("Password must be at least 12 characters.");
+        setLoading(false);
+        return;
+      }
+
+      if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+        setError("Password must include at least one letter and one number.");
+        setLoading(false);
+        return;
+      }
+    }
+
     const payload: Record<string, unknown> = {};
     formData.forEach((value, key) => {
       if (key !== "confirmPassword") payload[key] = value;
     });
+    if (mode === "register" && registerEmail) {
+      payload.email = registerEmail;
+    }
     if (token) payload.token = token;
 
     try {
@@ -121,8 +177,12 @@ export function AuthPanel({
   const isRegister = mode === "register";
   const isForgot = mode === "forgot";
   const isReset = mode === "reset";
+  const isRegisterVerifyStep = isRegister && registerPhase === "verify";
+  const isRegisterDetailsStep = isRegister && registerPhase === "details";
   const title = isRegister
-    ? "Create Account"
+    ? isRegisterVerifyStep
+      ? "Verify Email"
+      : "Create Account"
     : isForgot
       ? "Reset Access"
       : isReset
@@ -141,45 +201,106 @@ export function AuthPanel({
         <div className="portal-auth__card">
           <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={128} height={74} priority />
           <h2>{title}</h2>
-          <form onSubmit={submit}>
-            {isRegister ? (
-              <div className="portal-auth__grid">
-                <label>
-                  First name
-                  <input autoComplete="given-name" name="firstName" required />
-                </label>
-                <label>
-                  Second name
-                  <input autoComplete="family-name" name="lastName" required />
-                </label>
-              </div>
-            ) : null}
-            {!isReset ? (
+          {isRegisterVerifyStep ? (
+            <form onSubmit={requestVerificationCode}>
               <label>
-                Email
-                <input autoComplete="email" name="email" required type="email" />
+                Company email
+                <input
+                  autoComplete="email"
+                  defaultValue={registerEmail}
+                  name="email"
+                  placeholder="you@naturerompsafaris.com"
+                  required
+                  type="email"
+                />
               </label>
-            ) : null}
-            {!isForgot ? (
-              <PasswordField
-                autoComplete={isRegister ? "new-password" : "current-password"}
-                label="Password"
-                name="password"
-              />
-            ) : null}
-            {isRegister || isReset ? (
-              <PasswordField
-                autoComplete="new-password"
-                label="Repeat password"
-                name="confirmPassword"
-              />
-            ) : null}
-            {error ? <p className="portal-auth__error">{error}</p> : null}
-            {message ? <p className="portal-auth__message">{message}</p> : null}
-            <button className="portal-auth__submit" disabled={loading} type="submit">
-              {loading ? "Please wait..." : isRegister ? "Create account" : isForgot ? "Send reset link" : isReset ? "Update password" : "Login"}
-            </button>
-          </form>
+              <p className="portal-auth__meta">
+                Only verified @naturerompsafaris.com addresses can request portal access.
+              </p>
+              {error ? <p className="portal-auth__error">{error}</p> : null}
+              {message ? <p className="portal-auth__message">{message}</p> : null}
+              <button className="portal-auth__submit" disabled={loading} type="submit">
+                {loading ? "Please wait..." : "Send verification code"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={submit}>
+              {isRegisterDetailsStep ? (
+                <>
+                  <p className="portal-auth__meta">
+                    Verification code sent to <strong>{registerEmail}</strong>.{" "}
+                    <button
+                      className="portal-auth__link"
+                      onClick={() => {
+                        setRegisterPhase("verify");
+                        setError("");
+                        setMessage("");
+                      }}
+                      type="button"
+                    >
+                      Use a different email
+                    </button>
+                  </p>
+                  <label>
+                    Verification code
+                    <input
+                      autoComplete="one-time-code"
+                      inputMode="numeric"
+                      maxLength={6}
+                      name="code"
+                      pattern="[0-9]{6}"
+                      placeholder="6-digit code"
+                      required
+                      type="text"
+                    />
+                  </label>
+                  <div className="portal-auth__grid">
+                    <label>
+                      First name
+                      <input autoComplete="given-name" name="firstName" required />
+                    </label>
+                    <label>
+                      Second name
+                      <input autoComplete="family-name" name="lastName" required />
+                    </label>
+                  </div>
+                </>
+              ) : null}
+              {!isReset && !isRegisterDetailsStep ? (
+                <label>
+                  Email
+                  <input autoComplete="email" name="email" required type="email" />
+                </label>
+              ) : null}
+              {!isForgot && !isRegisterVerifyStep ? (
+                <PasswordField
+                  autoComplete={isRegister ? "new-password" : "current-password"}
+                  label="Password"
+                  name="password"
+                />
+              ) : null}
+              {(isRegisterDetailsStep || isReset) ? (
+                <PasswordField
+                  autoComplete="new-password"
+                  label="Repeat password"
+                  name="confirmPassword"
+                />
+              ) : null}
+              {error ? <p className="portal-auth__error">{error}</p> : null}
+              {message ? <p className="portal-auth__message">{message}</p> : null}
+              <button className="portal-auth__submit" disabled={loading} type="submit">
+                {loading
+                  ? "Please wait..."
+                  : isRegisterDetailsStep
+                    ? "Create account"
+                    : isForgot
+                      ? "Send reset link"
+                      : isReset
+                        ? "Update password"
+                        : "Login"}
+              </button>
+            </form>
+          )}
           <div className="portal-auth__links">
             {isRegister ? (
               <p className="portal-auth__meta">

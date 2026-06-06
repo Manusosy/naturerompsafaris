@@ -1230,24 +1230,14 @@ export function ResourceForm({
     <form ref={formRef} onSubmit={(e) => submit(e, pendingAction.current)}>
       <div className="portal-form-layout">
         {/* Save bar */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 14,
-            padding: "14px 0",
-            borderBottom: "1.5px solid var(--p-line)",
-            marginBottom: 4,
-          }}
-        >
-          <div>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "var(--p-ink)" }}>{title}</h2>
-            <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--p-muted)" }}>
+        <div className="portal-form-toolbar">
+          <div className="portal-form-toolbar__copy">
+            <h2>{title}</h2>
+            <p>
               {hasDraftPublish ? "Save a draft at any time. Fill all required fields before publishing." : "Fill in the fields below and save when ready."}
             </p>
           </div>
-          <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
+          <div className="portal-form-toolbar__actions">
             {hasDraftPublish ? (
               <>
                 <button

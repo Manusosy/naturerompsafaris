@@ -19,6 +19,7 @@ export type PublicSiteSettings = {
   quickLinks: FooterQuickLink[];
   siteName: string;
   twitter?: string;
+  tiktok?: string;
   whatsapp: string;
   whatsappEnquiryMessage: string;
   youtube?: string;
@@ -63,9 +64,11 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       twitter: typeof settings.twitter === "string" ? settings.twitter : undefined,
       whatsapp: String(settings.whatsapp || site.whatsapp),
       whatsappEnquiryMessage: String(
-        settings.whatsappEnquiryMessage || `Hello ${site.company}, I would like to plan a ${site.name}.`,
+        settings.whatsappEnquiryMessage ||
+          "Hello Nature Romp Safaris! I'd like help planning my Kenya/Tanzania safari. Could you guide me on destinations, travel dates, group size, and the best options for my trip?",
       ),
       youtube: typeof settings.youtube === "string" ? settings.youtube : undefined,
+      tiktok: typeof settings.tiktok === "string" ? settings.tiktok : undefined,
     };
   } catch {
     return {
@@ -77,7 +80,8 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       quickLinks: site.footerQuickLinks,
       siteName: site.name,
       whatsapp: site.whatsapp,
-      whatsappEnquiryMessage: `Hello ${site.company}, I would like to plan a ${site.name}.`,
+      whatsappEnquiryMessage:
+        "Hello Nature Romp Safaris! I'd like help planning my Kenya/Tanzania safari. Could you guide me on destinations, travel dates, group size, and the best options for my trip?",
     };
   }
 }

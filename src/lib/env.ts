@@ -21,6 +21,14 @@ const envSchema = z.object({
   ENQUIRY_FROM_EMAIL: z
     .string()
     .default("Nature Romp Safaris <inquiries@naturerompsafaris.com>"),
+  SIGNUP_SMTP_HOST: z.string().optional(),
+  SIGNUP_SMTP_PORT: z.coerce.number().optional(),
+  SIGNUP_SMTP_USER: z.string().optional(),
+  SIGNUP_SMTP_PASSWORD: z.string().optional(),
+  SIGNUP_FROM_EMAIL: z
+    .string()
+    .default("Nature Romp Safaris <no-reply@naturerompsafaris.com>"),
+  PORTAL_SIGNUP_ENABLED: z.enum(["true", "false"]).default("true"),
   WHATSAPP_NUMBER: z.string().default("+254722714812"),
 });
 
@@ -35,16 +43,23 @@ export type AppEnv = {
   SMTP_HOST?: string;
   SMTP_PORT: number;
   SMTP_USER?: string;
+  SIGNUP_SMTP_HOST: string;
+  SIGNUP_SMTP_PORT: number;
+  SIGNUP_SMTP_USER?: string;
+  SIGNUP_FROM_EMAIL: string;
   WHATSAPP_NUMBER: string;
   ADMIN_EMAIL_DOMAIN: string;
   PAYLOAD_DEV_SCHEMA_PUSH: boolean;
+  PORTAL_SIGNUP_ENABLED: boolean;
   hasEmailProvider: boolean;
   hasSmtpProvider: boolean;
+  hasSignupSmtpProvider: boolean;
   getEmailFromAddress: () => string;
   getEmailFromName: () => string;
   getPayloadSecret: () => string;
   getResendApiKey: () => string | undefined;
   getSmtpPassword: () => string;
+  getSignupSmtpPassword: () => string;
 };
 
 export function normalizeDatabaseUrl(databaseUrl: string) {
@@ -110,6 +125,13 @@ export function parseEnv(source: Record<string, string | undefined>): AppEnv {
   const hasSmtpProvider = Boolean(
     values.SMTP_HOST?.trim() && values.SMTP_USER?.trim() && values.SMTP_PASSWORD?.trim(),
   );
+  const signupSmtpHost = values.SIGNUP_SMTP_HOST?.trim() || values.SMTP_HOST?.trim() || "";
+  const signupSmtpPort = values.SIGNUP_SMTP_PORT ?? values.SMTP_PORT;
+  const hasSignupSmtpProvider = Boolean(
+    signupSmtpHost &&
+      values.SIGNUP_SMTP_USER?.trim() &&
+      values.SIGNUP_SMTP_PASSWORD?.trim(),
+  );
 
   return {
     DATABASE_URL: databaseUrl,
@@ -124,16 +146,23 @@ export function parseEnv(source: Record<string, string | undefined>): AppEnv {
     SMTP_HOST: values.SMTP_HOST?.trim() || undefined,
     SMTP_PORT: values.SMTP_PORT,
     SMTP_USER: values.SMTP_USER?.trim() || undefined,
+    SIGNUP_SMTP_HOST: signupSmtpHost,
+    SIGNUP_SMTP_PORT: signupSmtpPort,
+    SIGNUP_SMTP_USER: values.SIGNUP_SMTP_USER?.trim() || undefined,
+    SIGNUP_FROM_EMAIL: values.SIGNUP_FROM_EMAIL,
     WHATSAPP_NUMBER: values.WHATSAPP_NUMBER,
     ADMIN_EMAIL_DOMAIN: values.ADMIN_EMAIL_DOMAIN.toLowerCase().replace(/^@/, ""),
     PAYLOAD_DEV_SCHEMA_PUSH: values.PAYLOAD_DEV_SCHEMA_PUSH === "true",
+    PORTAL_SIGNUP_ENABLED: values.PORTAL_SIGNUP_ENABLED === "true",
     hasEmailProvider: hasSmtpProvider || Boolean(values.RESEND_API_KEY?.trim()),
     hasSmtpProvider,
+    hasSignupSmtpProvider,
     getPayloadSecret: () => values.PAYLOAD_SECRET,
     getResendApiKey: () => values.RESEND_API_KEY?.trim() || undefined,
     getEmailFromAddress: () => emailSender.address,
     getEmailFromName: () => emailSender.name,
     getSmtpPassword: () => values.SMTP_PASSWORD?.trim() ?? "",
+    getSignupSmtpPassword: () => values.SIGNUP_SMTP_PASSWORD?.trim() ?? "",
   };
 }
 

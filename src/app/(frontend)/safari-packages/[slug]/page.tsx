@@ -6,6 +6,7 @@ import { CheckCircle2, ChevronRight, Clock, Compass, MapPin } from "lucide-react
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
+import { DetailGallerySlider, type DetailGalleryImage } from "@/components/DetailGallerySlider";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { JsonLd } from "@/components/JsonLd";
 import { PackageEnhancementsView } from "@/components/PackageEnhancements";
@@ -47,6 +48,38 @@ function stripHtml(value: unknown) {
   return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function collectPackageGalleryImages(
+  item: Record<string, unknown>,
+  title: string,
+): DetailGalleryImage[] {
+  const images: DetailGalleryImage[] = [];
+  const seen = new Set<string>();
+
+  const addImage = (src: string | undefined, alt: string) => {
+    if (!src || seen.has(src)) return;
+    seen.add(src);
+    images.push({ alt, src });
+  };
+
+  addImage(getImageUrl(item.image), getMediaAlt(item.image, title));
+
+  const seo = item.seo && typeof item.seo === "object" ? (item.seo as Record<string, unknown>) : null;
+  addImage(getImageUrl(seo?.openGraphImage), getMediaAlt(seo?.openGraphImage, title));
+
+  const accommodations = Array.isArray(item.accommodations) ? item.accommodations : [];
+  for (const accommodation of accommodations) {
+    if (!accommodation || typeof accommodation !== "object") continue;
+    const record = accommodation as Record<string, unknown>;
+    const name = typeof record.name === "string" ? record.name : "Safari accommodation";
+    const photos = Array.isArray(record.photos) ? record.photos : [];
+    for (const photo of photos) {
+      addImage(getImageUrl(photo), getMediaAlt(photo, name));
+    }
+  }
+
+  return images;
+}
+
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
@@ -84,7 +117,7 @@ export default async function PackageDetailPage({ params }: Props) {
   const result = await payload.find({
     collection: "packages",
     where: { slug: { equals: slug } },
-    depth: 1,
+    depth: 2,
     overrideAccess: true,
   });
   const item = result.docs[0];
@@ -105,6 +138,10 @@ export default async function PackageDetailPage({ params }: Props) {
   const enhancements = await getPackageEnhancements(slug);
   const imageSrc = getImageUrl(item.image);
   const imageAlt = getMediaAlt(item.image, item.title);
+  const galleryImages = collectPackageGalleryImages(
+    item as Record<string, unknown>,
+    item.title,
+  );
   const route = routeEndpoints(destinationsLabel);
   const overviewText =
     stripHtml(item.content) ||
@@ -119,6 +156,30 @@ export default async function PackageDetailPage({ params }: Props) {
         { name: "Safari Packages", url: "/safari-packages" },
         { name: item.title, url: `/safari-packages/${item.slug}` },
       ])} />
+
+      <section className="pkg-detail__mobile-gallery" aria-label="Package image gallery">
+        <DetailGallerySlider images={galleryImages} />
+      </section>
+
+      <section className="pkg-detail__mobile-head">
+        <div className="container">
+          <span className="pkg-detail__category">{item.category || "Safari Package"}</span>
+          <h1>{item.title}</h1>
+          <div className="pkg-route-card pkg-route-card--compact" aria-label="Trip route">
+            <div className="pkg-route-card__stop">
+              <Compass aria-hidden size={40} />
+              <span>Starts in</span>
+              <strong>{route.start}</strong>
+            </div>
+            <span className="pkg-route-card__line" aria-hidden />
+            <div className="pkg-route-card__stop">
+              <MapPin aria-hidden size={40} />
+              <span>Ends in</span>
+              <strong>{route.end}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="pkg-detail__hero">
         <Image

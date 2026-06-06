@@ -218,44 +218,50 @@ export function MediaLibrary({
       </div>
 
       {selectedDoc ? (
-        <form className="media-upload-card" onSubmit={saveMediaChanges} style={{ alignItems: "flex-start", background: "var(--p-surface-2)", border: "1.5px solid var(--p-line)", borderRadius: "var(--p-radius)" }}>
-          <div style={{ display: "flex", gap: "16px", width: "100%", alignItems: "flex-start" }}>
-            <div style={{ flexShrink: 0, width: "120px", height: "90px", position: "relative", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--p-line)" }}>
-              <Image
-                alt="Selected"
-                fill
-                src={imageUrl(selectedDoc)}
-                style={{ objectFit: "cover" }}
-              />
+        <form
+          className="media-upload-card"
+          onSubmit={saveMediaChanges}
+          style={{
+            alignItems: "flex-start",
+            background: "var(--p-surface-2)",
+            border: "1.5px solid var(--p-line)",
+            borderRadius: "var(--p-radius)",
+          }}
+        >
+          <div className="media-upload-card__row">
+            <div className="media-upload-card__preview">
+              <Image alt="Selected" fill src={imageUrl(selectedDoc)} style={{ objectFit: "cover" }} />
             </div>
-            <div style={{ flex: 1, minWidth: 0, display: "grid", gap: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="media-upload-card__body">
+              <div className="media-upload-card__head">
                 <div>
-                  <span style={{ fontSize: "11px", fontWeight: "bold", display: "block", color: "var(--p-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>EDITING MEDIA</span>
+                  <span style={{ fontSize: "11px", fontWeight: "bold", display: "block", color: "var(--p-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    EDITING MEDIA
+                  </span>
                   <p style={{ fontSize: "14px", margin: "2px 0 0", color: "var(--p-ink)", fontWeight: "600", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {String(selectedDoc.filename || "")}
                   </p>
                 </div>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <button className="portal-button" disabled={savingState} type="submit" style={{ background: "var(--p-green-800)", height: "36px" }}>
+                <div className="media-upload-card__actions">
+                  <button className="portal-button" disabled={savingState} type="submit" style={{ background: "var(--p-green-800)", minHeight: "44px" }}>
                     <Save size={16} /> {savingState ? "Saving..." : "Save changes"}
                   </button>
-                  <button className="portal-button portal-button--secondary" onClick={() => setSelectedDoc(null)} type="button" style={{ height: "36px" }}>
+                  <button className="portal-button portal-button--secondary" onClick={() => setSelectedDoc(null)} type="button" style={{ minHeight: "44px" }}>
                     <X size={16} /> Cancel
                   </button>
                   <button
                     className="portal-button"
                     onClick={() => deleteMedia(String(selectedDoc.id))}
                     type="button"
-                    style={{ background: "var(--p-brown)", height: "36px" }}
+                    style={{ background: "var(--p-brown)", minHeight: "44px" }}
                   >
                     <Trash2 size={16} /> Delete
                   </button>
                 </div>
               </div>
 
-              <div style={{ display: "flex", gap: "20px" }}>
-                <label className="portal-field" style={{ flex: 1 }}>
+              <div className="media-upload-card__fields">
+                <label className="portal-field">
                   <span>Alt text</span>
                   <input
                     name="alt"
@@ -263,17 +269,15 @@ export function MediaLibrary({
                     required
                     value={editAlt}
                     onChange={(e) => setEditAlt(e.target.value)}
-                    style={{ minHeight: "40px" }}
                   />
                 </label>
-                <label className="portal-field" style={{ flex: 1 }}>
+                <label className="portal-field">
                   <span>Caption</span>
                   <input
                     name="caption"
                     placeholder="Optional caption for articles"
                     value={editCaption}
                     onChange={(e) => setEditCaption(e.target.value)}
-                    style={{ minHeight: "40px" }}
                   />
                 </label>
               </div>

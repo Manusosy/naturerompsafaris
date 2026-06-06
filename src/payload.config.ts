@@ -17,6 +17,7 @@ import { HomepageSlides } from "./collections/HomepageSlides";
 import { Itineraries } from "./collections/Itineraries";
 import { Media } from "./collections/Media";
 import { NavigationItems } from "./collections/NavigationItems";
+import { PortalSignupVerifications } from "./collections/PortalSignupVerifications";
 import { Packages } from "./collections/Packages";
 import { PostCategories } from "./collections/PostCategories";
 import { Posts } from "./collections/Posts";
@@ -73,6 +74,7 @@ export default buildConfig({
   },
   collections: [
     Users,
+    PortalSignupVerifications,
     Media,
     NavigationItems,
     Destinations,

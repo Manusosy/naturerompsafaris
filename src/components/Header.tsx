@@ -178,17 +178,16 @@ export function Header({
     >
       <div className="topbar">
         <div className="topbar__mobile-contact" aria-label="Contact Nature Romp Safaris">
-          <a className="topbar__mobile-email" href={`mailto:${siteSettings.email}`}>
-            <Mail size={14} /> {siteSettings.email}
+          <a className="topbar__mobile-chip topbar__mobile-email" href={`mailto:${siteSettings.email}`}>
+            <Mail size={15} />
+            <span>{siteSettings.email}</span>
           </a>
           <div className="topbar__mobile-phones">
-            {phoneNumbers.map((number, index) => (
-              <span className="topbar__mobile-phone" key={number}>
-                {index > 0 ? <span aria-hidden="true" className="topbar__mobile-sep">/</span> : null}
-                <a href={`tel:${phoneHref(number)}`}>
-                  <Phone size={13} /> {number}
-                </a>
-              </span>
+            {phoneNumbers.map((number) => (
+              <a className="topbar__mobile-chip" href={`tel:${phoneHref(number)}`} key={number}>
+                <Phone size={15} />
+                <span>{number}</span>
+              </a>
             ))}
           </div>
         </div>
@@ -258,6 +257,14 @@ export function Header({
           >
             {open ? <X /> : <Menu />}
           </button>
+          {open ? (
+            <button
+              aria-label="Close navigation"
+              className="mobile-nav-backdrop"
+              onClick={closeNav}
+              type="button"
+            />
+          ) : null}
           <nav className={open ? "mainnav mainnav--open" : "mainnav"} aria-label="Primary navigation">
             {headerNavItems.map((item) => (
               item.items?.length ? (
@@ -265,16 +272,18 @@ export function Header({
                   className={`navgroup navgroup--${getMenuVariant(item.label)}${openGroup === item.label ? " navgroup--open" : ""}`}
                   key={item.label}
                 >
-                  <Link href={item.href} onClick={closeNav}>{item.label}</Link>
-                  <button
-                    aria-expanded={openGroup === item.label}
-                    aria-label={`Toggle ${item.label} menu`}
-                    className="navgroup__toggle"
-                    onClick={() => setOpenGroup((value) => value === item.label ? null : item.label)}
-                    type="button"
-                  >
-                    <ChevronDown size={14} />
-                  </button>
+                  <div className="navgroup__row">
+                    <Link href={item.href} onClick={closeNav}>{item.label}</Link>
+                    <button
+                      aria-expanded={openGroup === item.label}
+                      aria-label={`Toggle ${item.label} menu`}
+                      className="navgroup__toggle"
+                      onClick={() => setOpenGroup((value) => value === item.label ? null : item.label)}
+                      type="button"
+                    >
+                      <ChevronDown size={18} />
+                    </button>
+                  </div>
                   {renderSubmenu(item)}
                 </div>
               ) : (

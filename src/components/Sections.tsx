@@ -2,14 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock3, Gem, MapPinned, ShieldCheck } from "lucide-react";
 
-import { getPayload } from "payload";
-import configPromise from "@payload-config";
-
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { PackageCard, type BlogSummary, type Package } from "@/components/Cards";
 import { HomepageFaqsExperience } from "@/components/HomepageFaqsExperience";
 import { posts as staticPosts, serviceCards } from "@/content/site";
 import { mediaAlt, mediaUrl } from "@/lib/cms-media";
+import { getSafePayload } from "@/lib/safe-payload";
 
 const serviceDetails: Record<string, { body: string; cta: string; href: string }> = {
   "Tours and Travel": {
@@ -107,27 +105,36 @@ export function Services() {
 }
 
 export async function FeaturedPackages({ limit = 6 }: { limit?: number }) {
-  const payload = await getPayload({ config: configPromise });
-  const featuredResult = await payload.find({
-    collection: "packages",
-    where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] },
-    limit,
-    depth: 1,
-    overrideAccess: true,
-    sort: "-updatedAt",
-  });
-  const result = featuredResult.docs.length
-    ? featuredResult
-    : await payload.find({
+  let packages: Package[] = [];
+
+  try {
+    const payload = await getSafePayload();
+    if (payload) {
+      const featuredResult = await payload.find({
         collection: "packages",
-        where: { status: { equals: "published" } },
+        where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] },
         limit,
         depth: 1,
         overrideAccess: true,
         sort: "-updatedAt",
-      });
-  
-  const packages = result.docs as unknown as Package[];
+      }).catch(() => ({ docs: [] }));
+
+      const result = featuredResult.docs.length
+        ? featuredResult
+        : await payload.find({
+            collection: "packages",
+            where: { status: { equals: "published" } },
+            limit,
+            depth: 1,
+            overrideAccess: true,
+            sort: "-updatedAt",
+          });
+
+      packages = result.docs as unknown as Package[];
+    }
+  } catch (error) {
+    console.error("[homepage] Failed to load featured packages:", error);
+  }
 
   return (
     <section className="section homepage-packages">
@@ -184,12 +191,24 @@ export function JeepSafari() {
 }
 
 export async function Testimonials() {
-  const payload = await getPayload({ config: configPromise });
-  const settings = await payload.findGlobal({ slug: "site-settings", overrideAccess: true }) as Record<string, unknown>;
-  const trustIndexEmbed = typeof settings?.trustindexEmbed === "string" ? settings.trustindexEmbed : "";
-  const reviewHeading = typeof settings?.reviewHeading === "string" && settings.reviewHeading.trim()
-    ? settings.reviewHeading
-    : "What Guests Say on Google";
+  let trustIndexEmbed = "";
+  let reviewHeading = "What Guests Say on Google";
+
+  try {
+    const payload = await getSafePayload();
+    if (payload) {
+      const settings = await payload.findGlobal({
+        slug: "site-settings",
+        overrideAccess: true,
+      }) as Record<string, unknown>;
+      trustIndexEmbed = typeof settings?.trustindexEmbed === "string" ? settings.trustindexEmbed : "";
+      reviewHeading = typeof settings?.reviewHeading === "string" && settings.reviewHeading.trim()
+        ? settings.reviewHeading
+        : reviewHeading;
+    }
+  } catch (error) {
+    console.error("[homepage] Failed to load testimonials settings:", error);
+  }
 
   return (
     <section className="section testimonials">
@@ -210,16 +229,36 @@ export async function Testimonials() {
 }
 
 export async function GalleryPreview() {
-  const payload = await getPayload({ config: configPromise });
-  const result = await payload.find({
-    collection: "gallery" as never,
-    depth: 1,
-    limit: 8,
-    overrideAccess: true,
-    sort: "sortOrder",
-    where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] } as never,
-  }).catch(() => ({ docs: [] }));
-  const items = result.docs as Array<Record<string, unknown>>;
+  let items: Array<Record<string, unknown>> = [];
+
+  try {
+    const payload = await getSafePayload();
+    if (payload) {
+      const featuredResult = await payload.find({
+        collection: "gallery" as never,
+        depth: 1,
+        limit: 8,
+        overrideAccess: true,
+        sort: "sortOrder",
+        where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] } as never,
+      }).catch(() => ({ docs: [] }));
+
+      const result = featuredResult.docs.length
+        ? featuredResult
+        : await payload.find({
+            collection: "gallery" as never,
+            depth: 1,
+            limit: 8,
+            overrideAccess: true,
+            sort: "sortOrder",
+            where: { status: { equals: "published" } } as never,
+          }).catch(() => ({ docs: [] }));
+
+      items = result.docs as Array<Record<string, unknown>>;
+    }
+  } catch (error) {
+    console.error("[homepage] Failed to load gallery preview:", error);
+  }
 
   return (
     <section className="section gallery-section">
@@ -288,16 +327,25 @@ export function BookingSecurityPartners() {
 }
 
 export async function BlogPreview() {
-  const payload = await getPayload({ config: configPromise });
-  const result = await payload.find({
-    collection: "posts",
-    where: { status: { equals: "published" } },
-    sort: "-publishedAt",
-    limit: 4,
-    overrideAccess: true,
-  });
+  let posts = staticPosts.slice(0, 4) as unknown as BlogSummary[];
 
-  const posts = (result.docs.length > 0 ? result.docs : staticPosts.slice(0, 4)) as unknown as BlogSummary[];
+  try {
+    const payload = await getSafePayload();
+    if (payload) {
+      const result = await payload.find({
+        collection: "posts",
+        where: { status: { equals: "published" } },
+        sort: "-publishedAt",
+        limit: 4,
+        overrideAccess: true,
+      });
+      if (result.docs.length > 0) {
+        posts = result.docs as unknown as BlogSummary[];
+      }
+    }
+  } catch (error) {
+    console.error("[homepage] Failed to load blog preview:", error);
+  }
   const [featuredPost, ...sidePosts] = posts;
 
   return (

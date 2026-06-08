@@ -58,6 +58,16 @@ function normalizeUploadedMedia(result: Record<string, unknown>): PortalMediaOpt
   };
 }
 
+function dedupeMediaOptions(items: PortalMediaOption[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const id = String(item.id);
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
 export function MediaPickerField({
   autoOpen = false,
   hasMany = false,
@@ -79,6 +89,7 @@ export function MediaPickerField({
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(options.length >= 36);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
+  const [loadError, setLoadError] = useState("");
   const [mounted, setMounted] = useState(false);
   const emptyFetchAttempted = useRef(false);
 
@@ -87,16 +98,22 @@ export function MediaPickerField({
   }, []);
 
   useEffect(() => {
-    setMediaOptions(options);
-    setHasMore(options.length >= 36);
-    if (options.length > 0) {
-      setCurrentPage(Math.max(1, Math.ceil(options.length / 36)));
+    const unique = dedupeMediaOptions(options);
+    setMediaOptions(unique);
+    setHasMore(unique.length >= 36);
+    if (unique.length > 0) {
+      setCurrentPage(Math.max(1, Math.ceil(unique.length / 36)));
     }
   }, [options]);
 
   useEffect(() => {
     if (open && totalCount === undefined) {
-      fetchTotalMediaCount().then(setTotalCount).catch(console.error);
+      fetchTotalMediaCount()
+        .then(setTotalCount)
+        .catch((error) => {
+          console.error(error);
+          setLoadError(error instanceof Error ? error.message : "Unable to load the media library.");
+        });
     }
   }, [open, totalCount]);
 
@@ -110,14 +127,20 @@ export function MediaPickerField({
     emptyFetchAttempted.current = true;
     let cancelled = false;
     setLoadingMore(true);
+    setLoadError("");
     fetchMoreMediaOptions(1)
       .then((nextOptions) => {
         if (cancelled) return;
-        setMediaOptions(nextOptions);
+        setMediaOptions(dedupeMediaOptions(nextOptions));
         setCurrentPage(1);
         setHasMore(nextOptions.length >= 36);
       })
-      .catch(console.error)
+      .catch((error) => {
+        console.error(error);
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : "Unable to load the media library.");
+        }
+      })
       .finally(() => {
         if (!cancelled) setLoadingMore(false);
       });
@@ -221,7 +244,7 @@ export function MediaPickerField({
     }
 
     if (newMediaItems.length > 0) {
-      setMediaOptions((prev) => [...newMediaItems, ...prev]);
+      setMediaOptions((prev) => dedupeMediaOptions([...newMediaItems, ...prev]));
       const newIds = newMediaItems.map(m => m.id);
       const nextSelected = hasMany ? [...selectedIds, ...newIds] : [newIds[0]];
 
@@ -303,7 +326,7 @@ export function MediaPickerField({
                   </div>
                   {totalCount !== undefined ? (
                     <div className="portal-media-dialog__count">
-                      Showing {mediaOptions.length} of {totalCount} images
+                      Showing {filteredOptions.length} of {totalCount} images
                     </div>
                   ) : null}
                   <button aria-label="Close media picker" onClick={closeDialog} type="button">
@@ -327,6 +350,7 @@ export function MediaPickerField({
                   </form>
                 </div>
                 {uploadMessage ? <p className="portal-media-dialog__message">{uploadMessage}</p> : null}
+                {loadError ? <p className="portal-media-dialog__message portal-media-dialog__message--error">{loadError}</p> : null}
 
                 <div className="portal-media-dialog__grid">
                   {filteredOptions.map((item) => {
@@ -338,8 +362,16 @@ export function MediaPickerField({
                         onClick={() => toggle(item.id)}
                         type="button"
                       >
-                        <Image alt={item.alt || item.filename} height={180} src={optionImage(item)} width={240} />
-                        <span>{item.alt || item.filename}</span>
+                        <span className="portal-media-tile__media">
+                          <img
+                            alt={item.alt || item.filename}
+                            className="portal-media-tile__img"
+                            draggable={false}
+                            loading="lazy"
+                            src={optionImage(item)}
+                          />
+                        </span>
+                        <span className="portal-media-tile__label">{item.alt || item.filename}</span>
                         {selected ? <CheckCircle2 size={20} /> : null}
                       </button>
                     );
@@ -356,7 +388,7 @@ export function MediaPickerField({
                             setMediaOptions((prev) => {
                               const newIds = new Set(nextOptions.map((option) => String(option.id)));
                               const filteredPrev = prev.filter((item) => !newIds.has(String(item.id)));
-                              return [...filteredPrev, ...nextOptions];
+                              return dedupeMediaOptions([...filteredPrev, ...nextOptions]);
                             });
                             setCurrentPage((page) => page + 1);
                             if (nextOptions.length < 36) setHasMore(false);

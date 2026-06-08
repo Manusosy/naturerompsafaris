@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { TripCard, type Trip } from "@/components/Cards";
 import { buildMetadata } from "@/lib/seo";
 import {
+  mergeExperienceTypes,
   TRIP_EXPERIENCE_FILTER_OPTIONS,
   TRIP_TIER_FILTER_OPTIONS,
 } from "@/lib/trip-labels";
@@ -41,9 +42,7 @@ function normalizeTrip(doc: Record<string, unknown>): Trip {
     galleryImages: gallery.map((item) =>
       item && typeof item === "object" ? (item as Record<string, unknown>).image : item,
     ),
-    experienceTypes: Array.isArray(doc.experienceTypes)
-      ? doc.experienceTypes.filter((value): value is string => typeof value === "string")
-      : undefined,
+    experienceTypes: mergeExperienceTypes(doc.experienceTypes, doc.customExperienceTypes),
     heroImage: doc.heroImage,
     location: typeof doc.location === "string" ? doc.location : undefined,
     nights: typeof doc.nights === "number" ? doc.nights : undefined,

@@ -4,22 +4,25 @@ import {
   CalendarDays,
   Check,
   ChevronRight,
+  ArrowRight,
+  CircleX,
   Crown,
   Gem,
   MapPin,
   ShieldCheck,
   Sparkles,
-  Star,
   Users,
   Wallet,
-  X,
+  ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { SafariQuoteForm } from "@/components/SafariQuoteForm";
+import { TripInquiryForm, type TripInquiryPrefill } from "@/components/TripInquiryForm";
+import { WhatsappIcon } from "@/components/SocialBrandIcons";
 import { TripRouteMap } from "@/components/TripRouteMap";
+import { TRIP_PRICE_INQUIRY_LABEL } from "@/lib/trip-pricing";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { TIER_MATRIX_CLASS } from "@/lib/trip-labels";
 import {
@@ -114,6 +117,7 @@ export type TripDetailData = {
   nights?: number;
   optionalExperiences?: OptionalExperience[];
   overview?: string;
+  linkedPackage?: { slug: string; title: string };
   packageTier?: string;
   positiveImpact?: string;
   priceSeasons?: PriceSeason[];
@@ -136,8 +140,7 @@ const baseSectionLinks = [
   { id: "prices", label: "Prices" },
   { id: "included", label: "Included" },
   { id: "faqs", label: "FAQs" },
-  { id: "reviews", label: "Reviews" },
-  { id: "quote", label: "Quote" },
+  { id: "quote", label: "Inquiry" },
 ];
 
 const tierLabels: Record<string, string> = {
@@ -174,15 +177,28 @@ function scrollToQuote() {
   document.getElementById("quote")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
+function normalizeBreadcrumbLabel(value: string) {
+  return value.toLowerCase().replace(/[\s\-_]+/g, " ").trim();
+}
+
+export function TripDetailExperience({
+  trip,
+  whatsappHref,
+}: {
+  trip: TripDetailData;
+  whatsappHref?: string;
+}) {
   const navRef = useRef<HTMLElement>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [activeSection, setActiveSection] = useState("overview");
+  const [expandedDay, setExpandedDay] = useState(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [inquiryPrefill, setInquiryPrefill] = useState<TripInquiryPrefill | undefined>();
+  const [selectedInquiryKey, setSelectedInquiryKey] = useState<string | null>(null);
   const images = trip.gallery.length ? trip.gallery : [{ src: "/assets/img/banner1.webp", alt: trip.title }];
   const heroImage = trip.heroImage?.src ? trip.heroImage : images[activeImage] || images[0];
   const routeText = trip.routeLabel || [trip.startLocation, trip.endLocation].filter(Boolean).join(" to ");
   const durationText = trip.days || trip.nights ? `${trip.days || "-"} days / ${trip.nights || "-"} nights` : "Custom duration";
-  const trustindexEmbed = trip.trustindexEmbedOverride || trip.reviewSettings?.trustindexEmbed || "";
   const sectionLinks = useMemo(
     () => baseSectionLinks.filter((section) => section.id !== "faqs" || Boolean(trip.faqs?.length)),
     [trip.faqs?.length],
@@ -236,6 +252,34 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
     window.scrollTo({ top: element.offsetTop - navOffset - 24, behavior: "smooth" });
   }
 
+  function pricingInquiryKey(context: TripInquiryPrefill) {
+    return `${context.tier || ""}::${context.season || ""}`;
+  }
+
+  function inquireFromPricing(context: TripInquiryPrefill) {
+    setInquiryPrefill(context);
+    setSelectedInquiryKey(pricingInquiryKey(context));
+    scrollToQuote();
+  }
+
+  const routeStops = [
+    trip.startLocation,
+    ...(trip.routeWaypoints?.map((stop) => stop.place) || []),
+    trip.endLocation,
+  ].filter(Boolean).filter((stop, index, list) => list.indexOf(stop) === index);
+  const displayRouteStops = routeStops.length ? routeStops : routeText ? [routeText] : [];
+  const linkableDestinations =
+    trip.destinationStops?.filter((item) => item.slug) ?? [];
+  const showPackageCrumb =
+    Boolean(trip.linkedPackage) &&
+    normalizeBreadcrumbLabel(trip.linkedPackage?.title ?? "") !== normalizeBreadcrumbLabel(trip.title);
+  const includedItems = trip.included?.length
+    ? trip.included
+    : ["Safari planning and local support", "Quoted ground services"];
+  const excludedItems = trip.excluded?.length
+    ? trip.excluded
+    : ["International flights", "Visa fees and personal expenses"];
+
   return (
     <section className="flash-trip">
       <header className="flash-trip__hero">
@@ -253,6 +297,12 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             <Link href="/">Home</Link>
             <ChevronRight size={14} />
             <Link href="/safari-packages">Safari Tours</Link>
+            {showPackageCrumb && trip.linkedPackage ? (
+              <>
+                <ChevronRight size={14} />
+                <Link href={`/safari-packages/${trip.linkedPackage.slug}`}>{trip.linkedPackage.title}</Link>
+              </>
+            ) : null}
             <ChevronRight size={14} />
             <span>{trip.title}</span>
           </nav>
@@ -262,7 +312,7 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
           <div className="flash-trip__facts">
             <span><MapPin size={16} /> {routeText || trip.location || "Kenya and Tanzania"}</span>
             <span><CalendarDays size={16} /> {durationText}</span>
-            <span><Users size={16} /> {trip.budgetText || "Quote on request"}</span>
+            <span><Users size={16} /> {trip.budgetText || TRIP_PRICE_INQUIRY_LABEL}</span>
           </div>
         </div>
       </header>
@@ -308,28 +358,15 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </div>
           </section>
 
-          <section className="flash-trip__section flash-trip__section--mint" id="overview">
+          <section className="flash-trip__section" id="overview">
             <SectionTitle>Overview</SectionTitle>
             {trip.overview ? (
-              <div className="rich-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(trip.overview) }} />
+              <div className="flash-trip__rich-content rich-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(trip.overview) }} />
             ) : (
               <p>This safari is arranged around your dates, pace, accommodation style, and preferred route.</p>
             )}
-            {trip.highlights?.length ? (
-              <div className="flash-trip__highlights">
-                {trip.highlights.map((item, index) => (
-                  <article key={`${item.title}-${index}`}>
-                    <Sparkles size={18} />
-                    <div>
-                      <h3>{item.title}</h3>
-                      {item.description ? <p>{item.description}</p> : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : null}
             {trip.bestFor?.length ? (
-              <div className="flash-trip__audience">
+              <div className="flash-trip__meta-block">
                 <h3>Best for</h3>
                 <ul>
                   {trip.bestFor.map((item) => <li key={item}>{item}</li>)}
@@ -337,34 +374,45 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
               </div>
             ) : null}
             {trip.bestTimeToVisit ? (
-              <div className="flash-trip__best-time">
+              <div className="flash-trip__meta-block">
                 <h3>Best time to visit</h3>
                 <p>{trip.bestTimeToVisit}</p>
               </div>
             ) : null}
           </section>
 
-          <section className="flash-trip__section" id="where">
-            <SectionTitle>Where you&apos;ll go</SectionTitle>
-            {trip.destinationStops?.length ? (
-              <div className="flash-trip__destinations">
-                {trip.destinationStops.map((item, index) => (
-                  <article key={`${item.title}-${index}`}>
-                    {item.image ? (
-                      <Image alt={item.alt || item.title || trip.title} height={150} src={item.image} width={230} />
-                    ) : null}
-                    <div>
-                      <h3>{item.title}</h3>
-                      {item.description ? <p>{item.description}</p> : null}
-                      {item.slug ? <Link href={`/destinations/${item.slug}`}>View destination</Link> : null}
-                    </div>
-                  </article>
+          <section className="flash-trip__section flash-trip__section--route" id="where">
+            <div className="flash-trip__section-heading">
+              <SectionTitle>Where you&apos;ll go</SectionTitle>
+              {linkableDestinations.length ? (
+                <div className="flash-trip__section-heading__actions">
+                  {linkableDestinations.map((item, index) => (
+                    <Link
+                      className="flash-trip__route-link"
+                      href={`/destinations/${item.slug}`}
+                      key={`${item.slug}-${index}`}
+                    >
+                      <span className="flash-trip__route-link__label">
+                        {linkableDestinations.length === 1 ? "View destination" : `View ${item.title}`}
+                      </span>
+                      <ArrowRight aria-hidden className="flash-trip__route-link__icon" size={14} />
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            {displayRouteStops.length ? (
+              <div className="flash-trip__route-bar">
+                {displayRouteStops.map((stop, index) => (
+                  <span className="flash-trip__route-stop" key={`${stop}-${index}`}>
+                    {index > 0 ? <ChevronRight aria-hidden className="flash-trip__route-arrow" size={14} /> : null}
+                    <MapPin aria-hidden size={14} />
+                    {stop}
+                  </span>
                 ))}
               </div>
-            ) : (
-              <p>{trip.location || "Destinations for this safari will be confirmed in the custom quote."}</p>
-            )}
-            {(trip.mapEmbedUrl || trip.routeWaypoints?.length) ? (
+            ) : null}
+            {(trip.mapEmbedUrl || trip.routeWaypoints?.length || trip.startLocation || trip.endLocation) ? (
               <div className="flash-trip__map">
                 {trip.mapEmbedUrl ? (
                   <iframe
@@ -381,30 +429,48 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             ) : null}
           </section>
 
-          <section className="flash-trip__section flash-trip__section--mint" id="itinerary">
+          <section className="flash-trip__section" id="itinerary">
             <SectionTitle>Itinerary</SectionTitle>
             {trip.itineraryDays?.length ? (
-              <div className="flash-trip__timeline">
-                {trip.itineraryDays.map((day, index) => (
-                  <article key={`${day.day}-${index}`} className="flash-trip__day">
-                    <div className="flash-trip__day-index">Day {day.day || index + 1}</div>
-                    {day.image ? <Image alt={day.title || trip.title} height={116} src={day.image} width={170} /> : null}
-                    <div>
-                      <h3>{day.title || "Safari day"}</h3>
-                      {day.location ? <p className="flash-trip__day-location"><MapPin size={14} /> {day.location}</p> : null}
-                      {day.description ? <p>{day.description}</p> : null}
-                      <dl>
-                        {day.meals ? <><dt>Meals</dt><dd>{day.meals}</dd></> : null}
-                        {day.accommodation ? <><dt>Stay</dt><dd>{day.accommodation}</dd></> : null}
-                        {day.activities ? <><dt>Activities</dt><dd>{day.activities}</dd></> : null}
-                      </dl>
-                      {day.experienceNotes ? <p className="flash-trip__note">{day.experienceNotes}</p> : null}
-                    </div>
-                  </article>
-                ))}
+              <div className="flash-trip__itinerary">
+                {trip.itineraryDays.map((day, index) => {
+                  const isOpen = expandedDay === index;
+                  const dayNumber = day.day || index + 1;
+                  return (
+                    <article className={isOpen ? "flash-trip__itinerary-day is-open" : "flash-trip__itinerary-day"} key={`${day.day}-${index}`}>
+                      <button
+                        aria-expanded={isOpen}
+                        className="flash-trip__itinerary-toggle"
+                        onClick={() => setExpandedDay(isOpen ? -1 : index)}
+                        type="button"
+                      >
+                        <span className="flash-trip__itinerary-badge">Day {dayNumber}</span>
+                        <span className="flash-trip__itinerary-title">{day.title || `Day ${dayNumber}`}</span>
+                        {day.location ? <span className="flash-trip__itinerary-location">{day.location}</span> : null}
+                        <ChevronDown aria-hidden className="flash-trip__itinerary-chevron" size={18} />
+                      </button>
+                      {isOpen ? (
+                        <div className="flash-trip__itinerary-body">
+                          {day.image ? (
+                            <Image alt={day.title || trip.title} className="flash-trip__itinerary-image" height={200} src={day.image} width={320} />
+                          ) : null}
+                          {day.description ? <p>{day.description}</p> : null}
+                          {(day.meals || day.accommodation || day.activities) ? (
+                            <dl className="flash-trip__itinerary-meta">
+                              {day.meals ? <><dt>Meals</dt><dd>{day.meals}</dd></> : null}
+                              {day.accommodation ? <><dt>Stay</dt><dd>{day.accommodation}</dd></> : null}
+                              {day.activities ? <><dt>Activities</dt><dd>{day.activities}</dd></> : null}
+                            </dl>
+                          ) : null}
+                          {day.experienceNotes ? <p className="flash-trip__note">{day.experienceNotes}</p> : null}
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
               </div>
             ) : (
-              <p>The day-by-day route will be prepared once the admin adds itinerary details for this trip.</p>
+              <p>The day-by-day route will be prepared once itinerary details are added for this trip.</p>
             )}
             {(trip.accommodationSummary || trip.accommodationOptions?.length) ? (
               <div className="flash-trip__accommodation">
@@ -444,7 +510,6 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                       <thead>
                         <tr>
                           <th>Season</th>
-                          <th>Dates</th>
                           {matrix.columns.map((column) => (
                             <th key={column}>{column}</th>
                           ))}
@@ -458,14 +523,31 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                               <strong>{row.seasonLabel}</strong>
                               {row.notes ? <span>{row.notes}</span> : null}
                             </td>
-                            <td>{row.dateRange || "Flexible dates"}</td>
                             {matrix.columns.map((column) => (
                               <td key={column}>
                                 {formatMatrixPrice(matrix.currency, row.prices[column] ? Number(row.prices[column]) : undefined)}
                               </td>
                             ))}
                             <td className="flash-trip__matrix-action">
-                              <button onClick={scrollToQuote} type="button">{row.ctaLabel}</button>
+                              <button
+                                className={
+                                  selectedInquiryKey === pricingInquiryKey({
+                                    season: row.seasonLabel,
+                                    tier: matrix.packageLabel,
+                                  })
+                                    ? "is-selected"
+                                    : undefined
+                                }
+                                onClick={() =>
+                                  inquireFromPricing({
+                                    season: row.seasonLabel,
+                                    tier: matrix.packageLabel,
+                                  })
+                                }
+                                type="button"
+                              >
+                                {row.ctaLabel}
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -487,7 +569,6 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                       <thead>
                         <tr>
                           <th>Season</th>
-                          <th>Dates</th>
                           <th>Quote Range</th>
                           <th aria-label="Inquire" />
                         </tr>
@@ -499,10 +580,27 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                               <strong>{item.title || item.seasonLabel || "Custom season"}</strong>
                               {item.notes ? <span>{item.notes}</span> : null}
                             </td>
-                            <td>{item.dateRange || "Flexible dates"}</td>
                             <td>{priceText(item)}</td>
                             <td className="flash-trip__matrix-action">
-                              <button onClick={scrollToQuote} type="button">{item.ctaLabel || "Inquire"}</button>
+                              <button
+                                className={
+                                  selectedInquiryKey === pricingInquiryKey({
+                                    season: item.title || item.seasonLabel,
+                                    tier: tierLabels[tier] || tier,
+                                  })
+                                    ? "is-selected"
+                                    : undefined
+                                }
+                                onClick={() =>
+                                  inquireFromPricing({
+                                    season: item.title || item.seasonLabel,
+                                    tier: tierLabels[tier] || tier,
+                                  })
+                                }
+                                type="button"
+                              >
+                                {item.ctaLabel || "Inquire"}
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -514,29 +612,44 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </div>
           </section>
 
-          <section className="flash-trip__section flash-trip__section--mint" id="included">
+          <section className="flash-trip__section" id="included">
             <SectionTitle>What&apos;s Included</SectionTitle>
-            <div className="flash-trip__included-grid">
-              <div>
-                <h3><Check size={18} /> Included</h3>
+            <div className="flash-trip__inclusions">
+              <article className="flash-trip__inclusion-panel flash-trip__inclusion-panel--included">
+                <header className="flash-trip__inclusion-panel__head">
+                  <h3>Included</h3>
+                </header>
                 <ul>
-                  {(trip.included?.length ? trip.included : ["Safari planning and local support", "Quoted ground services"]).map((item) => (
-                    <li key={item}>{item}</li>
+                  {includedItems.map((item) => (
+                    <li key={item}>
+                      <span aria-hidden className="flash-trip__inclusion-marker flash-trip__inclusion-marker--included">
+                        <Check size={11} strokeWidth={3} />
+                      </span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
-              </div>
-              <div>
-                <h3><X size={18} /> Excluded</h3>
+              </article>
+              <article className="flash-trip__inclusion-panel flash-trip__inclusion-panel--excluded">
+                <header className="flash-trip__inclusion-panel__head">
+                  <h3>Excluded</h3>
+                </header>
                 <ul>
-                  {(trip.excluded?.length ? trip.excluded : ["International flights", "Visa fees and personal expenses"]).map((item) => (
-                    <li key={item}>{item}</li>
+                  {excludedItems.map((item) => (
+                    <li key={item}>
+                      <CircleX aria-hidden className="flash-trip__inclusion-marker" size={17} strokeWidth={1.75} />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
-              </div>
+              </article>
             </div>
             {trip.optionalExperiences?.length ? (
-              <div className="flash-trip__optional">
-                <h3>Optional Experiences</h3>
+              <div className="flash-trip__optional-panel">
+                <h3 className="flash-trip__subsection-title">Optional add-on experiences</h3>
+                <p className="flash-trip__subsection-intro">
+                  Enhance your safari with these optional activities. Mention any add-ons in your inquiry.
+                </p>
                 <div className="flash-trip__optional-grid">
                   {trip.optionalExperiences.map((item) => (
                     <article key={item.title}>
@@ -553,19 +666,34 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
           {trip.faqs?.length ? (
             <section className="flash-trip__section" id="faqs">
               <SectionTitle>Frequently Asked Questions</SectionTitle>
-              <ul className="flash-trip__faq-list">
-                {trip.faqs.map((item) => (
-                  <li key={item.question}>
-                    <strong>{item.question}</strong>
-                    <p>{item.answer}</p>
-                  </li>
-                ))}
-              </ul>
+              <div className="flash-trip__faq">
+                {trip.faqs.map((item, index) => {
+                  const isOpen = expandedFaq === index;
+                  return (
+                    <article className={isOpen ? "flash-trip__faq-item is-open" : "flash-trip__faq-item"} key={item.question}>
+                      <button
+                        aria-expanded={isOpen}
+                        className="flash-trip__faq-toggle"
+                        onClick={() => setExpandedFaq(isOpen ? null : index)}
+                        type="button"
+                      >
+                        <span>{item.question}</span>
+                        <ChevronDown aria-hidden className="flash-trip__faq-chevron" size={18} />
+                      </button>
+                      {isOpen ? (
+                        <div className="flash-trip__faq-answer">
+                          <p>{item.answer}</p>
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
             </section>
           ) : null}
 
           {(trip.positiveImpact || trip.whyBook?.length) ? (
-            <section className="flash-trip__section flash-trip__section--mint flash-trip__trust">
+            <section className="flash-trip__section flash-trip__trust">
               {trip.positiveImpact ? (
                 <div>
                   <SectionTitle>Positive Impact Travel</SectionTitle>
@@ -585,20 +713,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </section>
           ) : null}
 
-          <section className="flash-trip__section" id="reviews">
-            <SectionTitle>{trip.reviewSettings?.heading || "Reviews"}</SectionTitle>
-            {trustindexEmbed ? (
-              <div dangerouslySetInnerHTML={{ __html: trustindexEmbed }} />
-            ) : (
-              <div className="flash-trip__review-fallback">
-                <div>{Array.from({ length: 5 }).map((_, index) => <Star fill="#f5b301" color="#f5b301" key={index} size={18} />)}</div>
-                <p>Verified Trustindex or Google reviews can be connected from the dashboard.</p>
-              </div>
-            )}
-          </section>
-
           {trip.relatedTrips?.length ? (
-            <section className="flash-trip__section flash-trip__section--mint">
+            <section className="flash-trip__section">
               <SectionTitle>Similar Tours</SectionTitle>
               <div className="flash-trip__related">
                 {trip.relatedTrips.map((item) => (
@@ -611,37 +727,33 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
               </div>
             </section>
           ) : null}
-
-          <section className="flash-trip__section flash-trip__security">
-            <SectionTitle>{trip.reviewSettings?.bookingSecurityHeading || "Our Partners and Booking Security"}</SectionTitle>
-            {trip.reviewSettings?.bookingSecurityText ? <p>{trip.reviewSettings.bookingSecurityText}</p> : null}
-            {trip.reviewSettings?.bookingSecurityItems?.length ? (
-              <ul>
-                {trip.reviewSettings.bookingSecurityItems.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            ) : null}
-            {trip.reviewSettings?.partnerLogos?.length ? (
-              <div className="flash-trip__partners">
-                {trip.reviewSettings.partnerLogos.map((item, index) => (
-                  <Image alt={item.alt} height={42} key={`${item.src}-${index}`} src={item.src} width={90} />
-                ))}
-              </div>
-            ) : null}
-          </section>
         </main>
 
         <aside className="flash-trip__sidebar" id="quote">
           <section className="flash-trip__quote-card">
-            <h2>Request a Quote</h2>
-            <p>{trip.quoteIntro || "Tell us your dates, group size, and travel style. The team will prepare a tailored safari quote."}</p>
-            <SafariQuoteForm compact destination={trip.location} sourceTrip={trip.id} subject={trip.title} />
+            <p className="flash-trip__quote-kicker">Trip inquiry</p>
+            <TripInquiryForm
+              context={{
+                duration: durationText,
+                priceText: trip.budgetText,
+                route: routeText || trip.location,
+                slug: trip.slug,
+                title: trip.title,
+              }}
+              destination={trip.location}
+              selectedOffer={inquiryPrefill}
+              sourceTrip={trip.id}
+            />
           </section>
-          <section className="flash-trip__mini-card">
-            <h3>Route</h3>
-            <p>{routeText || trip.location || "Flexible safari route"}</p>
-            {trip.departurePoint ? <p><strong>Departure:</strong> {trip.departurePoint}</p> : null}
-            <button onClick={scrollToQuote} type="button">Plan this trip</button>
-          </section>
+          {whatsappHref ? (
+            <section className="flash-trip__help-card">
+              <p className="flash-trip__help-copy">Prefer WhatsApp? Chat with our safari planners for quick answers.</p>
+              <a className="book-btn header-cta flash-trip__help-cta" href={whatsappHref} rel="noopener noreferrer" target="_blank">
+                <span className="header-cta__label">Help Me Plan</span>
+                <WhatsappIcon aria-hidden className="header-cta__icon" height={18} width={18} />
+              </a>
+            </section>
+          ) : null}
         </aside>
       </div>
     </section>

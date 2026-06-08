@@ -10,7 +10,15 @@ import { DetailGallerySlider, type DetailGalleryImage } from "@/components/Detai
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { JsonLd } from "@/components/JsonLd";
 import { PackageEnhancementsView } from "@/components/PackageEnhancements";
+import { PackageLinkedTrips } from "@/components/PackageLinkedTrips";
 import { formatPackageDestinations } from "@/lib/cms-relations";
+import {
+  fetchLinkedTripsForPackage,
+  packageRouteFromTrips,
+  primaryLinkedTrip,
+  resolvePackageDuration,
+  resolvePackagePriceText,
+} from "@/lib/package-trips";
 import { getPackageEnhancements } from "@/lib/portal-content";
 import { site } from "@/content/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
@@ -123,7 +131,40 @@ export default async function PackageDetailPage({ params }: Props) {
   const item = result.docs[0];
   if (!item) notFound();
 
+  const linkedTrips = await fetchLinkedTripsForPackage(payload, item.id);
+  const catalogFields = {
+    bestTime: typeof item.bestTime === "string" ? item.bestTime : undefined,
+    duration: typeof item.duration === "string" ? item.duration : undefined,
+    priceText: typeof item.priceText === "string" ? item.priceText : undefined,
+  };
+  const primaryTrip = primaryLinkedTrip(linkedTrips);
+  const displayDuration = resolvePackageDuration(catalogFields, linkedTrips);
+  const displayPrice = resolvePackagePriceText(catalogFields, linkedTrips);
   const destinationsLabel = formatPackageDestinations(item);
+  const tripRoute = packageRouteFromTrips(linkedTrips);
+  const route = tripRoute ?? routeEndpoints(destinationsLabel);
+
+  const packageFaqs = Array.isArray(item.faqs)
+    ? (item.faqs as Array<Record<string, unknown>>)
+        .map((entry) => ({
+          answer: typeof entry.answer === "string" ? entry.answer.trim() : "",
+          question: typeof entry.question === "string" ? entry.question.trim() : "",
+        }))
+        .filter((entry) => entry.question && entry.answer)
+    : [];
+  const tripFaqs = primaryTrip?.faqs ?? [];
+  const faqs = packageFaqs.length ? packageFaqs : tripFaqs;
+
+  const inclusions = primaryTrip?.included?.length
+    ? primaryTrip.included
+    : [
+        "Private 4x4 safari vehicle with pop-up roof",
+        "Expert driver-guide and park fees guidance",
+        "Flexible pacing tailored to your group",
+        "Direct support from Nature Romp Safaris",
+      ];
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventures.com";
 
   const schema = {
     "@context": "https://schema.org",
@@ -133,6 +174,16 @@ export default async function PackageDetailPage({ params }: Props) {
     provider: { "@type": "TravelAgency", name: site.company },
     touristType: ["Family travelers", "Private safari guests", "Wildlife travelers"],
     itinerary: destinationsLabel,
+    ...(displayDuration ? { duration: displayDuration } : {}),
+    ...(linkedTrips.length
+      ? {
+          hasPart: linkedTrips.map((trip) => ({
+            "@type": "TouristTrip",
+            name: trip.title,
+            url: `${siteUrl}/trips/${trip.slug}`,
+          })),
+        }
+      : {}),
   };
 
   const enhancements = await getPackageEnhancements(slug);
@@ -142,11 +193,12 @@ export default async function PackageDetailPage({ params }: Props) {
     item as Record<string, unknown>,
     item.title,
   );
-  const route = routeEndpoints(destinationsLabel);
   const overviewText =
     stripHtml(item.content) ||
     item.excerpt ||
-    `This ${item.duration || "custom"} safari package is planned around ${destinationsLabel}, with flexible pacing, private guiding and practical support from Nature Romp Safaris.`;
+    (primaryTrip?.overview
+      ? stripHtml(primaryTrip.overview)
+      : `This ${displayDuration || "custom"} safari package is planned around ${destinationsLabel}, with flexible pacing, private guiding and practical support from Nature Romp Safaris.`);
 
   return (
     <main className="pkg-detail">
@@ -227,7 +279,7 @@ export default async function PackageDetailPage({ params }: Props) {
               <div className="pkg-fact">
                 <Clock aria-hidden size={20} />
                 <span>Duration</span>
-                <strong>{item.duration || "Custom duration"}</strong>
+                <strong>{displayDuration || "Custom duration"}</strong>
               </div>
               <div className="pkg-fact pkg-fact--wide">
                 <MapPin aria-hidden size={20} />
@@ -251,59 +303,35 @@ export default async function PackageDetailPage({ params }: Props) {
               </div>
 
               <div className="pkg-inclusions">
-                <h3>Highlights & Inclusions</h3>
+                <h3>{primaryTrip?.included?.length ? "What's included" : "Highlights & Inclusions"}</h3>
                 <ul>
-                  <li>
-                    <CheckCircle2 aria-hidden size={16} />
-                    <span>Best For: Wildlife, Photography, Scenic landscapes</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 aria-hidden size={16} />
-                    <span>Transport: Custom-built 4x4 open-roof safari landcruiser/jeep</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 aria-hidden size={16} />
-                    <span>Pacing: Relaxed & custom-adjusted with expert guides</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 aria-hidden size={16} />
-                    <span>Support: Fully vetted team with emergency radio systems</span>
-                  </li>
+                  {inclusions.map((entry) => (
+                    <li key={entry}>
+                      <CheckCircle2 aria-hidden size={16} />
+                      <span>{entry}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </section>
 
-            <section className="pkg-panel pkg-faq">
-              <h2>Frequently Asked Questions</h2>
-              <div className="pkg-faq__list">
-                <article>
-                  <h3>
-                    <Compass aria-hidden size={16} /> How many days do you need?
-                  </h3>
-                  <p>
-                    This route is designed around {item.duration}, with pacing adjusted for travel season, group style and accommodation preference.
-                  </p>
-                </article>
+            <PackageLinkedTrips packageTitle={item.title} trips={linkedTrips} />
 
-                <article>
-                  <h3>
-                    <Compass aria-hidden size={16} /> Can this be private or family-friendly?
-                  </h3>
-                  <p>
-                    Yes. Nature Romp Safaris can adapt this package for private, family, budget, mid-range or comfort-focused travel. We offer child car seat mounts and custom meal pacing for family safaris.
-                  </p>
-                </article>
-
-                <article>
-                  <h3>
-                    <Compass aria-hidden size={16} /> Can it connect with Tanzania?
-                  </h3>
-                  <p>
-                    Kenya routes can be extended into Tanzania for Serengeti, Ngorongoro and broader Kenya Tanzania safari adventure itineraries. Please check our combined package options or request custom adjustments in the booking form.
-                  </p>
-                </article>
-              </div>
-            </section>
+            {faqs.length ? (
+              <section className="pkg-panel pkg-faq">
+                <h2>Frequently Asked Questions</h2>
+                <div className="pkg-faq__list">
+                  {faqs.map((entry) => (
+                    <article key={entry.question}>
+                      <h3>
+                        <Compass aria-hidden size={16} /> {entry.question}
+                      </h3>
+                      <p>{entry.answer}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
             <div className="pkg-detail__enhancements">
               <PackageEnhancementsView {...enhancements} />
@@ -314,9 +342,11 @@ export default async function PackageDetailPage({ params }: Props) {
             <div className="pkg-sidebar__summary">
               <span>Package inquiry</span>
               <h2>{item.title}</h2>
-              {item.priceText ? <p className="pkg-sidebar__price">{item.priceText}</p> : null}
+              {displayPrice ? <p className="pkg-sidebar__price">{displayPrice}</p> : null}
               <p>
-                Share your travel dates, group size and comfort level. We will respond with a specific quote for this safari.
+                {linkedTrips.length
+                  ? "Choose a linked tour above for full pricing tables, or send your dates here for a tailored quote."
+                  : "Share your travel dates, group size and comfort level. We will respond with a specific quote for this safari."}
               </p>
             </div>
             <EnquiryForm

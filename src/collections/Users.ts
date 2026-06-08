@@ -24,6 +24,7 @@ function throwUnauthorizedEmailValidation(req: PayloadRequest) {
 export const Users: CollectionConfig = {
   slug: "users",
   auth: {
+    tokenExpiration: 60 * 60 * 24 * 14,
     forgotPassword: {
       generateEmailHTML: (args) => {
         const token = args?.token ?? "";

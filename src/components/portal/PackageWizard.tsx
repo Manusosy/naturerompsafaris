@@ -437,15 +437,16 @@ export function PackageWizard({
               </div>
 
               <div className="acc-field">
-                <label className="acc-label" htmlFor="pkg-duration">Duration</label>
+                <label className="acc-label" htmlFor="pkg-duration">Duration (fallback)</label>
                 <input
                   className="acc-input"
                   id="pkg-duration"
                   onChange={(e) => set("duration", e.target.value)}
-                  placeholder="e.g. 7 Days / 6 Nights"
+                  placeholder="e.g. 7 Days / 6 Nights — auto-filled from linked trips when empty"
                   type="text"
                   value={data.duration}
                 />
+                <span className="acc-hint">Leave blank to use duration from linked published trips.</span>
               </div>
             </div>
           </div>
@@ -472,19 +473,20 @@ export function PackageWizard({
           <div className="acc-wizard__panel">
             <h2 className="acc-wizard__heading">Pricing & Timing</h2>
             <p className="acc-wizard__sub">
-              Starting price text and the best season to travel. Enquiries are handled directly — no payment on the site.
+              Optional fallback text for listing cards. When published trips are linked to this package, their live pricing and duration appear automatically on the public site.
             </p>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-price">Starting Price Text</label>
+              <label className="acc-label" htmlFor="pkg-price">Starting Price Text (fallback)</label>
               <input
                 className="acc-input"
                 id="pkg-price"
                 onChange={(e) => set("priceText", e.target.value)}
-                placeholder="e.g. From USD 2,400 per person"
+                placeholder="e.g. From USD 2,400 per person — used only when no linked trip exists"
                 type="text"
                 value={data.priceText}
               />
+              <span className="acc-hint">Shown on cards only when no published trip is linked to this package.</span>
             </div>
 
             <div className="acc-field">

@@ -154,7 +154,7 @@ export function LocationSearchPicker({
       setShowSuggestions(true);
 
       const best = results[0];
-      if (best.source === "curated" || results.length === 1) {
+      if (results.length === 1) {
         applyResult(best);
       } else {
         setSearchError("Multiple matches found — pick the correct park or place from the list.");

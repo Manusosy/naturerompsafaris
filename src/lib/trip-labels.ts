@@ -36,6 +36,53 @@ export const TRIP_EXPERIENCE_FILTER_OPTIONS = [
   { label: "Mount Climbing", value: "mount-climbing" },
 ] as const;
 
+export function formatExperienceLabel(value: string) {
+  if (TRIP_EXPERIENCE_LABELS[value]) return TRIP_EXPERIENCE_LABELS[value];
+  return value
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export const TRIP_EXPERIENCE_PRESET_VALUES = TRIP_EXPERIENCE_FILTER_OPTIONS.filter(
+  (option) => option.value !== "__all",
+).map((option) => option.value);
+
+export function parseCustomExperienceTypes(value: unknown) {
+  if (typeof value !== "string" || !value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0);
+  } catch {
+    return [];
+  }
+}
+
+export function mergeExperienceTypes(preset: unknown, customJson: unknown) {
+  const presets = Array.isArray(preset) ? preset.map(String).filter(Boolean) : [];
+  const custom = parseCustomExperienceTypes(customJson);
+  const seen = new Set<string>();
+  const merged: string[] = [];
+
+  for (const value of [...presets, ...custom]) {
+    if (seen.has(value)) continue;
+    seen.add(value);
+    merged.push(value);
+  }
+
+  return merged;
+}
+
+export function splitExperienceTypes(all: string[]) {
+  const presetSet = new Set<string>(TRIP_EXPERIENCE_PRESET_VALUES);
+  return {
+    custom: all.filter((value) => !presetSet.has(value)),
+    preset: all.filter((value) => presetSet.has(value)),
+  };
+}
+
 export function suggestTripHeroEyebrow(input: {
   experienceTypes?: string[];
   packageTier?: string;
@@ -47,11 +94,11 @@ export function suggestTripHeroEyebrow(input: {
   }
 
   const primaryExperience = Array.isArray(input.experienceTypes)
-    ? input.experienceTypes.find((value) => TRIP_EXPERIENCE_LABELS[value])
+    ? input.experienceTypes.find((value) => value.trim())
     : undefined;
 
   if (primaryExperience) {
-    const experienceLabel = TRIP_EXPERIENCE_LABELS[primaryExperience]
+    const experienceLabel = formatExperienceLabel(primaryExperience)
       .replace(/ Holidays$/, "")
       .replace(/ Safari$/, "");
     if (!parts.some((part) => experienceLabel.toLowerCase().includes(part.toLowerCase()))) {
@@ -79,11 +126,11 @@ export function getTripDesignationLabel(input: {
   }
 
   const firstExperience = Array.isArray(input.experienceTypes)
-    ? input.experienceTypes.find((value) => TRIP_EXPERIENCE_LABELS[value])
+    ? input.experienceTypes.find((value) => value.trim())
     : undefined;
 
   if (firstExperience) {
-    return TRIP_EXPERIENCE_LABELS[firstExperience];
+    return formatExperienceLabel(firstExperience);
   }
 
   return undefined;

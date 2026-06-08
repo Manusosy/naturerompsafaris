@@ -7,6 +7,7 @@ import { PackageCard, type BlogSummary, type Package } from "@/components/Cards"
 import { HomepageFaqsExperience } from "@/components/HomepageFaqsExperience";
 import { posts as staticPosts, serviceCards } from "@/content/site";
 import { galleryItemImages, mediaAlt, mediaUrl } from "@/lib/cms-media";
+import { enrichPackageForCatalog, fetchLinkedTripsByPackageIds } from "@/lib/package-trips";
 import { getSafePayload } from "@/lib/safe-payload";
 
 const serviceDetails: Record<string, { body: string; cta: string; href: string }> = {
@@ -130,7 +131,12 @@ export async function FeaturedPackages({ limit = 6 }: { limit?: number }) {
             sort: "-updatedAt",
           });
 
-      packages = result.docs as unknown as Package[];
+      const rawPackages = result.docs as Array<Package & { id?: string | number }>;
+      const tripsByPackageId = await fetchLinkedTripsByPackageIds(
+        payload,
+        rawPackages.map((item) => item.id).filter((id) => id != null) as Array<string | number>,
+      );
+      packages = rawPackages.map((item) => enrichPackageForCatalog(item, tripsByPackageId));
     }
   } catch (error) {
     console.error("[homepage] Failed to load featured packages:", error);

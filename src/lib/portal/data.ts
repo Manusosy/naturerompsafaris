@@ -1,12 +1,12 @@
 import configPromise from "@payload-config";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getPayload } from "payload";
 
 import { getEnv } from "@/lib/env";
 import { normalizeMediaUrl } from "@/lib/cms-media";
-import { verifyPortalToken } from "@/lib/portal/session";
+import { readPortalAuthToken, verifyPortalToken } from "@/lib/portal/session";
 
 export type PortalUser = {
   email?: string;
@@ -19,21 +19,41 @@ export async function getPayloadClient() {
   return getPayload({ config: configPromise });
 }
 
-export async function getPortalUser(): Promise<PortalUser | null> {
+async function readPortalAuthTokenFromContext(request?: Pick<Request, "headers">) {
+  const payload = await getPayloadClient();
+  const cookieName = `${payload.config.cookiePrefix}-token`;
+  let cookieStore: Awaited<ReturnType<typeof cookies>> | undefined;
+
   try {
-    const cookieStore = await cookies();
-    const tokenCookie = cookieStore.getAll().find((cookie) => cookie.name.endsWith("-token"));
-    const token = tokenCookie?.value;
+    cookieStore = await cookies();
+  } catch {
+    cookieStore = undefined;
+  }
+
+  let cookieHeader = request?.headers.get("cookie");
+  if (!cookieHeader) {
+    try {
+      cookieHeader = (await headers()).get("cookie");
+    } catch {
+      cookieHeader = null;
+    }
+  }
+
+  return readPortalAuthToken({
+    cookieHeader,
+    cookieName,
+    cookieStore,
+  });
+}
+
+export async function getPortalUser(request?: Pick<Request, "headers">): Promise<PortalUser | null> {
+  try {
+    const payload = await getPayloadClient();
+    const token = await readPortalAuthTokenFromContext(request);
     if (!token) return null;
 
-    const payload = await getPayloadClient();
     const tokenPayload = await verifyPortalToken(token, payload.secret);
-    if (
-      !tokenPayload?.id ||
-      tokenPayload.collection !== "users"
-    ) {
-      return null;
-    }
+    if (!tokenPayload?.id || tokenPayload.collection !== "users") return null;
 
     const user = await payload.findByID({
       collection: "users",
@@ -41,6 +61,8 @@ export async function getPortalUser(): Promise<PortalUser | null> {
       id: tokenPayload.id,
       overrideAccess: true,
     });
+
+    if (!user) return null;
 
     return {
       email: user.email,
@@ -56,6 +78,15 @@ export async function getPortalUser(): Promise<PortalUser | null> {
 export async function requirePortalUser() {
   const user = await getPortalUser();
   if (!user) redirect("/admin/login");
+  return user;
+}
+
+/** Server actions should throw instead of redirecting — redirect feels like an instant logout. */
+export async function requirePortalUserForAction() {
+  const user = await getPortalUser();
+  if (!user) {
+    throw new Error("Your session expired. Refresh the page and sign in again.");
+  }
   return user;
 }
 
@@ -105,11 +136,14 @@ export const getRelationOptions = cache(async (collection: string) => {
 });
 
 export type WizardLinkOption = {
+  category?: string;
   dayCount?: number;
+  destinationIds?: string[];
   href?: string;
   label: string;
   mapPlace?: string;
   meta?: string;
+  packageTier?: string;
   value: string;
 };
 
@@ -152,13 +186,35 @@ export const getTripWizardRelations = cache(async () => {
     }));
 
   const packages = (packageResult.docs as Array<Record<string, unknown>>)
-    .filter((doc) => doc.status === "published")
-    .map((doc) => ({
-      href: doc.slug ? `/safari-packages/${String(doc.slug)}` : undefined,
-      label: relationDocLabel(doc),
-      meta: packageDocMeta(doc),
-      value: String(doc.id),
-    }));
+    .filter((doc) => doc.status !== "trashed")
+    .map((doc) => {
+      const destinationIds = Array.isArray(doc.destinations)
+        ? doc.destinations
+            .map((item) => {
+              if (item && typeof item === "object" && "id" in item) {
+                return String((item as { id?: unknown }).id ?? "");
+              }
+              if (typeof item === "string" || typeof item === "number") return String(item);
+              return "";
+            })
+            .filter(Boolean)
+        : [];
+
+      return {
+        category: typeof doc.category === "string" ? doc.category : undefined,
+        destinationIds,
+        href: doc.slug ? `/safari-packages/${String(doc.slug)}` : undefined,
+        label: relationDocLabel(doc),
+        meta: [
+          packageDocMeta(doc),
+          doc.status === "draft" ? "Draft" : "",
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
+        value: String(doc.id),
+      };
+    });
 
   const trips = (tripResult.docs as Array<Record<string, unknown>>)
     .filter((doc) => doc.status === "published")

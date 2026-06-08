@@ -1,17 +1,17 @@
 "use server";
 
-import { findCollection, requirePortalUser } from "@/lib/portal/data";
+import { findCollection, requirePortalUserForAction } from "@/lib/portal/data";
 
 import { normalizeMediaUrl } from "@/lib/cms-media";
 
 export async function fetchMoreMedia(page: number) {
-    await requirePortalUser();
+    await requirePortalUserForAction();
     const result = await findCollection("media", 36, undefined, page);
     return result.docs;
 }
 
 export async function fetchTotalMediaCount() {
-    await requirePortalUser();
+    await requirePortalUserForAction();
     const payload = await import("@/lib/portal/data").then(m => m.getPayloadClient());
     const countResult = await payload.count({
         collection: "media" as never,
@@ -21,7 +21,7 @@ export async function fetchTotalMediaCount() {
 }
 
 export async function fetchMoreMediaOptions(page: number) {
-    await requirePortalUser();
+    await requirePortalUserForAction();
     const result = await findCollection("media", 36, undefined, page);
     return (result.docs as Array<Record<string, unknown>>).map((doc) => {
         const sizes = doc.sizes && typeof doc.sizes === "object" ? doc.sizes as Record<string, unknown> : {};

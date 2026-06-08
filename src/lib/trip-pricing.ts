@@ -1,5 +1,12 @@
 export type TripPricingBasis = "per-person" | "per-person-sharing";
 
+/** Shown on cards and listings when no pricing table amounts exist yet. */
+export const TRIP_PRICE_INQUIRY_LABEL = "Price confirmed after trip inquiry";
+
+/** Longer helper copy for admin wizard and detail pages. */
+export const TRIP_PRICE_INQUIRY_HINT =
+  "Final trip price is confirmed once we review your travel dates, group size, and accommodation preference.";
+
 export function tripPricingBasisLabel(basis?: TripPricingBasis | string | null) {
   return basis === "per-person-sharing" ? "Per Person Sharing" : "Per Person";
 }
@@ -86,7 +93,7 @@ export function getTripPriceParts(input: {
     return { kind: "quote", label: normalizeLegacyTripPrice(legacy) };
   }
 
-  return { kind: "quote", label: "Price on request" };
+  return { kind: "quote", label: TRIP_PRICE_INQUIRY_LABEL };
 }
 
 export function formatTripPrice(input: {
@@ -119,7 +126,7 @@ export function buildTripBudgetPayload(input: {
 
   return {
     currency,
-    displayText: displayText === "Price on request" ? "" : displayText,
+    displayText: displayText === TRIP_PRICE_INQUIRY_LABEL ? "" : displayText,
     max: input.max,
     min: input.min,
     pricingBasis,

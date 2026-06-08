@@ -35,7 +35,7 @@ function getMutationErrorMessage(error: unknown) {
 }
 
 export async function POST(request: Request) {
-  const user = await getPortalUser();
+  const user = await getPortalUser(request);
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }

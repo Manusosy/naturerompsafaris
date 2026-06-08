@@ -13,6 +13,7 @@
     "db:sync:portal-signup": "node scripts/sync-portal-signup-schema.mjs",
     "db:sync:trip-pricing": "node scripts/sync-trip-pricing-schema.mjs",
     "db:sync:trip-content": "node scripts/sync-trip-content-schema.mjs",
+    "db:sync:trip-experiences": "node scripts/sync-trip-experience-types.mjs",
     "db:sync:homepage-slides": "node scripts/sync-homepage-slides-schema.mjs",
     "db:sync:gallery": "node scripts/sync-gallery-schema.mjs",
     "db:migrate:production-cms": "node scripts/migrate-production-cms-redesign.mjs",

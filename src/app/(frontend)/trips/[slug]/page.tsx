@@ -6,6 +6,8 @@ import { getPayload } from "payload";
 import { JsonLd } from "@/components/JsonLd";
 import { TripDetailExperience, type TripDetailData } from "@/components/TripDetailExperience";
 import { site } from "@/content/site";
+import { createWhatsAppLink } from "@/lib/enquiry";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { formatTripPrice } from "@/lib/trip-pricing";
@@ -201,6 +203,12 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
         })).filter((item) => item.title)
       : [],
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
+    linkedPackage: (() => {
+      const pkg = doc.package && typeof doc.package === "object" ? doc.package as Record<string, unknown> : null;
+      const slug = pkg ? relationSlug(pkg) : "";
+      const title = pkg ? relationName(pkg) : "";
+      return slug && title ? { slug, title } : undefined;
+    })(),
     packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
     positiveImpact: typeof doc.positiveImpact === "string" ? doc.positiveImpact : undefined,
     priceSeasons: Array.isArray(doc.priceSeasons)
@@ -287,7 +295,14 @@ export default async function TripPage({ params }: Props) {
   const trip = await getTrip(slug);
   if (!trip) notFound();
   const reviewSettings = await getReviewSettings();
+  const siteSettings = await getPublicSiteSettings();
   const normalizedTrip = normalizeTrip(trip, reviewSettings);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? site.canonicalUrl;
+  const tripPageUrl = `${siteUrl}/trips/${normalizedTrip.slug}`;
+  const whatsappHref = createWhatsAppLink({
+    message: `Hi Nature Romp Safaris, I would like help planning "${normalizedTrip.title}". ${tripPageUrl}`,
+    phone: siteSettings.whatsapp || site.whatsapp,
+  });
 
   const schema = {
     "@context": "https://schema.org",
@@ -307,7 +322,7 @@ export default async function TripPage({ params }: Props) {
         { name: "Trips", url: "/safari-packages" },
         { name: normalizedTrip.title, url: `/trips/${normalizedTrip.slug}` },
       ])} />
-      <TripDetailExperience trip={normalizedTrip} />
+      <TripDetailExperience trip={normalizedTrip} whatsappHref={whatsappHref} />
     </main>
   );
 }

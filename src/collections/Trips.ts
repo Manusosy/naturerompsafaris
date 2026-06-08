@@ -142,7 +142,16 @@ export const Trips: CollectionConfig = {
         { label: "Beach Extensions", value: "beach-extension" },
         { label: "Mount Climbing", value: "mount-climbing" },
       ],
-      admin: { description: "Used by Experiences navigation and public filters." },
+      admin: { description: "Preset filters used by navigation and trip listings." },
+    },
+    {
+      name: "customExperienceTypes",
+      label: "Custom experience types",
+      type: "text",
+      admin: {
+        hidden: true,
+        description: "JSON array of custom experience slugs. Managed by the trip wizard.",
+      },
     },
     {
       name: "destinations",

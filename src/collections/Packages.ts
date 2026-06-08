@@ -68,13 +68,16 @@ export const Packages: CollectionConfig = {
     {
       name: "duration",
       type: "text",
-      admin: { placeholder: "e.g. 7 Days / 6 Nights" },
+      admin: { placeholder: "e.g. 7 Days / 6 Nights — fallback when no linked trip exists" },
     },
     {
       name: "priceText",
       label: "Price / starting text",
       type: "text",
-      admin: { placeholder: "e.g. From USD 2,400 per person" },
+      admin: {
+        placeholder: "e.g. From USD 2,400 per person",
+        description: "Fallback for listing cards. Linked published trips supply live pricing automatically.",
+      },
     },
     {
       name: "bestTime",

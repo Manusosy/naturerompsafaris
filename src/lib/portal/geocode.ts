@@ -1,11 +1,10 @@
-import { matchSafariPlaces, normalizePlaceQuery, type SafariPlace } from "./safari-places";
-
 export type GeocodeResult = {
   label: string;
   lat: string;
   lng: string;
+  placeId?: string;
   shortLabel?: string;
-  source?: "curated" | "google" | "nominatim";
+  source?: "google" | "nominatim";
 };
 
 const COUNTRY_CODES: Record<string, string> = {
@@ -18,6 +17,8 @@ const COUNTRY_NAMES: Record<string, string> = {
   tanzania: "Tanzania",
 };
 
+const KENYA_TANZANIA_COMPONENTS = "country:ke|country:tz";
+
 type NominatimRow = {
   class?: string;
   display_name?: string;
@@ -27,31 +28,29 @@ type NominatimRow = {
   type?: string;
 };
 
-function toGeocodeResult(place: SafariPlace): GeocodeResult {
-  return {
-    label: place.label,
-    lat: place.lat,
-    lng: place.lng,
-    shortLabel: place.label,
-    source: "curated",
+type ScoredGeocodeResult = GeocodeResult & { score?: number };
+
+type GoogleAutocompletePrediction = {
+  description?: string;
+  place_id?: string;
+  structured_formatting?: {
+    main_text?: string;
+    secondary_text?: string;
   };
+};
+
+function componentsForCountry(country?: string) {
+  if (country === "kenya") return "country:ke";
+  if (country === "tanzania") return "country:tz";
+  return KENYA_TANZANIA_COMPONENTS;
 }
 
-function buildSearchQueries(query: string, country?: string) {
-  const trimmed = query.trim();
-  const countryName = country ? COUNTRY_NAMES[country] : "";
-  const queries = new Set<string>([trimmed]);
+function shortAddressLabel(label: string) {
+  return label.split(",").slice(0, 3).join(", ").trim();
+}
 
-  if (countryName && !trimmed.toLowerCase().includes(countryName.toLowerCase())) {
-    queries.add(`${trimmed}, ${countryName}`);
-  }
-
-  if (!/national (park|reserve)/i.test(trimmed) && /mara|serengeti|amboseli|nakuru|ngorongoro|tarangire|manyara/i.test(trimmed)) {
-    queries.add(`${trimmed} National Park, ${countryName || "Kenya"}`);
-    queries.add(`${trimmed} National Reserve, ${countryName || "Kenya"}`);
-  }
-
-  return [...queries];
+function normalizePlaceQuery(query: string) {
+  return query.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function scoreNominatimRow(row: NominatimRow, query: string) {
@@ -86,8 +85,122 @@ function scoreNominatimRow(row: NominatimRow, query: string) {
   return score;
 }
 
-function shortNominatimLabel(displayName: string) {
-  return displayName.split(",").slice(0, 3).join(", ").trim();
+function buildSearchQueries(query: string, country?: string) {
+  const trimmed = query.trim();
+  const countryName = country ? COUNTRY_NAMES[country] : "";
+  const queries = new Set<string>([trimmed]);
+
+  if (countryName && !trimmed.toLowerCase().includes(countryName.toLowerCase())) {
+    queries.add(`${trimmed}, ${countryName}`);
+  }
+
+  return [...queries];
+}
+
+function dedupeResults(results: ScoredGeocodeResult[]) {
+  const seen = new Set<string>();
+  return results.filter((result) => {
+    const key = result.placeId || `${result.lat}:${result.lng}` || result.label.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+async function searchGooglePlacesAutocomplete(
+  query: string,
+  apiKey: string,
+  options?: { country?: string; limit?: number },
+): Promise<ScoredGeocodeResult[]> {
+  const params = new URLSearchParams({
+    components: componentsForCountry(options?.country),
+    input: query,
+    key: apiKey,
+  });
+
+  const response = await fetch(
+    `https://maps.googleapis.com/maps/api/place/autocomplete/json?${params.toString()}`,
+  );
+  if (!response.ok) return [];
+
+  const payload = (await response.json()) as {
+    predictions?: GoogleAutocompletePrediction[];
+    status?: string;
+  };
+
+  if (payload.status !== "OK" && payload.status !== "ZERO_RESULTS") {
+    return [];
+  }
+
+  const limit = options?.limit ?? 8;
+  return (payload.predictions ?? []).slice(0, limit).map((prediction, index) => {
+    const main = prediction.structured_formatting?.main_text ?? "";
+    const secondary = prediction.structured_formatting?.secondary_text ?? "";
+    const label = prediction.description ?? [main, secondary].filter(Boolean).join(", ");
+
+    return {
+      label,
+      shortLabel: label,
+      lat: "",
+      lng: "",
+      placeId: prediction.place_id,
+      score: 100 - index,
+      source: "google" as const,
+    };
+  });
+}
+
+async function searchGoogleGeocode(
+  query: string,
+  apiKey: string,
+  country?: string,
+  limit = 8,
+): Promise<ScoredGeocodeResult[]> {
+  const queries = buildSearchQueries(query, country);
+  const rows: ScoredGeocodeResult[] = [];
+
+  for (const candidate of queries) {
+    const params = new URLSearchParams({
+      address: candidate,
+      key: apiKey,
+    });
+    const region = country ? COUNTRY_CODES[country] : "";
+    if (region) params.set("region", region);
+
+    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`);
+    if (!response.ok) continue;
+
+    const payload = (await response.json()) as {
+      results?: Array<{
+        formatted_address?: string;
+        geometry?: { location?: { lat?: number; lng?: number } };
+        place_id?: string;
+      }>;
+      status?: string;
+    };
+
+    if (payload.status !== "OK" || !payload.results?.length) continue;
+
+    payload.results.slice(0, limit).forEach((row, index) => {
+      const lat = row.geometry?.location?.lat;
+      const lng = row.geometry?.location?.lng;
+      if (lat === undefined || lng === undefined) return;
+
+      rows.push({
+        label: String(row.formatted_address ?? candidate),
+        shortLabel: shortAddressLabel(String(row.formatted_address ?? candidate)),
+        lat: String(lat),
+        lng: String(lng),
+        placeId: row.place_id,
+        score: 80 - index,
+        source: "google",
+      });
+    });
+
+    if (rows.length) break;
+  }
+
+  return rows;
 }
 
 async function searchNominatim(query: string, country?: string, limit = 8) {
@@ -98,8 +211,8 @@ async function searchNominatim(query: string, country?: string, limit = 8) {
     q: query,
   });
 
-  const countryCode = country ? COUNTRY_CODES[country] : "";
-  if (countryCode) params.set("countrycodes", countryCode);
+  const countryCode = country ? COUNTRY_CODES[country] : "ke,tz";
+  params.set("countrycodes", countryCode);
 
   const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
     headers: {
@@ -118,50 +231,44 @@ async function searchNominatim(query: string, country?: string, limit = 8) {
       lat: String(row.lat),
       lng: String(row.lon),
       score: scoreNominatimRow(row, query),
-      shortLabel: shortNominatimLabel(String(row.display_name)),
+      shortLabel: shortAddressLabel(String(row.display_name)),
       source: "nominatim" as const,
     }));
 }
 
-async function searchGoogle(query: string, apiKey: string) {
+export async function resolvePlaceDetails(placeId: string, apiKey: string): Promise<GeocodeResult | null> {
   const params = new URLSearchParams({
-    address: query,
+    fields: "formatted_address,geometry,name",
     key: apiKey,
+    place_id: placeId,
   });
 
-  const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`);
-  if (!response.ok) return [];
+  const response = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?${params.toString()}`);
+  if (!response.ok) return null;
 
   const payload = (await response.json()) as {
-    results?: Array<{
+    result?: {
       formatted_address?: string;
       geometry?: { location?: { lat?: number; lng?: number } };
-    }>;
+      name?: string;
+    };
     status?: string;
   };
 
-  if (payload.status !== "OK" || !payload.results?.length) return [];
+  if (payload.status !== "OK" || !payload.result?.geometry?.location) return null;
 
-  return payload.results
-    .filter((row) => row.geometry?.location?.lat !== undefined && row.geometry?.location?.lng !== undefined)
-    .map((row, index) => ({
-      label: String(row.formatted_address ?? query),
-      lat: String(row.geometry!.location!.lat),
-      lng: String(row.geometry!.location!.lng),
-      score: 100 - index,
-      shortLabel: shortNominatimLabel(String(row.formatted_address ?? query)),
-      source: "google" as const,
-    }));
-}
+  const { lat, lng } = payload.result.geometry.location;
+  const label = payload.result.formatted_address ?? payload.result.name ?? "";
+  if (lat === undefined || lng === undefined || !label) return null;
 
-function dedupeResults(results: Array<GeocodeResult & { score?: number }>) {
-  const seen = new Set<string>();
-  return results.filter((result) => {
-    const key = `${result.lat}:${result.lng}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  return {
+    label,
+    shortLabel: shortAddressLabel(label),
+    lat: String(lat),
+    lng: String(lng),
+    placeId,
+    source: "google",
+  };
 }
 
 export function pickBestPlace(results: GeocodeResult[]) {
@@ -175,41 +282,41 @@ export async function resolvePlaces(
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
 
-  const limit = options?.limit ?? 6;
-  const curated = matchSafariPlaces(trimmed, options?.country).map(toGeocodeResult);
-  const queries = buildSearchQueries(trimmed, options?.country);
-
-  const remoteResults: Array<GeocodeResult & { score?: number }> = [];
+  const limit = options?.limit ?? 8;
 
   if (options?.googleApiKey) {
-    for (const candidate of queries) {
-      const googleResults = await searchGoogle(candidate, options.googleApiKey);
-      remoteResults.push(...googleResults);
-      if (googleResults.length) break;
+    const autocompleteResults = await searchGooglePlacesAutocomplete(trimmed, options.googleApiKey, {
+      country: options.country,
+      limit,
+    });
+    if (autocompleteResults.length) {
+      return dedupeResults(autocompleteResults).slice(0, limit);
+    }
+
+    const geocodeResults = await searchGoogleGeocode(trimmed, options.googleApiKey, options.country, limit);
+    if (geocodeResults.length) {
+      return dedupeResults(geocodeResults).slice(0, limit);
     }
   }
 
-  if (!remoteResults.length) {
-    for (const candidate of queries) {
-      const nominatimResults = await searchNominatim(candidate, options?.country, limit);
-      remoteResults.push(...nominatimResults);
-      if (nominatimResults.some((item) => (item.score ?? 0) >= 60)) break;
-    }
+  const remoteResults: ScoredGeocodeResult[] = [];
+  for (const candidate of buildSearchQueries(trimmed, options?.country)) {
+    const nominatimResults = await searchNominatim(candidate, options?.country, limit);
+    remoteResults.push(...nominatimResults);
+    if (nominatimResults.some((item) => (item.score ?? 0) >= 60)) break;
   }
 
-  const rankedRemote = dedupeResults(remoteResults).sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-  const combined = dedupeResults([
-    ...curated.map((item) => ({ ...item, score: 200 })),
-    ...rankedRemote,
-  ]).slice(0, limit);
-
-  return combined.map(({ label, lat, lng, shortLabel, source }) => ({
-    label,
-    lat,
-    lng,
-    shortLabel,
-    source,
-  }));
+  return dedupeResults(remoteResults)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .slice(0, limit)
+    .map(({ label, lat, lng, shortLabel, source, placeId }) => ({
+      label,
+      lat,
+      lng,
+      shortLabel,
+      source,
+      placeId,
+    }));
 }
 
 /** Client-side helper — calls the portal geocode API. */
@@ -231,6 +338,18 @@ export async function searchPlaces(
   return Array.isArray(payload.results) ? payload.results : [];
 }
 
+/** Resolve a Google place_id to coordinates and a formatted address. */
+export async function fetchPlaceDetails(placeId: string): Promise<GeocodeResult | null> {
+  const response = await fetch(`/api/portal/geocode?placeId=${encodeURIComponent(placeId)}`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as { result?: GeocodeResult | null };
+  return payload.result ?? null;
+}
+
 export function buildMapEmbedUrl(lat: string, lng: string, label?: string) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const query = label?.trim() || `${lat},${lng}`;
@@ -240,4 +359,8 @@ export function buildMapEmbedUrl(lat: string, lng: string, label?: string) {
   }
 
   return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&hl=en&z=9&output=embed`;
+}
+
+export function googleMapsApiKey() {
+  return process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? process.env.GOOGLE_MAPS_API_KEY ?? "";
 }

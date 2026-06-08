@@ -5,7 +5,7 @@ import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
 import { isTrustedPortalOrigin } from "@/lib/portal/security";
 
 export async function POST(request: Request) {
-  const user = await getPortalUser();
+  const user = await getPortalUser(request);
   if (!user?.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }

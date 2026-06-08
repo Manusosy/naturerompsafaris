@@ -5,6 +5,7 @@ import configPromise from "@payload-config";
 import { PackageCard, type Package } from "@/components/Cards";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeader } from "@/components/Sections";
+import { enrichPackageForCatalog, fetchLinkedTripsByPackageIds } from "@/lib/package-trips";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +43,12 @@ export default async function PackagesPage(props: {
     overrideAccess: true,
   });
 
-  const packages = result.docs as unknown as Package[];
+  const rawPackages = result.docs as Array<Package & { id?: string | number }>;
+  const tripsByPackageId = await fetchLinkedTripsByPackageIds(
+    payload,
+    rawPackages.map((item) => item.id).filter((id) => id != null) as Array<string | number>,
+  );
+  const packages = rawPackages.map((item) => enrichPackageForCatalog(item, tripsByPackageId));
 
   return (
     <main className="packages-page">

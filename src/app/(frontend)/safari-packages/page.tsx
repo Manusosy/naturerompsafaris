@@ -39,9 +39,13 @@ export default async function PackagesPage({
 }) {
   const params = (await searchParams) || {};
   const category = params.category ?? "__all";
-  const group = params.group ?? "__all";
+  const groupParam = params.group ?? "__all";
   const tier = params.tier ?? "__all";
   const payload = await getPayload({ config: configPromise });
+  const visibleGroupsForQuery = packageGroupsForCategory(category);
+  const group = visibleGroupsForQuery.some((option) => option.value === groupParam)
+    ? groupParam
+    : "__all";
 
   const result = await payload.find({
     collection: "packages",
@@ -68,8 +72,9 @@ export default async function PackagesPage({
 
   const activeCategoryLabel =
     PACKAGE_CATEGORY_FILTER_OPTIONS.find((option) => option.value === category)?.label ?? "";
-  const visibleGroups = packageGroupsForCategory(category);
-  const isFiltered = category !== "__all" || group !== "__all" || tier !== "__all";
+  const visibleGroups = visibleGroupsForQuery;
+  const activeGroup = group;
+  const isFiltered = category !== "__all" || activeGroup !== "__all" || tier !== "__all";
 
   return (
     <main className="acc-page packages-page">
@@ -111,12 +116,13 @@ export default async function PackagesPage({
 
             <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Package Type</h3>
-              {visibleGroups.map(({ label, value }) => (
-                <label className="acc-filter-radio" key={value}>
-                  <input defaultChecked={group === value} name="group" type="radio" value={value} />
-                  {label}
-                </label>
-              ))}
+              <select className="acc-filter-select" defaultValue={activeGroup} name="group">
+                {visibleGroups.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="acc-filter-group">
@@ -149,9 +155,9 @@ export default async function PackagesPage({
             {isFiltered ? (
               <span>
                 {category !== "__all" ? `Market: ${activeCategoryLabel}` : null}
-                {category !== "__all" && group !== "__all" ? " / " : null}
-                {group !== "__all" ? `Type: ${packageGroupLabel(group)}` : null}
-                {(category !== "__all" || group !== "__all") && tier !== "__all" ? " / " : null}
+                {category !== "__all" && activeGroup !== "__all" ? " / " : null}
+                {activeGroup !== "__all" ? `Type: ${packageGroupLabel(activeGroup)}` : null}
+                {(category !== "__all" || activeGroup !== "__all") && tier !== "__all" ? " / " : null}
                 {tier !== "__all" ? `Tier: ${packageTierLabel(tier)}` : null}
               </span>
             ) : null}

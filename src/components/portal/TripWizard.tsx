@@ -9,7 +9,21 @@ import { MediaPickerField, type PortalMediaOption } from "@/components/portal/Me
 import { PlaceSearchInput } from "@/components/portal/PlaceSearchInput";
 import { slugify } from "@/lib/portal/format";
 import type { WizardLinkOption } from "@/lib/portal/data";
+import {
+  suggestTripHeroEyebrow,
+  TRIP_EXPERIENCE_FILTER_OPTIONS,
+  TRIP_TIER_FILTER_OPTIONS,
+} from "@/lib/trip-labels";
 import { buildTripBudgetPayload, formatTripPrice, type TripPricingBasis } from "@/lib/trip-pricing";
+import {
+  DEFAULT_PARTY_COLUMNS,
+  defaultPackageLabel,
+  emptyPricingPackage,
+  emptyPricingPackageRow,
+  packagesToPriceSeasons,
+  priceSeasonsToPackages,
+  type PricingPackage,
+} from "@/lib/trip-pricing-table";
 
 type QaItem = { question: string; answer: string };
 type ItineraryDay = {
@@ -32,25 +46,16 @@ type DestinationStop = {
   imageId: string;
   title: string;
 };
-type PriceSeason = {
-  budgetText: string;
-  ctaLabel: string;
-  currency: string;
-  dateRange: string;
-  displayText: string;
-  max: string;
-  min: string;
-  notes: string;
-  seasonLabel: string;
-  tier: string;
-  title: string;
-};
+type OptionalExperience = { description: string; priceNote: string; title: string };
+type AccommodationOption = { name: string; note: string };
 
 type WizardData = {
   title: string;
   slug: string;
   heroEyebrow: string;
   heroSubtitle: string;
+  cardSummary: string;
+  departurePoint: string;
   location: string;
   routeLabel: string;
   startLocation: string;
@@ -75,11 +80,16 @@ type WizardData = {
   pricingBasis: TripPricingBasis;
   budgetDisplay: string;
   priceText: string;
-  priceSeasons: PriceSeason[];
+  pricingPackages: PricingPackage[];
   included: string[];
   excluded: string[];
+  optionalExperiences: OptionalExperience[];
+  accommodationSummary: string;
+  accommodationOptions: AccommodationOption[];
   overview: string;
   positiveImpact: string;
+  bestFor: string[];
+  bestTimeToVisit: string;
   whyBook: string[];
   quoteIntro: string;
   faqs: QaItem[];
@@ -106,24 +116,6 @@ const STEPS = [
   { id: 6, label: "Content", description: "Overview & FAQs" },
   { id: 7, label: "Publish", description: "Availability & save" },
 ] as const;
-
-const TIER_OPTIONS = [
-  { label: "Budget", value: "budget" },
-  { label: "Mid Range", value: "mid-range" },
-  { label: "Luxury", value: "luxury" },
-  { label: "High End", value: "high-end" },
-];
-
-const EXPERIENCE_OPTIONS = [
-  { label: "Family Safaris", value: "family" },
-  { label: "Honeymoon Safaris", value: "honeymoon" },
-  { label: "Group Joining Safaris", value: "group-joining" },
-  { label: "Private Safaris", value: "private" },
-  { label: "Fly-In Safaris", value: "fly-in" },
-  { label: "Safari & Beach Holidays", value: "safari-beach" },
-  { label: "Beach Extensions", value: "beach-extension" },
-  { label: "Mount Climbing", value: "mount-climbing" },
-];
 
 const AVAILABILITY_OPTIONS = [
   { label: "Available", value: "available" },
@@ -248,22 +240,6 @@ function generateRouteFromItinerary(itineraryDays: ItineraryDay[]) {
   };
 }
 
-function emptyPriceSeason(): PriceSeason {
-  return {
-    budgetText: "",
-    ctaLabel: "Request Quote",
-    currency: "USD",
-    dateRange: "",
-    displayText: "",
-    max: "",
-    min: "",
-    notes: "",
-    seasonLabel: "",
-    tier: "mid-range",
-    title: "",
-  };
-}
-
 function buildFromDoc(doc: Record<string, unknown>): WizardData {
   const budget =
     doc.budget && typeof doc.budget === "object"
@@ -304,6 +280,8 @@ function buildFromDoc(doc: Record<string, unknown>): WizardData {
     slug: String(doc.slug ?? ""),
     heroEyebrow: String(doc.heroEyebrow ?? ""),
     heroSubtitle: String(doc.heroSubtitle ?? ""),
+    cardSummary: String(doc.cardSummary ?? ""),
+    departurePoint: String(doc.departurePoint ?? ""),
     location: String(doc.location ?? ""),
     routeLabel: String(doc.routeLabel ?? ""),
     startLocation: String(doc.startLocation ?? ""),
@@ -366,25 +344,41 @@ function buildFromDoc(doc: Record<string, unknown>): WizardData {
       budget.pricingBasis === "per-person-sharing" ? "per-person-sharing" : "per-person",
     budgetDisplay: String(budget.displayText ?? ""),
     priceText: String(doc.priceText ?? ""),
-    priceSeasons: seasonsRaw.length
-      ? seasonsRaw.map((item) => ({
+    pricingPackages: seasonsRaw.length
+      ? priceSeasonsToPackages(seasonsRaw.map((item) => ({
           title: String(item.title ?? ""),
           tier: String(item.tier ?? "mid-range"),
           seasonLabel: String(item.seasonLabel ?? ""),
+          packageLabel: String(item.packageLabel ?? ""),
           dateRange: String(item.dateRange ?? ""),
           currency: String(item.currency ?? "USD"),
-          min: item.min != null ? String(item.min) : "",
-          max: item.max != null ? String(item.max) : "",
-          displayText: String(item.displayText ?? ""),
-          budgetText: String(item.budgetText ?? ""),
+          min: typeof item.min === "number" ? item.min : undefined,
+          max: typeof item.max === "number" ? item.max : undefined,
           notes: String(item.notes ?? ""),
-          ctaLabel: String(item.ctaLabel ?? "Request Quote"),
-        }))
+          partySizeLabel: String(item.partySizeLabel ?? ""),
+          ctaLabel: String(item.ctaLabel ?? "Inquire"),
+        })))
       : [],
     included: parseStringItems(doc.included, "item"),
     excluded: parseStringItems(doc.excluded, "item"),
+    optionalExperiences: Array.isArray(doc.optionalExperiences)
+      ? (doc.optionalExperiences as Array<Record<string, unknown>>).map((item) => ({
+          title: String(item.title ?? ""),
+          description: String(item.description ?? ""),
+          priceNote: String(item.priceNote ?? ""),
+        }))
+      : [],
+    accommodationSummary: String(doc.accommodationSummary ?? ""),
+    accommodationOptions: Array.isArray(doc.accommodationOptions)
+      ? (doc.accommodationOptions as Array<Record<string, unknown>>).map((item) => ({
+          name: String(item.name ?? ""),
+          note: String(item.note ?? ""),
+        }))
+      : [],
     overview: String(doc.overview ?? ""),
     positiveImpact: String(doc.positiveImpact ?? ""),
+    bestFor: parseStringItems(doc.bestFor, "item"),
+    bestTimeToVisit: String(doc.bestTimeToVisit ?? ""),
     whyBook: parseStringItems(doc.whyBook, "item"),
     quoteIntro: String(doc.quoteIntro ?? ""),
     faqs: parseQaItems(doc.faqs),
@@ -639,6 +633,8 @@ export function TripWizard({
           slug: "",
           heroEyebrow: "",
           heroSubtitle: "",
+          cardSummary: "",
+          departurePoint: "",
           location: "",
           routeLabel: "",
           startLocation: "",
@@ -663,11 +659,16 @@ export function TripWizard({
           pricingBasis: "per-person",
           budgetDisplay: "",
           priceText: "",
-          priceSeasons: [],
+          pricingPackages: [],
           included: [],
           excluded: [],
+          optionalExperiences: [],
+          accommodationSummary: "",
+          accommodationOptions: [],
           overview: "",
           positiveImpact: "",
+          bestFor: [],
+          bestTimeToVisit: "",
           whyBook: [],
           quoteIntro: "",
           faqs: [{ question: "", answer: "" }],
@@ -797,6 +798,8 @@ export function TripWizard({
       slug: finalSlug,
       heroEyebrow: data.heroEyebrow.trim(),
       heroSubtitle: data.heroSubtitle.trim(),
+      cardSummary: data.cardSummary.trim(),
+      departurePoint: data.departurePoint.trim(),
       heroVideoUrl: data.heroVideoUrl.trim(),
       days: days || undefined,
       nights: nights || undefined,
@@ -832,7 +835,27 @@ export function TripWizard({
       included: data.included.map((item) => ({ item })),
       excluded: data.excluded.map((item) => ({ item })),
       whyBook: data.whyBook.map((item) => ({ item })),
+      bestFor: data.bestFor.map((item) => ({ item })),
+      bestTimeToVisit: data.bestTimeToVisit.trim(),
+      accommodationSummary: data.accommodationSummary.trim(),
     };
+
+    const optionalExperiences = data.optionalExperiences
+      .filter((item) => item.title.trim())
+      .map((item) => ({
+        title: item.title.trim(),
+        description: item.description.trim(),
+        priceNote: item.priceNote.trim(),
+      }));
+    if (optionalExperiences.length) payload.optionalExperiences = optionalExperiences;
+
+    const accommodationOptions = data.accommodationOptions
+      .filter((item) => item.name.trim())
+      .map((item) => ({
+        name: item.name.trim(),
+        note: item.note.trim(),
+      }));
+    if (accommodationOptions.length) payload.accommodationOptions = accommodationOptions;
 
     if (data.packageId) payload.package = toPayloadMediaId(data.packageId);
     if (data.heroImageId) payload.heroImage = toPayloadMediaId(data.heroImageId);
@@ -896,21 +919,20 @@ export function TripWizard({
       if (days.length) payload.itineraryDays = days;
     }
 
-    const seasons = data.priceSeasons
-      .filter((s) => s.title.trim())
-      .map((s) => ({
-        title: s.title.trim(),
-        tier: s.tier,
-        seasonLabel: s.seasonLabel.trim(),
-        dateRange: s.dateRange.trim(),
-        currency: s.currency.trim() || "USD",
-        min: s.min ? Number(s.min) : undefined,
-        max: s.max ? Number(s.max) : undefined,
-        displayText: s.displayText.trim(),
-        budgetText: s.budgetText.trim(),
-        notes: s.notes.trim(),
-        ctaLabel: s.ctaLabel.trim() || "Request Quote",
-      }));
+    const seasons = packagesToPriceSeasons(data.pricingPackages).map((season) => ({
+      title: season.title || season.seasonLabel || "",
+      tier: season.tier,
+      packageLabel: season.packageLabel,
+      seasonLabel: season.seasonLabel,
+      partySizeLabel: season.partySizeLabel,
+      dateRange: season.dateRange,
+      currency: season.currency || "USD",
+      min: season.min,
+      max: season.max,
+      displayText: season.displayText,
+      notes: season.notes,
+      ctaLabel: season.ctaLabel || "Inquire",
+    }));
     if (seasons.length) payload.priceSeasons = seasons;
 
     const body: Record<string, unknown> = { collection: "trips", data: payload };
@@ -983,12 +1005,12 @@ export function TripWizard({
           <div className="acc-wizard__panel">
             <h2 className="acc-wizard__heading">Trip Basics</h2>
             <p className="acc-wizard__sub">
-              Name the trip and link it to published packages and destinations. Duration is set automatically from your itinerary in Step 3.
+              Set the public title, filters, and tour summary. Duration is calculated automatically from the itinerary in Step 3.
             </p>
 
             <div className="acc-field">
               <label className="acc-label" htmlFor="trip-title">Trip Title <span className="acc-req">*</span></label>
-              <input className="acc-input" id="trip-title" onChange={(e) => handleTitleChange(e.target.value)} placeholder="e.g. 7-Day Masai Mara Safari" type="text" value={data.title} />
+              <input className="acc-input" id="trip-title" onChange={(e) => handleTitleChange(e.target.value)} placeholder="e.g. 3 Days Masai Mara Fly-In Safari Package" type="text" value={data.title} />
             </div>
 
             <div className="acc-field">
@@ -997,30 +1019,91 @@ export function TripWizard({
                 <span className="acc-slug-prefix">/trips/</span>
                 <input className="acc-input acc-input--slug" id="trip-slug" onChange={(e) => set("slug", slugify(e.target.value))} type="text" value={data.slug} />
               </div>
+              <span className="acc-hint">Use lowercase words separated by hyphens, e.g. <code>3-days-masai-mara-fly-in-safari-package</code>.</span>
             </div>
 
             <div className="acc-row">
               <div className="acc-field">
-                <label className="acc-label" htmlFor="trip-eyebrow">Hero Eyebrow</label>
-                <input className="acc-input" id="trip-eyebrow" onChange={(e) => set("heroEyebrow", e.target.value)} placeholder="Signature Kenya Safari" type="text" value={data.heroEyebrow} />
-              </div>
-              <div className="acc-field">
                 <label className="acc-label" htmlFor="trip-tier">Package Tier</label>
                 <select className="acc-select" id="trip-tier" onChange={(e) => set("packageTier", e.target.value)} value={data.packageTier}>
-                  {TIER_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  {TRIP_TIER_FILTER_OPTIONS.filter((option) => option.value !== "__all").map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
+                <span className="acc-hint">Controls listing badge and price table grouping.</span>
+              </div>
+              <div className="acc-field">
+                <label className="acc-label">Experience Types</label>
+                <span className="acc-hint">Select every style that applies. Used by filters and listing badges.</span>
               </div>
             </div>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="trip-subtitle">Hero Subtitle</label>
-              <textarea className="acc-textarea" id="trip-subtitle" onChange={(e) => set("heroSubtitle", e.target.value)} rows={2} value={data.heroSubtitle} />
+              <div className="acc-amenity-suggestions">
+                {TRIP_EXPERIENCE_FILTER_OPTIONS.filter((option) => option.value !== "__all").map((opt) => (
+                  <button
+                    className={`acc-amenity-suggest${data.experienceTypes.includes(opt.value) ? " is-on" : ""}`}
+                    key={opt.value}
+                    onClick={() => toggleExperience(opt.value)}
+                    type="button"
+                  >
+                    {data.experienceTypes.includes(opt.value) ? "✓ " : "+ "}{opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="acc-row">
+              <div className="acc-field">
+                <label className="acc-label" htmlFor="trip-eyebrow">Hero Category Line</label>
+                <input className="acc-input" id="trip-eyebrow" onChange={(e) => set("heroEyebrow", e.target.value)} placeholder="e.g. Luxury Fly-In Safari" type="text" value={data.heroEyebrow} />
+                <button
+                  className="acc-amenity-btn"
+                  onClick={() => set("heroEyebrow", suggestTripHeroEyebrow({
+                    experienceTypes: data.experienceTypes,
+                    packageTier: data.packageTier,
+                  }))}
+                  style={{ marginTop: 8 }}
+                  type="button"
+                >
+                  Suggest from tier + experience
+                </button>
+                <span className="acc-hint">Shown above the title on the trip detail hero only. Do not paste the full package title here.</span>
+              </div>
+              <div className="acc-field">
+                <label className="acc-label" htmlFor="trip-subtitle">Hero Subtitle</label>
+                <textarea className="acc-textarea" id="trip-subtitle" onChange={(e) => set("heroSubtitle", e.target.value)} placeholder="e.g. Luxury air safari from Nairobi to the Masai Mara" rows={3} value={data.heroSubtitle} />
+              </div>
             </div>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="trip-location">Location Label</label>
-              <input className="acc-input" id="trip-location" onChange={(e) => set("location", e.target.value)} placeholder="e.g. Kenya & Tanzania" type="text" value={data.location} />
-              <span className="acc-hint">Short label shown on trip cards, e.g. &quot;Kenya&quot; or &quot;Kenya & Tanzania&quot;.</span>
+              <label className="acc-label" htmlFor="trip-location">Primary Destination Label</label>
+              <input className="acc-input" id="trip-location" onChange={(e) => set("location", e.target.value)} placeholder="e.g. Masai Mara, Kenya" type="text" value={data.location} />
+              <span className="acc-hint">Short label shown on listing cards and hero facts.</span>
+            </div>
+
+            <div className="acc-row">
+              <PlaceSearchInput
+                datalistOptions={destinations.map((d) => d.mapPlace ?? d.label)}
+                id="trip-start-loc-basics"
+                label="Start Point"
+                onChange={(value) => set("startLocation", value)}
+                placeholder="Nairobi, Kenya"
+                value={data.startLocation}
+              />
+              <PlaceSearchInput
+                datalistOptions={destinations.map((d) => d.mapPlace ?? d.label)}
+                id="trip-end-loc-basics"
+                label="End Point"
+                onChange={(value) => set("endLocation", value)}
+                placeholder="Nairobi, Kenya"
+                value={data.endLocation}
+              />
+            </div>
+
+            <div className="acc-field">
+              <label className="acc-label" htmlFor="trip-departure">Departure / Flight Point</label>
+              <input className="acc-input" id="trip-departure" onChange={(e) => set("departurePoint", e.target.value)} placeholder="e.g. Wilson Airport" type="text" value={data.departurePoint} />
             </div>
 
             <div className="acc-field">
@@ -1051,21 +1134,6 @@ export function TripWizard({
               />
             </div>
 
-            <div className="acc-field">
-              <label className="acc-label">Experience Types</label>
-              <div className="acc-amenity-suggestions">
-                {EXPERIENCE_OPTIONS.map((opt) => (
-                  <button
-                    className={`acc-amenity-suggest${data.experienceTypes.includes(opt.value) ? " is-on" : ""}`}
-                    key={opt.value}
-                    onClick={() => toggleExperience(opt.value)}
-                    type="button"
-                  >
-                    {data.experienceTypes.includes(opt.value) ? "✓ " : "+ "}{opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
@@ -1190,8 +1258,8 @@ export function TripWizard({
                         </div>
                       </div>
                       <div className="acc-field">
-                        <label className="acc-label">Activities</label>
-                        <textarea className="acc-textarea" onChange={(e) => updateItineraryDay(index, { activities: e.target.value })} rows={2} value={day.activities} />
+                        <label className="acc-label">Main Experience</label>
+                        <textarea className="acc-textarea" onChange={(e) => updateItineraryDay(index, { activities: e.target.value })} placeholder="e.g. Scenic flight, afternoon game drive" rows={2} value={day.activities} />
                       </div>
                       <div className="acc-field">
                         <label className="acc-label">Description <span className="acc-req">*</span></label>
@@ -1336,35 +1404,6 @@ export function TripWizard({
               </div>
             </div>
 
-            <div className="acc-field">
-              <div className="acc-faq-head">
-                <label className="acc-label">Tour Highlights</label>
-                <button className="acc-amenity-btn" onClick={() => set("highlights", [...data.highlights, { title: "", description: "", imageId: "", alt: "" }])} type="button"><Plus size={14} /> Add Highlight</button>
-              </div>
-              <div className="acc-faq-list">
-                {data.highlights.map((hl, index) => (
-                  <div className="acc-faq-item" key={index}>
-                    <button aria-label="Remove" className="acc-faq-remove" onClick={() => set("highlights", data.highlights.filter((_, i) => i !== index))} type="button"><X size={14} /></button>
-                    <div className="acc-field">
-                      <label className="acc-label">Title</label>
-                      <input className="acc-input" onChange={(e) => { const n = [...data.highlights]; n[index] = { ...n[index], title: e.target.value }; set("highlights", n); }} type="text" value={hl.title} />
-                    </div>
-                    <div className="acc-field">
-                      <label className="acc-label">Description</label>
-                      <textarea className="acc-textarea" onChange={(e) => { const n = [...data.highlights]; n[index] = { ...n[index], description: e.target.value }; set("highlights", n); }} rows={3} value={hl.description} />
-                    </div>
-                    <div className="acc-row">
-                      <MediaSelect label="Image" media={media} onChange={(id) => { const n = [...data.highlights]; n[index] = { ...n[index], imageId: id }; set("highlights", n); }} value={hl.imageId} />
-                      <div className="acc-field">
-                        <label className="acc-label">Image Alt</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.highlights]; n[index] = { ...n[index], alt: e.target.value }; set("highlights", n); }} type="text" value={hl.alt} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <p className="acc-hint">
               The route map is built automatically from your From, To, and waypoint places above — no embed URL or coordinates needed.
             </p>
@@ -1374,7 +1413,9 @@ export function TripWizard({
         {step === 5 && (
           <div className="acc-wizard__panel">
             <h2 className="acc-wizard__heading">Pricing & Inclusions</h2>
-            <p className="acc-wizard__sub">Budget range, seasonal pricing tables, and what is included or excluded.</p>
+            <p className="acc-wizard__sub">
+              Set the headline price, seasonal rate rows, accommodation options, inclusions, exclusions, and optional paid add-ons.
+            </p>
 
             <div className="acc-row">
               <div className="acc-field">
@@ -1418,47 +1459,212 @@ export function TripWizard({
 
             <div className="acc-field">
               <div className="acc-faq-head">
-                <label className="acc-label">Prices & Seasons</label>
-                <button className="acc-amenity-btn" onClick={() => set("priceSeasons", [...data.priceSeasons, emptyPriceSeason()])} type="button"><Plus size={14} /> Add Season</button>
+                <label className="acc-label">Pricing Packages</label>
+                <button
+                  className="acc-amenity-btn"
+                  onClick={() => set("pricingPackages", [...data.pricingPackages, emptyPricingPackage(data.packageTier || "luxury")])}
+                  type="button"
+                >
+                  <Plus size={14} /> Add Package Table
+                </button>
+              </div>
+              <span className="acc-hint">
+                Add one table per sub-package (Budget, Luxury, etc.). Each season row can include prices for 2–3, 4–5, and 6+ travellers. Visitors see an Inquire button on every row.
+              </span>
+              <div className="acc-price-packages">
+                {data.pricingPackages.map((pkg, pkgIndex) => (
+                  <div className={`acc-price-package acc-price-package--${pkg.tier}`} key={pkg.id}>
+                    <div className="acc-price-package__head">
+                      <div className="acc-row">
+                        <div className="acc-field">
+                          <label className="acc-label">Tier</label>
+                          <select
+                            className="acc-select"
+                            onChange={(e) => {
+                              const tier = e.target.value;
+                              const next = [...data.pricingPackages];
+                              next[pkgIndex] = {
+                                ...next[pkgIndex],
+                                tier,
+                                packageLabel: next[pkgIndex].packageLabel || defaultPackageLabel(tier),
+                              };
+                              set("pricingPackages", next);
+                            }}
+                            value={pkg.tier}
+                          >
+                            {TRIP_TIER_FILTER_OPTIONS.filter((option) => option.value !== "__all").map((option) => (
+                              <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="acc-field">
+                          <label className="acc-label">Table Label</label>
+                          <input
+                            className="acc-input"
+                            onChange={(e) => {
+                              const next = [...data.pricingPackages];
+                              next[pkgIndex] = { ...next[pkgIndex], packageLabel: e.target.value };
+                              set("pricingPackages", next);
+                            }}
+                            placeholder="e.g. Luxury Accommodations"
+                            type="text"
+                            value={pkg.packageLabel}
+                          />
+                        </div>
+                        <div className="acc-field">
+                          <label className="acc-label">Currency</label>
+                          <input
+                            className="acc-input"
+                            onChange={(e) => {
+                              const next = [...data.pricingPackages];
+                              next[pkgIndex] = { ...next[pkgIndex], currency: e.target.value };
+                              set("pricingPackages", next);
+                            }}
+                            type="text"
+                            value={pkg.currency}
+                          />
+                        </div>
+                      </div>
+                      <button
+                        aria-label="Remove package"
+                        className="acc-faq-remove"
+                        onClick={() => set("pricingPackages", data.pricingPackages.filter((_, index) => index !== pkgIndex))}
+                        type="button"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    <div className="acc-price-matrix-scroll">
+                      <table className="acc-price-matrix">
+                        <thead>
+                          <tr>
+                            <th>Season</th>
+                            <th>Dates</th>
+                            {DEFAULT_PARTY_COLUMNS.map((column) => (
+                              <th key={column}>{column}</th>
+                            ))}
+                            <th aria-label="Actions" />
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pkg.rows.map((row, rowIndex) => (
+                            <tr key={`${pkg.id}-${rowIndex}`}>
+                              <td>
+                                <input
+                                  className="acc-input"
+                                  onChange={(e) => {
+                                    const next = [...data.pricingPackages];
+                                    const rows = [...next[pkgIndex].rows];
+                                    rows[rowIndex] = { ...rows[rowIndex], seasonLabel: e.target.value };
+                                    next[pkgIndex] = { ...next[pkgIndex], rows };
+                                    set("pricingPackages", next);
+                                  }}
+                                  placeholder="Jan–Mar"
+                                  type="text"
+                                  value={row.seasonLabel}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  className="acc-input"
+                                  onChange={(e) => {
+                                    const next = [...data.pricingPackages];
+                                    const rows = [...next[pkgIndex].rows];
+                                    rows[rowIndex] = { ...rows[rowIndex], dateRange: e.target.value };
+                                    next[pkgIndex] = { ...next[pkgIndex], rows };
+                                    set("pricingPackages", next);
+                                  }}
+                                  placeholder="January to March"
+                                  type="text"
+                                  value={row.dateRange}
+                                />
+                              </td>
+                              {DEFAULT_PARTY_COLUMNS.map((column) => (
+                                <td key={column}>
+                                  <input
+                                    className="acc-input"
+                                    min="0"
+                                    onChange={(e) => {
+                                      const next = [...data.pricingPackages];
+                                      const rows = [...next[pkgIndex].rows];
+                                      rows[rowIndex] = {
+                                        ...rows[rowIndex],
+                                        prices: { ...rows[rowIndex].prices, [column]: e.target.value },
+                                      };
+                                      next[pkgIndex] = { ...next[pkgIndex], rows };
+                                      set("pricingPackages", next);
+                                    }}
+                                    placeholder="0"
+                                    type="number"
+                                    value={row.prices[column] || ""}
+                                  />
+                                </td>
+                              ))}
+                              <td>
+                                <button
+                                  aria-label="Remove season row"
+                                  className="acc-faq-remove"
+                                  onClick={() => {
+                                    const next = [...data.pricingPackages];
+                                    next[pkgIndex] = {
+                                      ...next[pkgIndex],
+                                      rows: next[pkgIndex].rows.filter((_, index) => index !== rowIndex),
+                                    };
+                                    set("pricingPackages", next);
+                                  }}
+                                  type="button"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <button
+                      className="acc-amenity-btn"
+                      onClick={() => {
+                        const next = [...data.pricingPackages];
+                        next[pkgIndex] = {
+                          ...next[pkgIndex],
+                          rows: [...next[pkgIndex].rows, emptyPricingPackageRow()],
+                        };
+                        set("pricingPackages", next);
+                      }}
+                      type="button"
+                    >
+                      <Plus size={14} /> Add Season Row
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="acc-field">
+              <label className="acc-label" htmlFor="trip-accommodation-summary">Accommodation Summary</label>
+              <textarea className="acc-textarea" id="trip-accommodation-summary" onChange={(e) => set("accommodationSummary", e.target.value)} placeholder="Your stay will be arranged in a carefully selected luxury tented camp or safari lodge…" rows={4} value={data.accommodationSummary} />
+            </div>
+
+            <div className="acc-field">
+              <div className="acc-faq-head">
+                <label className="acc-label">Accommodation Options</label>
+                <button className="acc-amenity-btn" onClick={() => set("accommodationOptions", [...data.accommodationOptions, { name: "", note: "" }])} type="button"><Plus size={14} /> Add Lodge/Camp</button>
               </div>
               <div className="acc-faq-list">
-                {data.priceSeasons.map((season, index) => (
+                {data.accommodationOptions.map((option, index) => (
                   <div className="acc-faq-item" key={index}>
-                    <button aria-label="Remove" className="acc-faq-remove" onClick={() => set("priceSeasons", data.priceSeasons.filter((_, i) => i !== index))} type="button"><X size={14} /></button>
+                    <button aria-label="Remove" className="acc-faq-remove" onClick={() => set("accommodationOptions", data.accommodationOptions.filter((_, i) => i !== index))} type="button"><X size={14} /></button>
                     <div className="acc-row">
                       <div className="acc-field">
-                        <label className="acc-label">Title</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], title: e.target.value }; set("priceSeasons", n); }} type="text" value={season.title} />
+                        <label className="acc-label">Property Name</label>
+                        <input className="acc-input" onChange={(e) => { const n = [...data.accommodationOptions]; n[index] = { ...n[index], name: e.target.value }; set("accommodationOptions", n); }} type="text" value={option.name} />
                       </div>
                       <div className="acc-field">
-                        <label className="acc-label">Tier</label>
-                        <select className="acc-select" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], tier: e.target.value }; set("priceSeasons", n); }} value={season.tier}>
-                          {TIER_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="acc-row">
-                      <div className="acc-field">
-                        <label className="acc-label">Season</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], seasonLabel: e.target.value }; set("priceSeasons", n); }} type="text" value={season.seasonLabel} />
-                      </div>
-                      <div className="acc-field">
-                        <label className="acc-label">Date Range</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], dateRange: e.target.value }; set("priceSeasons", n); }} type="text" value={season.dateRange} />
-                      </div>
-                    </div>
-                    <div className="acc-row">
-                      <div className="acc-field">
-                        <label className="acc-label">Min</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], min: e.target.value }; set("priceSeasons", n); }} type="number" value={season.min} />
-                      </div>
-                      <div className="acc-field">
-                        <label className="acc-label">Max</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], max: e.target.value }; set("priceSeasons", n); }} type="number" value={season.max} />
-                      </div>
-                      <div className="acc-field">
-                        <label className="acc-label">Display Text</label>
-                        <input className="acc-input" onChange={(e) => { const n = [...data.priceSeasons]; n[index] = { ...n[index], displayText: e.target.value }; set("priceSeasons", n); }} type="text" value={season.displayText} />
+                        <label className="acc-label">Note</label>
+                        <input className="acc-input" onChange={(e) => { const n = [...data.accommodationOptions]; n[index] = { ...n[index], note: e.target.value }; set("accommodationOptions", n); }} placeholder="Optional" type="text" value={option.note} />
                       </div>
                     </div>
                   </div>
@@ -1466,8 +1672,34 @@ export function TripWizard({
               </div>
             </div>
 
-            <TagListEditor items={data.included} onChange={(items) => set("included", items)} placeholder="e.g. Park fees, accommodation, meals…" title="Included" />
-            <TagListEditor items={data.excluded} onChange={(items) => set("excluded", items)} placeholder="e.g. International flights, visa fees…" title="Excluded" />
+            <TagListEditor items={data.included} onChange={(items) => set("included", items)} placeholder="e.g. Park fees, domestic flights, meals as per itinerary…" title="Included" />
+            <TagListEditor items={data.excluded} onChange={(items) => set("excluded", items)} placeholder="e.g. International flights, visa fees, tips…" title="Excluded" />
+
+            <div className="acc-field">
+              <div className="acc-faq-head">
+                <label className="acc-label">Optional Add-On Experiences</label>
+                <button className="acc-amenity-btn" onClick={() => set("optionalExperiences", [...data.optionalExperiences, { title: "", description: "", priceNote: "" }])} type="button"><Plus size={14} /> Add Optional Experience</button>
+              </div>
+              <div className="acc-faq-list">
+                {data.optionalExperiences.map((experience, index) => (
+                  <div className="acc-faq-item" key={index}>
+                    <button aria-label="Remove" className="acc-faq-remove" onClick={() => set("optionalExperiences", data.optionalExperiences.filter((_, i) => i !== index))} type="button"><X size={14} /></button>
+                    <div className="acc-field">
+                      <label className="acc-label">Title</label>
+                      <input className="acc-input" onChange={(e) => { const n = [...data.optionalExperiences]; n[index] = { ...n[index], title: e.target.value }; set("optionalExperiences", n); }} placeholder="Hot Air Balloon Safari" type="text" value={experience.title} />
+                    </div>
+                    <div className="acc-field">
+                      <label className="acc-label">Description</label>
+                      <textarea className="acc-textarea" onChange={(e) => { const n = [...data.optionalExperiences]; n[index] = { ...n[index], description: e.target.value }; set("optionalExperiences", n); }} rows={3} value={experience.description} />
+                    </div>
+                    <div className="acc-field">
+                      <label className="acc-label">Price Note</label>
+                      <input className="acc-input" onChange={(e) => { const n = [...data.optionalExperiences]; n[index] = { ...n[index], priceNote: e.target.value }; set("optionalExperiences", n); }} placeholder="Approx. USD 480 per person" type="text" value={experience.priceNote} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <div className="acc-field">
               <label className="acc-label acc-check-label">
@@ -1493,12 +1725,51 @@ export function TripWizard({
         {step === 6 && (
           <div className="acc-wizard__panel">
             <h2 className="acc-wizard__heading">Content & FAQs</h2>
-            <p className="acc-wizard__sub">Overview copy, trust messaging, and visitor questions.</p>
+            <p className="acc-wizard__sub">
+              Add the long overview, listing card excerpt, safari highlights, audience fit, and FAQs visitors will read on the trip page.
+            </p>
 
             <div className="acc-field">
               <label className="acc-label" htmlFor="trip-overview">Trip Overview</label>
-              <textarea className="acc-textarea" id="trip-overview" onChange={(e) => set("overview", e.target.value)} rows={6} value={data.overview} />
+              <textarea className="acc-textarea" id="trip-overview" onChange={(e) => set("overview", e.target.value)} placeholder="Full introductory copy for the Overview section on the trip detail page." rows={8} value={data.overview} />
             </div>
+
+            <div className="acc-field">
+              <label className="acc-label" htmlFor="trip-card-summary">Listing Card Summary</label>
+              <textarea className="acc-textarea" id="trip-card-summary" onChange={(e) => set("cardSummary", e.target.value)} placeholder="Short excerpt used on /trips listing cards. Aim for 120–160 characters." rows={3} value={data.cardSummary} />
+            </div>
+
+            <div className="acc-field">
+              <div className="acc-faq-head">
+                <label className="acc-label">Safari Highlights</label>
+                <button className="acc-amenity-btn" onClick={() => set("highlights", [...data.highlights, { title: "", description: "", imageId: "", alt: "" }])} type="button"><Plus size={14} /> Add Highlight</button>
+              </div>
+              <span className="acc-hint">One bullet per highlight. Title is required; description and image are optional.</span>
+              <div className="acc-faq-list">
+                {data.highlights.map((hl, index) => (
+                  <div className="acc-faq-item" key={index}>
+                    <button aria-label="Remove" className="acc-faq-remove" onClick={() => set("highlights", data.highlights.filter((_, i) => i !== index))} type="button"><X size={14} /></button>
+                    <div className="acc-field">
+                      <label className="acc-label">Highlight</label>
+                      <input className="acc-input" onChange={(e) => { const n = [...data.highlights]; n[index] = { ...n[index], title: e.target.value }; set("highlights", n); }} placeholder="Scenic flight from Nairobi Wilson Airport to the Masai Mara" type="text" value={hl.title} />
+                    </div>
+                    <div className="acc-field">
+                      <label className="acc-label">Optional Detail</label>
+                      <textarea className="acc-textarea" onChange={(e) => { const n = [...data.highlights]; n[index] = { ...n[index], description: e.target.value }; set("highlights", n); }} rows={2} value={hl.description} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <TagListEditor items={data.bestFor} onChange={(items) => set("bestFor", items)} placeholder="e.g. Honeymooners, families, photographers…" title="Best For" />
+            <TagListEditor items={data.whyBook} onChange={(items) => set("whyBook", items)} placeholder="Why choose this safari package…" title="Why Choose This Safari" />
+
+            <div className="acc-field">
+              <label className="acc-label" htmlFor="trip-best-time">Best Time to Visit</label>
+              <textarea className="acc-textarea" id="trip-best-time" onChange={(e) => set("bestTimeToVisit", e.target.value)} rows={4} value={data.bestTimeToVisit} />
+            </div>
+
             <div className="acc-field">
               <label className="acc-label" htmlFor="trip-impact">Positive Impact</label>
               <textarea className="acc-textarea" id="trip-impact" onChange={(e) => set("positiveImpact", e.target.value)} rows={4} value={data.positiveImpact} />
@@ -1508,10 +1779,8 @@ export function TripWizard({
               <textarea className="acc-textarea" id="trip-quote-intro" onChange={(e) => set("quoteIntro", e.target.value)} rows={3} value={data.quoteIntro} />
             </div>
 
-            <TagListEditor items={data.whyBook} onChange={(items) => set("whyBook", items)} placeholder="Why book with Nature Romp Safaris…" title="Why Book With Us" />
-
             <QaEditor addLabel="Add FAQ" items={data.faqs} onChange={(items) => set("faqs", items)} title="Frequently Asked Questions" />
-            <QaEditor addLabel="Add Direct Answer" items={data.directAnswers} onChange={(items) => set("directAnswers", items)} title="Direct Answers" />
+            <QaEditor addLabel="Add Direct Answer" items={data.directAnswers} onChange={(items) => set("directAnswers", items)} title="Direct Answers (SEO / featured snippets)" />
           </div>
         )}
 
@@ -1547,8 +1816,8 @@ export function TripWizard({
 
             <div className="acc-row">
               <div className="acc-field">
-                <label className="acc-label" htmlFor="trip-seo-title">SEO Title</label>
-                <input className="acc-input" id="trip-seo-title" onChange={(e) => set("seoTitle", e.target.value)} type="text" value={data.seoTitle} />
+              <label className="acc-label" htmlFor="trip-seo-title">SEO Title</label>
+              <input className="acc-input" id="trip-seo-title" onChange={(e) => set("seoTitle", e.target.value)} placeholder="3 Days Masai Mara Fly-In Safari Package | Luxury Kenya Air Safari" type="text" value={data.seoTitle} />
               </div>
               <div className="acc-field">
                 <label className="acc-label" htmlFor="trip-seo-keywords">Keywords</label>
@@ -1557,7 +1826,7 @@ export function TripWizard({
             </div>
             <div className="acc-field">
               <label className="acc-label" htmlFor="trip-seo-desc">SEO Description</label>
-              <textarea className="acc-textarea" id="trip-seo-desc" onChange={(e) => set("seoDescription", e.target.value)} rows={3} value={data.seoDescription} />
+              <textarea className="acc-textarea" id="trip-seo-desc" onChange={(e) => set("seoDescription", e.target.value)} placeholder="Fly from Nairobi to the Masai Mara on a 3 days luxury fly-in safari package…" rows={3} value={data.seoDescription} />
             </div>
             <div className="acc-field">
               <label className="acc-label" htmlFor="trip-trustindex">Trustindex Override</label>

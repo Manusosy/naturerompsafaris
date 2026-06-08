@@ -36,6 +36,40 @@ export const TRIP_EXPERIENCE_FILTER_OPTIONS = [
   { label: "Mount Climbing", value: "mount-climbing" },
 ] as const;
 
+export function suggestTripHeroEyebrow(input: {
+  experienceTypes?: string[];
+  packageTier?: string;
+}) {
+  const parts: string[] = [];
+
+  if (input.packageTier && TRIP_TIER_LABELS[input.packageTier]) {
+    parts.push(TRIP_TIER_LABELS[input.packageTier].replace(/ Safari$/, ""));
+  }
+
+  const primaryExperience = Array.isArray(input.experienceTypes)
+    ? input.experienceTypes.find((value) => TRIP_EXPERIENCE_LABELS[value])
+    : undefined;
+
+  if (primaryExperience) {
+    const experienceLabel = TRIP_EXPERIENCE_LABELS[primaryExperience]
+      .replace(/ Holidays$/, "")
+      .replace(/ Safari$/, "");
+    if (!parts.some((part) => experienceLabel.toLowerCase().includes(part.toLowerCase()))) {
+      parts.push(experienceLabel);
+    }
+  }
+
+  if (!parts.length) return "";
+  return parts.join(" ");
+}
+
+export const TIER_MATRIX_CLASS: Record<string, string> = {
+  budget: "flash-trip__matrix--budget",
+  "mid-range": "flash-trip__matrix--mid",
+  luxury: "flash-trip__matrix--luxury",
+  "high-end": "flash-trip__matrix--high-end",
+};
+
 export function getTripDesignationLabel(input: {
   experienceTypes?: string[];
   packageTier?: string;

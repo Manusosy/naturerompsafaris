@@ -15,7 +15,7 @@ import { PostCategoriesForm } from "@/components/portal/PostCategoriesForm";
 import { PostCategoriesTable } from "@/components/portal/PostCategoriesTable";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { findCollection, getGlobal, getMediaOptions, getRelationOptions, requirePortalUser } from "@/lib/portal/data";
-import { getPortalModule } from "@/lib/portal/modules";
+import { getPortalModule, moduleNeedsMediaOptions } from "@/lib/portal/modules";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
@@ -58,7 +58,7 @@ export default async function PortalModulePage({
 
   if (moduleDef.global) {
     const globalDoc = (await getGlobal(moduleDef.global)) as Record<string, unknown>;
-    const mediaOptions = moduleDef.fields.some((field) => field.type === "content")
+    const mediaOptions = moduleNeedsMediaOptions(moduleDef.fields)
       ? await getMediaOptions()
       : [];
     return (

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { validateSignupPassword } from "@/lib/portal-signup";
 import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
 import { isTrustedPortalOrigin } from "@/lib/portal/security";
 
@@ -26,8 +27,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "First name and second name are required." }, { status: 400 });
   }
 
-  if (password && password.length < 8) {
-    return NextResponse.json({ message: "Use a password with at least 8 characters." }, { status: 400 });
+  if (password) {
+    const passwordError = validateSignupPassword(password);
+    if (passwordError) {
+      return NextResponse.json({ message: passwordError }, { status: 400 });
+    }
   }
 
   const payload = await getPayloadClient();

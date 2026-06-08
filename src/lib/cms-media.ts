@@ -34,6 +34,16 @@ export function mediaUrl(value: unknown, fallback = "/assets/img/banner1.webp") 
   return fallback;
 }
 
+export function galleryItemImages(doc: Record<string, unknown>) {
+  const fromGallery = Array.isArray(doc.images)
+    ? doc.images.map((item) => mediaUrl(item, "")).filter(Boolean)
+    : [];
+  if (fromGallery.length) return fromGallery;
+
+  const legacy = mediaUrl(doc.image, "");
+  return legacy ? [legacy] : [];
+}
+
 export function mediaAlt(value: unknown, fallback: string) {
   if (value && typeof value === "object") {
     const record = value as Record<string, unknown>;

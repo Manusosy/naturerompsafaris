@@ -8,9 +8,9 @@ import { CategoryEditor } from "@/components/portal/CategoryEditor";
 import { PageHeader } from "@/components/portal/PortalCards";
 import { EnquiryDetail } from "@/components/portal/EnquiryDetail";
 import { ResourceForm } from "@/components/portal/ResourceForm";
-import { TripWizard } from "@/components/portal/TripWizard";
+import { TripWizardLoader } from "@/components/portal/TripWizardLoader";
 import { findDocument, getMediaOptions, getRelationOptions, getTripWizardRelations, requirePortalUser } from "@/lib/portal/data";
-import { getPortalModule } from "@/lib/portal/modules";
+import { getPortalModule, moduleNeedsMediaOptions } from "@/lib/portal/modules";
 
 export default async function EditPortalRecordPage({
   params,
@@ -67,7 +67,7 @@ export default async function EditPortalRecordPage({
       getMediaOptions(),
     ]);
     return (
-      <TripWizard
+      <TripWizardLoader
         destinations={relations.destinations}
         document={document}
         itineraries={relations.itineraries}
@@ -93,7 +93,7 @@ export default async function EditPortalRecordPage({
         .map(async (field) => [field.relationTo, await getRelationOptions(field.relationTo)]),
     ),
   );
-  const mediaOptions = moduleDef.fields.some((field) => field.type === "content")
+  const mediaOptions = moduleNeedsMediaOptions(moduleDef.fields)
     ? await getMediaOptions()
     : [];
 

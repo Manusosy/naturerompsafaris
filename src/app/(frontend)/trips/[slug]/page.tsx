@@ -145,8 +145,26 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
     budgetText,
     days: typeof doc.days === "number" ? doc.days : undefined,
     destinationStops,
+    accommodationOptions: Array.isArray(doc.accommodationOptions)
+      ? (doc.accommodationOptions as Array<Record<string, unknown>>).map((item) => ({
+          name: typeof item.name === "string" ? item.name : undefined,
+          note: typeof item.note === "string" ? item.note : undefined,
+        })).filter((item) => item.name)
+      : [],
+    accommodationSummary: typeof doc.accommodationSummary === "string" ? doc.accommodationSummary : undefined,
+    bestFor: arrayItems(doc.bestFor),
+    bestTimeToVisit: typeof doc.bestTimeToVisit === "string" ? doc.bestTimeToVisit : undefined,
+    departurePoint: typeof doc.departurePoint === "string" ? doc.departurePoint : undefined,
     directAnswers: Array.isArray(doc.directAnswers) ? doc.directAnswers as TripDetailData["directAnswers"] : [],
     endLocation: typeof doc.endLocation === "string" ? doc.endLocation : undefined,
+    faqs: Array.isArray(doc.faqs)
+      ? (doc.faqs as Array<Record<string, unknown>>)
+        .map((item) => ({
+          answer: typeof item.answer === "string" ? item.answer : undefined,
+          question: typeof item.question === "string" ? item.question : undefined,
+        }))
+        .filter((item) => item.question && item.answer)
+      : [],
     excluded: arrayItems(doc.excluded),
     gallery: gallery.map((item) => {
       const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
@@ -175,10 +193,33 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
     location: String(doc.location || destinations.join(", ") || "Kenya and Tanzania"),
     mapEmbedUrl: typeof doc.mapEmbedUrl === "string" ? doc.mapEmbedUrl : undefined,
     nights: typeof doc.nights === "number" ? doc.nights : undefined,
+    optionalExperiences: Array.isArray(doc.optionalExperiences)
+      ? (doc.optionalExperiences as Array<Record<string, unknown>>).map((item) => ({
+          description: typeof item.description === "string" ? item.description : undefined,
+          priceNote: typeof item.priceNote === "string" ? item.priceNote : undefined,
+          title: typeof item.title === "string" ? item.title : undefined,
+        })).filter((item) => item.title)
+      : [],
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
     packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
     positiveImpact: typeof doc.positiveImpact === "string" ? doc.positiveImpact : undefined,
-    priceSeasons: Array.isArray(doc.priceSeasons) ? doc.priceSeasons as TripDetailData["priceSeasons"] : [],
+    priceSeasons: Array.isArray(doc.priceSeasons)
+      ? (doc.priceSeasons as Array<Record<string, unknown>>).map((item) => ({
+          budgetText: typeof item.budgetText === "string" ? item.budgetText : undefined,
+          ctaLabel: typeof item.ctaLabel === "string" ? item.ctaLabel : undefined,
+          currency: typeof item.currency === "string" ? item.currency : undefined,
+          dateRange: typeof item.dateRange === "string" ? item.dateRange : undefined,
+          displayText: typeof item.displayText === "string" ? item.displayText : undefined,
+          max: typeof item.max === "number" ? item.max : undefined,
+          min: typeof item.min === "number" ? item.min : undefined,
+          notes: typeof item.notes === "string" ? item.notes : undefined,
+          packageLabel: typeof item.packageLabel === "string" ? item.packageLabel : undefined,
+          partySizeLabel: typeof item.partySizeLabel === "string" ? item.partySizeLabel : undefined,
+          seasonLabel: typeof item.seasonLabel === "string" ? item.seasonLabel : undefined,
+          tier: typeof item.tier === "string" ? item.tier : undefined,
+          title: typeof item.title === "string" ? item.title : undefined,
+        }))
+      : [],
     quoteIntro: typeof doc.quoteIntro === "string" ? doc.quoteIntro : undefined,
     relatedTrips: Array.isArray(doc.relatedTrips) ? doc.relatedTrips.map((item) => {
       const record = item && typeof item === "object" ? item as Record<string, unknown> : {};

@@ -6,7 +6,7 @@ import { EnquiryForm } from "@/components/EnquiryForm";
 import { PackageCard, type BlogSummary, type Package } from "@/components/Cards";
 import { HomepageFaqsExperience } from "@/components/HomepageFaqsExperience";
 import { posts as staticPosts, serviceCards } from "@/content/site";
-import { mediaAlt, mediaUrl } from "@/lib/cms-media";
+import { galleryItemImages, mediaAlt, mediaUrl } from "@/lib/cms-media";
 import { getSafePayload } from "@/lib/safe-payload";
 
 const serviceDetails: Record<string, { body: string; cta: string; href: string }> = {
@@ -260,14 +260,23 @@ export async function GalleryPreview() {
     console.error("[homepage] Failed to load gallery preview:", error);
   }
 
+  const tiles = items.flatMap((item) => {
+    const alt = String(item.alt || item.title || "Nature Romp Safaris gallery");
+    return galleryItemImages(item).map((src, index) => ({
+      alt,
+      id: `${String(item.id)}-${index}`,
+      src,
+    }));
+  }).slice(0, 8);
+
   return (
     <section className="section gallery-section">
       <div className="container">
         <SectionHeader eyebrow="Safari moments" title="Gallery From the Field" />
         <div className="gallery-grid" data-animate="section">
-          {items.length ? items.map((item) => (
-            <Link href="/photo-gallery" className="gallery-item" key={String(item.id)}>
-              <Image src={mediaUrl(item.image)} alt={String(item.alt || item.title || "Nature Romp Safaris gallery")} width={420} height={320} unoptimized />
+          {tiles.length ? tiles.map((tile) => (
+            <Link href="/photo-gallery" className="gallery-item" key={tile.id}>
+              <Image src={tile.src} alt={tile.alt} width={420} height={320} unoptimized />
             </Link>
           )) : (
             <p>Featured gallery images will appear here once they are published from the dashboard.</p>

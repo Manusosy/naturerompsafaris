@@ -47,6 +47,7 @@ function normalizeTrip(doc: Record<string, unknown>): Trip {
     heroImage: doc.heroImage,
     location: typeof doc.location === "string" ? doc.location : undefined,
     nights: typeof doc.nights === "number" ? doc.nights : undefined,
+    cardSummary: typeof doc.cardSummary === "string" ? doc.cardSummary : undefined,
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
     packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
     priceText: typeof doc.priceText === "string" ? doc.priceText : undefined,

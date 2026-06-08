@@ -98,7 +98,7 @@ export function EnquiryDetail({ document }: { document: Record<string, unknown> 
         </div>
       </div>
 
-      <div className="enquiry-detail__actions">
+      <div className="enquiry-detail__primary-actions">
         <a className="enquiry-action-btn enquiry-action-btn--primary" href={mailto}>
           <Mail size={16} /> Reply by email
         </a>
@@ -116,6 +116,9 @@ export function EnquiryDetail({ document }: { document: Record<string, unknown> 
             <MessageCircle size={16} /> No WhatsApp number
           </span>
         )}
+      </div>
+
+      <div className="enquiry-detail__actions">
         {sourceHref ? (
           <a
             className="enquiry-action-btn"

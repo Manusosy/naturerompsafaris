@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import Image from "next/image";
-import { CheckCircle2, ImagePlus, Save, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Save, Send, X } from "lucide-react";
 
+import { MediaPickerField, type PortalMediaOption } from "@/components/portal/MediaPickerField";
 import { RichTextField } from "@/components/portal/RichTextField";
 import { getValue, slugify } from "@/lib/portal/format";
 import type { PortalField } from "@/lib/portal/modules";
+import { getYouTubeVideoId } from "@/lib/youtube";
 
 type LatLngLiteral = { lat: number; lng: number };
 type GoogleLatLng = {
@@ -182,8 +183,8 @@ type FieldSection = {
 };
 
 const MEDIA_NAMES = new Set([
-  "heroImage", "image", "imageCaption", "galleryImages", "galleryAltText", "galleryCaptions",
-  "openGraphImage", "coverImage", "gallery",
+  "heroImage", "image", "images", "imageCaption", "galleryImages", "galleryAltText", "galleryCaptions",
+  "openGraphImage", "coverImage", "gallery", "backgroundVideoUrl", "slideIntervalSeconds",
 ]);
 
 const CONTENT_NAMES = new Set([
@@ -273,9 +274,90 @@ function groupDestinationFields(fields: PortalField[]): FieldSection[] {
   return sections.length ? sections : [{ id: "all", label: "Details", fields }];
 }
 
+function groupHomepageSlideFields(fields: PortalField[]): FieldSection[] {
+  const orderedSections: Array<{ id: string; label: string; names: string[] }> = [
+    {
+      id: "general",
+      label: "General Info",
+      names: ["title", "destinationFocus", "ctaLabel", "ctaHref", "sortOrder", "status"],
+    },
+    {
+      id: "content",
+      label: "Content & Details",
+      names: ["description"],
+    },
+    {
+      id: "media",
+      label: "Hero Media",
+      names: ["images", "slideIntervalSeconds", "backgroundVideoUrl"],
+    },
+  ];
+
+  const used = new Set<string>();
+  const sections = orderedSections
+    .map((section) => {
+      const sectionFields = pickFieldsByName(fields, section.names);
+      sectionFields.forEach((field) => used.add(field.name));
+      return {
+        id: section.id,
+        label: section.label,
+        fields: sectionFields,
+      };
+    })
+    .filter((section) => section.fields.length > 0);
+
+  const leftovers = fields.filter((field) => !used.has(field.name));
+  if (leftovers.length) {
+    sections.push({ id: "additional", label: "Additional Details", fields: leftovers });
+  }
+
+  return sections.length ? sections : [{ id: "all", label: "Details", fields }];
+}
+
+function groupGalleryFields(fields: PortalField[]): FieldSection[] {
+  const orderedSections: Array<{ id: string; label: string; names: string[] }> = [
+    {
+      id: "general",
+      label: "General Info",
+      names: ["title", "category", "alt", "featured", "sortOrder", "status"],
+    },
+    {
+      id: "media",
+      label: "Photos",
+      names: ["images"],
+    },
+  ];
+
+  const used = new Set<string>();
+  const sections = orderedSections
+    .map((section) => {
+      const sectionFields = pickFieldsByName(fields, section.names);
+      sectionFields.forEach((field) => used.add(field.name));
+      return {
+        id: section.id,
+        label: section.label,
+        fields: sectionFields,
+      };
+    })
+    .filter((section) => section.fields.length > 0);
+
+  const leftovers = fields.filter((field) => !used.has(field.name));
+  if (leftovers.length) {
+    sections.push({ id: "additional", label: "Additional Details", fields: leftovers });
+  }
+
+  return sections.length ? sections : [{ id: "all", label: "Details", fields }];
+}
+
 function groupFields(fields: PortalField[], moduleSlug?: string): FieldSection[] {
   if (moduleSlug === "destinations") {
     return groupDestinationFields(fields);
+  }
+  if (moduleSlug === "homepage-slides") {
+    return groupHomepageSlideFields(fields);
+  }
+  if (moduleSlug === "gallery") {
+    return groupGalleryFields(fields);
   }
 
   const general: PortalField[] = [];
@@ -415,7 +497,6 @@ function QaListField({
 }
 
 /* ─── Map Selector ──────────────────────────────────────────────── */
-import { useEffect, useRef } from "react";
 
 function LocationPickerField({
   initialLat,
@@ -559,165 +640,11 @@ function LocationPickerField({
   );
 }
 
-/* ─── Visual Media Picker ───────────────────────────────────────── */
-function MediaPickerField({
-  field,
-  initialValues,
-  mediaOptions,
-}: {
-  field: PortalField;
-  initialValues: string[];
-  mediaOptions: Array<{ alt: string; filename: string; id: string; url: string }>;
-}) {
-  const [selectedIds, setSelectedIds] = useState<string[]>(initialValues);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const isHasMany = "hasMany" in field && field.hasMany;
-
-  const toggleSelect = (id: string) => {
-    if (!isHasMany) {
-      setSelectedIds([id]);
-      setPickerOpen(false);
-      return;
-    }
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
-  const removeId = (id: string) => {
-    setSelectedIds((prev) => prev.filter((x) => x !== id));
-  };
-
-  const selectedMedia = selectedIds
-    .map((id) => mediaOptions.find((m) => String(m.id) === id))
-    .filter(Boolean) as typeof mediaOptions;
-
-  const filteredOptions = mediaOptions.filter((m) =>
-    (m.alt || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (m.filename || "").toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  return (
-    <div className="portal-field is-wide" style={{ marginBottom: "1rem" }}>
-      <span style={{ display: "block", marginBottom: 8, fontWeight: 700, fontSize: 14, color: "var(--p-ink)" }}>{field.label}</span>
-      {/* Hidden select to submit values */}
-      <select name={field.name} multiple={isHasMany} value={isHasMany ? selectedIds : (selectedIds[0] || "__none")} onChange={() => { }} style={{ display: "none" }}>
-        {!isHasMany && <option value="__none">None</option>}
-        {mediaOptions.map((opt) => (
-          <option key={opt.id} value={opt.id}>
-            {opt.filename}
-          </option>
-        ))}
-      </select>
-
-      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "10px" }}>
-        {selectedMedia.map((media) => (
-          <div key={media.id} style={{ position: "relative", border: "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", width: "160px", height: "120px", boxShadow: "0 2px 4px rgba(0,0,0,0.05)" }}>
-            <Image src={media.url} alt={media.alt} fill style={{ objectFit: "cover" }} unoptimized />
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.6)", color: "#fff", fontSize: "10px", padding: "4px 6px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {media.filename}
-            </div>
-            <button
-              type="button"
-              onClick={() => removeId(String(media.id))}
-              style={{ position: "absolute", top: 6, right: 6, background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%", padding: 4, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-            >
-              <X size={14} />
-            </button>
-          </div>
-        ))}
-        <button
-          type="button"
-          onClick={() => setPickerOpen(true)}
-          style={{ width: "160px", height: "120px", border: "2px dashed #d1d5db", borderRadius: "8px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#f9fafb", cursor: "pointer", color: "#6b7280", transition: "all 0.2s" }}
-          onMouseOver={(e) => (e.currentTarget.style.borderColor = "var(--p-primary)", e.currentTarget.style.color = "var(--p-primary)")}
-          onMouseOut={(e) => (e.currentTarget.style.borderColor = "#d1d5db", e.currentTarget.style.color = "#6b7280")}
-        >
-          <ImagePlus size={28} style={{ marginBottom: 8 }} />
-          <span style={{ fontSize: 13, fontWeight: 600 }}>{isHasMany ? "Add Media" : "Select Media"}</span>
-        </button>
-      </div>
-
-      {pickerOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}>
-          <div style={{ background: "#fff", width: "90%", maxWidth: "900px", height: "80vh", borderRadius: "12px", display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid #e5e7eb" }}>
-              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 700 }}>Select Media</h3>
-              <button type="button" onClick={() => setPickerOpen(false)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#6b7280" }}>
-                <X size={24} />
-              </button>
-            </div>
-
-            <div style={{ padding: "16px 24px", borderBottom: "1px solid #e5e7eb", background: "#f9fafb" }}>
-              <input
-                type="text"
-                placeholder="Search images by filename or alt text..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ width: "100%", padding: "10px 14px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px" }}
-              />
-            </div>
-
-            <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "16px" }}>
-                {filteredOptions.map((media) => {
-                  const isSelected = selectedIds.includes(String(media.id));
-                  return (
-                    <div
-                      key={media.id}
-                      onClick={() => toggleSelect(String(media.id))}
-                      style={{
-                        position: "relative",
-                        aspectRatio: "1",
-                        border: isSelected ? "3px solid var(--p-primary)" : "1px solid #e5e7eb",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        cursor: "pointer",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                        transition: "transform 0.1s",
-                        transform: isSelected ? "scale(0.96)" : "scale(1)",
-                      }}
-                    >
-                      <Image src={media.url} alt={media.alt} fill style={{ objectFit: "cover" }} unoptimized />
-                      {isSelected && (
-                        <div style={{ position: "absolute", top: 6, right: 6, background: "var(--p-primary)", color: "#fff", borderRadius: "50%", padding: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <CheckCircle2 size={16} />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {filteredOptions.length === 0 && (
-                <div style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
-                  No media found matching your search.
-                </div>
-              )}
-            </div>
-
-            <div style={{ padding: "16px 24px", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", background: "#f9fafb" }}>
-              <button
-                type="button"
-                onClick={() => setPickerOpen(false)}
-                className="portal-button"
-              >
-                Done ({selectedIds.length} selected)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ─── Field renderer ────────────────────────────────────────── */
 function renderField(
   field: PortalField,
   document: Record<string, unknown>,
-  mediaOptions: Array<{ alt: string; filename: string; id: string; url: string }>,
+  mediaOptions: PortalMediaOption[],
   relationOptions: Record<string, Array<{ label: string; value: string }>>,
   slugState?: {
     slug: string;
@@ -885,12 +812,19 @@ function renderField(
     const selectedValues = relationInputValues(rawValue);
     if (field.relationTo === "media" && mediaOptions) {
       return (
-        <MediaPickerField
-          key={field.name}
-          field={field}
-          initialValues={isHasMany ? selectedValues : inputValue ? [inputValue] : []}
-          mediaOptions={mediaOptions}
-        />
+        <div className="portal-field is-wide" key={field.name} style={{ marginBottom: "1rem" }}>
+          <span style={{ display: "block", marginBottom: 8, fontWeight: 700, fontSize: 14, color: "var(--p-ink)" }}>
+            {field.label} {field.required ? <span style={{ color: "var(--p-error, #ef4444)" }}>*</span> : null}
+          </span>
+          <MediaPickerField
+            hasMany={isHasMany}
+            initialValues={isHasMany ? selectedValues : inputValue ? [inputValue] : []}
+            label={field.label}
+            name={field.name}
+            options={mediaOptions}
+            required={field.required}
+          />
+        </div>
       );
     }
     const options = relationOptions[field.relationTo] ?? [];
@@ -973,6 +907,49 @@ function renderField(
           </div>
         )}
       </div>
+    );
+  }
+
+  if (field.name === "backgroundVideoUrl") {
+    const videoId = getYouTubeVideoId(inputValue);
+    return (
+      <div className="portal-field is-wide" key={field.name}>
+        <span>{field.label}</span>
+        <small>Optional. When set, the video replaces the image gallery on the homepage hero.</small>
+        <input
+          defaultValue={inputValue}
+          name={field.name}
+          placeholder="https://www.youtube.com/watch?v=…"
+          type="url"
+        />
+        {videoId ? (
+          <div className="acc-youtube-preview" style={{ marginTop: 12 }}>
+            <iframe
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="Hero background video preview"
+            />
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (field.name === "slideIntervalSeconds") {
+    return (
+      <label className="portal-field is-wide" key={field.name}>
+        <span>{field.label}</span>
+        <small>How long each image shows before the next one (3–30 seconds). Also controls how long this slide stays active when multiple hero slides are published.</small>
+        <input
+          defaultValue={inputValue || "6"}
+          max={30}
+          min={3}
+          name={field.name}
+          step={1}
+          type="number"
+        />
+      </label>
     );
   }
 
@@ -1126,7 +1103,7 @@ export function ResourceForm({
   moduleHref: string;
   moduleSlug?: string;
   relationOptions?: Record<string, Array<{ label: string; value: string }>>;
-  mediaOptions?: Array<{ alt: string; filename: string; id: string; url: string }>;
+  mediaOptions?: PortalMediaOption[];
   title: string;
 }) {
   const router = useRouter();

@@ -2,13 +2,13 @@ import crypto from "crypto";
 
 export const SIGNUP_CODE_TTL_MS = 10 * 60 * 1000;
 export const SIGNUP_MAX_VERIFY_ATTEMPTS = 5;
-export const SIGNUP_EMAIL_COOLDOWN_MS = 2 * 60 * 1000;
+export const SIGNUP_EMAIL_COOLDOWN_MS = 60 * 1000;
 export const SIGNUP_EMAIL_HOURLY_LIMIT = 5;
 export const SIGNUP_IP_HOURLY_LIMIT = 10;
 export const SIGNUP_HOURLY_WINDOW_MS = 60 * 60 * 1000;
 
 export const SIGNUP_GENERIC_SENT_MESSAGE =
-  "If this email is authorized for portal access, a verification code has been sent.";
+  "If the details are valid, a verification code has been sent to your email.";
 export const SIGNUP_GENERIC_REGISTER_FAILURE_MESSAGE =
   "This account cannot be created. Check your verification code and try again.";
 

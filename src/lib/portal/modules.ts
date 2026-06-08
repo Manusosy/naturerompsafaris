@@ -51,6 +51,7 @@ export type PortalModule = {
 };
 
 export type SidebarLink = {
+  badgeKey?: "notifications";
   href: string;
   icon: Icon;
   label: string;
@@ -446,12 +447,19 @@ export const portalModules: Record<string, PortalModule> = {
   },
   gallery: {
     collection: "gallery",
-    description: "Curate gallery images.",
+    description: "Curate gallery images for the homepage and photo gallery page.",
     emptyLabel: "No gallery items yet.",
     fields: [
       { label: "Title", name: "title", required: true, type: "text" },
       { label: "Category", name: "category", type: "text" },
-      { label: "Image", name: "image", relationTo: "media", required: true, type: "relationship" },
+      {
+        hasMany: true,
+        label: "Photos",
+        name: "images",
+        relationTo: "media",
+        required: true,
+        type: "relationship",
+      },
       { label: "Image alt", name: "alt", required: true, type: "text" },
       { label: "Featured on homepage", name: "featured", type: "checkbox" },
       { label: "Sort order", name: "sortOrder", type: "number" },
@@ -473,12 +481,28 @@ export const portalModules: Record<string, PortalModule> = {
   },
   "homepage-slides": {
     collection: "homepage-slides",
-    description: "Manage the homepage hero slider.",
+    description: "Manage the homepage hero slider with multiple images or a YouTube background video.",
     emptyLabel: "No homepage slides yet.",
     fields: [
       { label: "Heading", name: "title", required: true, type: "text" },
       { label: "Description", name: "description", required: true, rows: 5, type: "textarea" },
-      { label: "Hero image", name: "image", relationTo: "media", required: true, type: "relationship" },
+      {
+        hasMany: true,
+        label: "Hero images",
+        name: "images",
+        relationTo: "media",
+        type: "relationship",
+      },
+      {
+        label: "Slide interval (seconds)",
+        name: "slideIntervalSeconds",
+        type: "number",
+      },
+      {
+        label: "YouTube background video URL",
+        name: "backgroundVideoUrl",
+        type: "url",
+      },
       { label: "Destination focus", name: "destinationFocus", type: "text" },
       { label: "CTA label", name: "ctaLabel", type: "text" },
       { label: "CTA link", name: "ctaHref", type: "text" },
@@ -638,7 +662,6 @@ export const sidebarGroups: SidebarGroup[] = [
       { href: "/admin/trips/new", icon: FilePlus2, label: "Add New" },
       { href: "/admin/destinations", icon: MapPinned, label: "Destinations" },
       { href: "/admin/packages", icon: PackagePlus, label: "Packages" },
-      { href: "/admin/enquiries", icon: Inbox, label: "Enquiries" },
     ],
   },
   {
@@ -684,13 +707,37 @@ export const sidebarGroups: SidebarGroup[] = [
   },
 ];
 
-export const sidebarItems = sidebarGroups.flatMap((group) => group.links);
-
-export const notificationLink: SidebarLink = {
+export const enquiriesNavLink: SidebarLink = {
   href: "/admin/enquiries",
+  icon: Inbox,
+  label: "Enquiries",
+};
+
+/** Top-level sidebar links rendered after the Trips group. */
+export const sidebarLinksAfterTrips: SidebarLink[] = [enquiriesNavLink];
+
+export const notificationsNavLink: SidebarLink = {
+  badgeKey: "notifications",
+  href: "/admin/notifications",
   icon: Bell,
   label: "Notifications",
 };
+
+export const sidebarItems = [
+  ...sidebarGroups.flatMap((group) => group.links),
+  ...sidebarLinksAfterTrips,
+  notificationsNavLink,
+];
+
+export const notificationLink: SidebarLink = notificationsNavLink;
+
+export function moduleNeedsMediaOptions(fields: PortalField[]) {
+  return fields.some(
+    (field) =>
+      field.type === "content" ||
+      (field.type === "relationship" && field.relationTo === "media"),
+  );
+}
 
 export function getPortalModule(slug: string) {
   return portalModules[slug];

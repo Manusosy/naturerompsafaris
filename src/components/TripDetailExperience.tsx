@@ -4,11 +4,14 @@ import {
   CalendarDays,
   Check,
   ChevronRight,
+  Crown,
+  Gem,
   MapPin,
   ShieldCheck,
   Sparkles,
   Star,
   Users,
+  Wallet,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -18,6 +21,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SafariQuoteForm } from "@/components/SafariQuoteForm";
 import { TripRouteMap } from "@/components/TripRouteMap";
 import { sanitizeHtml } from "@/lib/sanitize-html";
+import { TIER_MATRIX_CLASS } from "@/lib/trip-labels";
+import {
+  buildTierPriceMatrices,
+  formatMatrixPrice,
+  hasMatrixPricing,
+  type PriceSeasonRow,
+} from "@/lib/trip-pricing-table";
 
 type TripImage = {
   alt: string;
@@ -57,18 +67,17 @@ type DestinationStop = Highlight & {
   slug?: string;
 };
 
-type PriceSeason = {
-  budgetText?: string;
-  ctaLabel?: string;
-  currency?: string;
-  dateRange?: string;
-  displayText?: string;
-  max?: number;
-  min?: number;
-  notes?: string;
-  seasonLabel?: string;
-  tier?: "budget" | "mid-range" | "luxury" | "high-end" | string;
+type PriceSeason = PriceSeasonRow;
+
+type OptionalExperience = {
+  description?: string;
+  priceNote?: string;
   title?: string;
+};
+
+type AccommodationOption = {
+  name?: string;
+  note?: string;
 };
 
 type RelatedTrip = {
@@ -79,13 +88,19 @@ type RelatedTrip = {
 };
 
 export type TripDetailData = {
+  accommodationOptions?: AccommodationOption[];
+  accommodationSummary?: string;
   availability?: string;
+  bestFor?: string[];
+  bestTimeToVisit?: string;
   budgetText?: string;
   days?: number;
+  departurePoint?: string;
   destinationStops?: DestinationStop[];
   directAnswers?: Array<{ answer?: string; question?: string }>;
   endLocation?: string;
   excluded?: string[];
+  faqs?: Array<{ answer?: string; question?: string }>;
   gallery: TripImage[];
   heroEyebrow?: string;
   heroImage?: TripImage;
@@ -97,6 +112,7 @@ export type TripDetailData = {
   location?: string;
   mapEmbedUrl?: string;
   nights?: number;
+  optionalExperiences?: OptionalExperience[];
   overview?: string;
   packageTier?: string;
   positiveImpact?: string;
@@ -113,12 +129,13 @@ export type TripDetailData = {
   whyBook?: string[];
 };
 
-const sectionLinks = [
+const baseSectionLinks = [
   { id: "overview", label: "Overview" },
   { id: "where", label: "Where you'll go" },
   { id: "itinerary", label: "Itinerary" },
   { id: "prices", label: "Prices" },
   { id: "included", label: "Included" },
+  { id: "faqs", label: "FAQs" },
   { id: "reviews", label: "Reviews" },
   { id: "quote", label: "Quote" },
 ];
@@ -129,6 +146,21 @@ const tierLabels: Record<string, string> = {
   luxury: "Luxury",
   "high-end": "High End",
 };
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="flash-trip__section-title">
+      <span>{children}</span>
+    </h2>
+  );
+}
+
+function TierIcon({ tier }: { tier: string }) {
+  if (tier === "luxury") return <Crown aria-hidden size={20} />;
+  if (tier === "high-end") return <Gem aria-hidden size={20} />;
+  if (tier === "budget") return <Wallet aria-hidden size={20} />;
+  return <Sparkles aria-hidden size={20} />;
+}
 
 function priceText(item: PriceSeason) {
   if (item.displayText) return item.displayText;
@@ -151,8 +183,18 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
   const routeText = trip.routeLabel || [trip.startLocation, trip.endLocation].filter(Boolean).join(" to ");
   const durationText = trip.days || trip.nights ? `${trip.days || "-"} days / ${trip.nights || "-"} nights` : "Custom duration";
   const trustindexEmbed = trip.trustindexEmbedOverride || trip.reviewSettings?.trustindexEmbed || "";
+  const sectionLinks = useMemo(
+    () => baseSectionLinks.filter((section) => section.id !== "faqs" || Boolean(trip.faqs?.length)),
+    [trip.faqs?.length],
+  );
+  const priceMatrices = useMemo(() => {
+    if (trip.priceSeasons?.length && hasMatrixPricing(trip.priceSeasons)) {
+      return buildTierPriceMatrices(trip.priceSeasons);
+    }
+    return [];
+  }, [trip.priceSeasons]);
 
-  const priceGroups = useMemo(() => {
+  const flatPriceGroups = useMemo(() => {
     const source = trip.priceSeasons?.length
       ? trip.priceSeasons
       : [{ title: "Custom Quote", tier: trip.packageTier || "budget", displayText: trip.budgetText || "On request", notes: "Pricing depends on travel dates, party size, and accommodation preference." }];
@@ -183,7 +225,7 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [sectionLinks]);
 
   function handleNav(event: React.MouseEvent<HTMLAnchorElement>, id: string) {
     event.preventDefault();
@@ -266,8 +308,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </div>
           </section>
 
-          <section className="flash-trip__panel" id="overview">
-            <h2>Overview</h2>
+          <section className="flash-trip__section flash-trip__section--mint" id="overview">
+            <SectionTitle>Overview</SectionTitle>
             {trip.overview ? (
               <div className="rich-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(trip.overview) }} />
             ) : (
@@ -286,10 +328,24 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                 ))}
               </div>
             ) : null}
+            {trip.bestFor?.length ? (
+              <div className="flash-trip__audience">
+                <h3>Best for</h3>
+                <ul>
+                  {trip.bestFor.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            ) : null}
+            {trip.bestTimeToVisit ? (
+              <div className="flash-trip__best-time">
+                <h3>Best time to visit</h3>
+                <p>{trip.bestTimeToVisit}</p>
+              </div>
+            ) : null}
           </section>
 
-          <section className="flash-trip__panel" id="where">
-            <h2>Where you&apos;ll go</h2>
+          <section className="flash-trip__section" id="where">
+            <SectionTitle>Where you&apos;ll go</SectionTitle>
             {trip.destinationStops?.length ? (
               <div className="flash-trip__destinations">
                 {trip.destinationStops.map((item, index) => (
@@ -325,8 +381,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             ) : null}
           </section>
 
-          <section className="flash-trip__panel" id="itinerary">
-            <h2>Itinerary</h2>
+          <section className="flash-trip__section flash-trip__section--mint" id="itinerary">
+            <SectionTitle>Itinerary</SectionTitle>
             {trip.itineraryDays?.length ? (
               <div className="flash-trip__timeline">
                 {trip.itineraryDays.map((day, index) => (
@@ -350,46 +406,116 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             ) : (
               <p>The day-by-day route will be prepared once the admin adds itinerary details for this trip.</p>
             )}
+            {(trip.accommodationSummary || trip.accommodationOptions?.length) ? (
+              <div className="flash-trip__accommodation">
+                <h3>Accommodation</h3>
+                {trip.accommodationSummary ? <p>{trip.accommodationSummary}</p> : null}
+                {trip.accommodationOptions?.length ? (
+                  <ul>
+                    {trip.accommodationOptions.map((item) => (
+                      <li key={`${item.name}-${item.note || ""}`}>
+                        <strong>{item.name}</strong>
+                        {item.note ? <span>{item.note}</span> : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
           </section>
 
-          <section className="flash-trip__panel" id="prices">
-            <h2>Prices and Seasons</h2>
+          <section className="flash-trip__section" id="prices">
+            <SectionTitle>Prices and Seasons</SectionTitle>
             <div className="flash-trip__price-table">
-              {Object.entries(priceGroups).map(([tier, rows]) => (
-                <div className="flash-trip__price-group" key={tier}>
-                  <h3>{tierLabels[tier] || tier}</h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Season</th>
-                        <th>Dates</th>
-                        <th>Quote Range</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((item, index) => (
-                        <tr key={`${item.title}-${index}`}>
-                          <td>
-                            <strong>{item.title || item.seasonLabel || "Custom season"}</strong>
-                            {item.notes ? <span>{item.notes}</span> : null}
-                          </td>
-                          <td>{item.dateRange || "Flexible dates"}</td>
-                          <td>{priceText(item)}</td>
-                          <td>
-                            <button onClick={scrollToQuote} type="button">{item.ctaLabel || "Request Quote"}</button>
-                          </td>
+              {priceMatrices.length ? priceMatrices.map((matrix) => (
+                <div
+                  className={`flash-trip__matrix ${TIER_MATRIX_CLASS[matrix.tier] || ""}`}
+                  key={`${matrix.tier}-${matrix.packageLabel}`}
+                >
+                  <div className="flash-trip__matrix-head">
+                    <TierIcon tier={matrix.tier} />
+                    <div>
+                      <strong>{matrix.packageLabel}</strong>
+                      <span>{tierLabels[matrix.tier] || matrix.tier}</span>
+                    </div>
+                  </div>
+                  <div className="flash-trip__matrix-scroll">
+                    <table className="flash-trip__matrix-table">
+                      <thead>
+                        <tr>
+                          <th>Season</th>
+                          <th>Dates</th>
+                          {matrix.columns.map((column) => (
+                            <th key={column}>{column}</th>
+                          ))}
+                          <th aria-label="Inquire" />
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {matrix.rows.map((row, index) => (
+                          <tr key={`${row.seasonLabel}-${index}`}>
+                            <td>
+                              <strong>{row.seasonLabel}</strong>
+                              {row.notes ? <span>{row.notes}</span> : null}
+                            </td>
+                            <td>{row.dateRange || "Flexible dates"}</td>
+                            {matrix.columns.map((column) => (
+                              <td key={column}>
+                                {formatMatrixPrice(matrix.currency, row.prices[column] ? Number(row.prices[column]) : undefined)}
+                              </td>
+                            ))}
+                            <td className="flash-trip__matrix-action">
+                              <button onClick={scrollToQuote} type="button">{row.ctaLabel}</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )) : Object.entries(flatPriceGroups).map(([tier, rows]) => (
+                <div className={`flash-trip__matrix ${TIER_MATRIX_CLASS[tier] || ""}`} key={tier}>
+                  <div className="flash-trip__matrix-head">
+                    <TierIcon tier={tier} />
+                    <div>
+                      <strong>{tierLabels[tier] || tier}</strong>
+                      <span>Seasonal rates</span>
+                    </div>
+                  </div>
+                  <div className="flash-trip__matrix-scroll">
+                    <table className="flash-trip__matrix-table">
+                      <thead>
+                        <tr>
+                          <th>Season</th>
+                          <th>Dates</th>
+                          <th>Quote Range</th>
+                          <th aria-label="Inquire" />
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((item, index) => (
+                          <tr key={`${item.title}-${index}`}>
+                            <td>
+                              <strong>{item.title || item.seasonLabel || "Custom season"}</strong>
+                              {item.notes ? <span>{item.notes}</span> : null}
+                            </td>
+                            <td>{item.dateRange || "Flexible dates"}</td>
+                            <td>{priceText(item)}</td>
+                            <td className="flash-trip__matrix-action">
+                              <button onClick={scrollToQuote} type="button">{item.ctaLabel || "Inquire"}</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="flash-trip__panel" id="included">
-            <h2>What&apos;s Included</h2>
+          <section className="flash-trip__section flash-trip__section--mint" id="included">
+            <SectionTitle>What&apos;s Included</SectionTitle>
             <div className="flash-trip__included-grid">
               <div>
                 <h3><Check size={18} /> Included</h3>
@@ -408,19 +534,47 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
                 </ul>
               </div>
             </div>
+            {trip.optionalExperiences?.length ? (
+              <div className="flash-trip__optional">
+                <h3>Optional Experiences</h3>
+                <div className="flash-trip__optional-grid">
+                  {trip.optionalExperiences.map((item) => (
+                    <article key={item.title}>
+                      <h4>{item.title}</h4>
+                      {item.description ? <p>{item.description}</p> : null}
+                      {item.priceNote ? <p className="flash-trip__optional-price">{item.priceNote}</p> : null}
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
 
+          {trip.faqs?.length ? (
+            <section className="flash-trip__section" id="faqs">
+              <SectionTitle>Frequently Asked Questions</SectionTitle>
+              <ul className="flash-trip__faq-list">
+                {trip.faqs.map((item) => (
+                  <li key={item.question}>
+                    <strong>{item.question}</strong>
+                    <p>{item.answer}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {(trip.positiveImpact || trip.whyBook?.length) ? (
-            <section className="flash-trip__panel flash-trip__trust">
+            <section className="flash-trip__section flash-trip__section--mint flash-trip__trust">
               {trip.positiveImpact ? (
                 <div>
-                  <h2>Positive Impact Travel</h2>
+                  <SectionTitle>Positive Impact Travel</SectionTitle>
                   <div className="rich-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(trip.positiveImpact) }} />
                 </div>
               ) : null}
               {trip.whyBook?.length ? (
                 <div>
-                  <h2>Why Book With Nature Romp Safaris</h2>
+                  <SectionTitle>Why Choose This Safari</SectionTitle>
                   <ul>
                     {trip.whyBook.map((item) => (
                       <li key={item}><ShieldCheck size={16} /> {item}</li>
@@ -431,8 +585,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </section>
           ) : null}
 
-          <section className="flash-trip__panel" id="reviews">
-            <h2>{trip.reviewSettings?.heading || "Reviews"}</h2>
+          <section className="flash-trip__section" id="reviews">
+            <SectionTitle>{trip.reviewSettings?.heading || "Reviews"}</SectionTitle>
             {trustindexEmbed ? (
               <div dangerouslySetInnerHTML={{ __html: trustindexEmbed }} />
             ) : (
@@ -444,8 +598,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
           </section>
 
           {trip.relatedTrips?.length ? (
-            <section className="flash-trip__panel">
-              <h2>Similar Tours</h2>
+            <section className="flash-trip__section flash-trip__section--mint">
+              <SectionTitle>Similar Tours</SectionTitle>
               <div className="flash-trip__related">
                 {trip.relatedTrips.map((item) => (
                   <Link href={`/trips/${item.slug}`} key={item.slug}>
@@ -458,8 +612,8 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
             </section>
           ) : null}
 
-          <section className="flash-trip__panel flash-trip__security">
-            <h2>{trip.reviewSettings?.bookingSecurityHeading || "Our Partners and Booking Security"}</h2>
+          <section className="flash-trip__section flash-trip__security">
+            <SectionTitle>{trip.reviewSettings?.bookingSecurityHeading || "Our Partners and Booking Security"}</SectionTitle>
             {trip.reviewSettings?.bookingSecurityText ? <p>{trip.reviewSettings.bookingSecurityText}</p> : null}
             {trip.reviewSettings?.bookingSecurityItems?.length ? (
               <ul>
@@ -485,6 +639,7 @@ export function TripDetailExperience({ trip }: { trip: TripDetailData }) {
           <section className="flash-trip__mini-card">
             <h3>Route</h3>
             <p>{routeText || trip.location || "Flexible safari route"}</p>
+            {trip.departurePoint ? <p><strong>Departure:</strong> {trip.departurePoint}</p> : null}
             <button onClick={scrollToQuote} type="button">Plan this trip</button>
           </section>
         </aside>

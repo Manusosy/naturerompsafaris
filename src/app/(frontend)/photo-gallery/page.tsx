@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { getPayload } from "payload";
 
 import { PageHero } from "@/components/PageHero";
-import { mediaUrl } from "@/lib/cms-media";
+import { galleryItemImages, mediaUrl } from "@/lib/cms-media";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -41,12 +41,16 @@ export default async function GalleryPage() {
               <div className="gallery-category" key={category}>
                 <h2>{category}</h2>
                 <div className="gallery-grid">
-                  {items.map((item) => (
-                    <a href={mediaUrl(item.image)} className="gallery-item" key={String(item.id)}>
-                      <Image src={mediaUrl(item.image)} alt={String(item.alt || item.title || "Nature Romp Safaris gallery")} width={520} height={390} unoptimized />
-                      <span>{String(item.title || category)}</span>
-                    </a>
-                  ))}
+                  {items.flatMap((item) => {
+                    const alt = String(item.alt || item.title || "Nature Romp Safaris gallery");
+                    const title = String(item.title || category);
+                    return galleryItemImages(item).map((src, index) => (
+                      <a className="gallery-item" href={src} key={`${String(item.id)}-${index}`}>
+                        <Image alt={alt} height={390} src={src} unoptimized width={520} />
+                        <span>{title}</span>
+                      </a>
+                    ));
+                  })}
                 </div>
               </div>
             );

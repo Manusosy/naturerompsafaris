@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search, Settings, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { notificationLink, sidebarGroups, sidebarItems } from "@/lib/portal/modules";
+import { notificationLink, sidebarGroups, sidebarItems, sidebarLinksAfterTrips, notificationsNavLink, type SidebarLink } from "@/lib/portal/modules";
 
 type PortalShellProps = {
   children: React.ReactNode;
@@ -19,6 +19,49 @@ type PortalShellProps = {
 };
 
 type SidebarGroup = (typeof sidebarGroups)[number];
+
+function TopNavLink({
+  badgeCount = 0,
+  collapsed,
+  link,
+  pathname,
+  setDrawerOpen,
+}: {
+  badgeCount?: number;
+  collapsed: boolean;
+  link: SidebarLink;
+  pathname: string;
+  setDrawerOpen: (open: boolean) => void;
+}) {
+  const Icon = link.icon;
+  const active =
+    link.href === "/admin"
+      ? pathname === "/admin"
+      : pathname === link.href || pathname.startsWith(`${link.href}/`);
+  const showBadge = link.badgeKey === "notifications" && badgeCount > 0;
+  const badgeLabel = badgeCount > 99 ? "99+" : String(badgeCount);
+
+  return (
+    <Link
+      className={
+        active
+          ? "portal-nav__link portal-nav__link--group is-active"
+          : "portal-nav__link portal-nav__link--group"
+      }
+      href={link.href}
+      onClick={() => setDrawerOpen(false)}
+      title={collapsed ? link.label : undefined}
+    >
+      <Icon size={17} />
+      {!collapsed ? <span>{link.label}</span> : null}
+      {showBadge ? (
+        <span aria-label={`${badgeLabel} new notifications`} className="portal-nav__badge">
+          {badgeLabel}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
 
 function NavGroup({
   collapsed,
@@ -138,6 +181,9 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
 
   const title = useMemo(() => {
     if (pathname === "/admin") return "Overview";
+    if (pathname === "/admin/account") return "My account";
+    if (pathname === "/admin/notifications") return "Notifications";
+    if (pathname === "/admin/enquiries" || pathname.startsWith("/admin/enquiries/")) return "Enquiries";
     const active = sidebarItems.find(
       (item) => item.href !== "/admin" && (pathname === item.href || pathname.startsWith(`${item.href}/`)),
     );
@@ -170,34 +216,64 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
           const isOverview = group.label === "Overview";
           if (isOverview) {
             const link = group.links[0];
-            const Icon = link.icon;
-            const active = pathname === link.href;
             return (
-              <Link
-                className={
-                  active
-                    ? "portal-nav__link portal-nav__link--group is-active"
-                    : "portal-nav__link portal-nav__link--group"
-                }
-                href={link.href}
+              <TopNavLink
+                collapsed={collapsed}
                 key={group.label}
-                onClick={() => setDrawerOpen(false)}
-              >
-                <Icon size={17} />
-                <span>{link.label}</span>
-              </Link>
+                link={link}
+                pathname={pathname}
+                setDrawerOpen={setDrawerOpen}
+              />
             );
           }
-          return (
+
+          const groupElement = (
             <NavGroup
               collapsed={collapsed}
               group={group}
-              key={group.label}
               openGroup={openGroup}
               pathname={pathname}
               setDrawerOpen={setDrawerOpen}
               setOpenGroup={setOpenGroup}
             />
+          );
+
+          if (group.label === "Trips") {
+            return (
+              <div className="portal-nav__section" key={group.label}>
+                {groupElement}
+                {sidebarLinksAfterTrips.map((link) => (
+                  <TopNavLink
+                    collapsed={collapsed}
+                    key={link.href}
+                    link={link}
+                    pathname={pathname}
+                    setDrawerOpen={setDrawerOpen}
+                  />
+                ))}
+              </div>
+            );
+          }
+
+          if (group.label === "Settings") {
+            return (
+              <div key={group.label}>
+                <TopNavLink
+                  badgeCount={notificationCount}
+                  collapsed={collapsed}
+                  link={notificationsNavLink}
+                  pathname={pathname}
+                  setDrawerOpen={setDrawerOpen}
+                />
+                {groupElement}
+              </div>
+            );
+          }
+
+          return (
+            <div key={group.label}>
+              {groupElement}
+            </div>
           );
         })}
       </nav>
@@ -252,9 +328,14 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
             <input aria-label="Search portal" placeholder="Search portal…" />
           </label>
           <Link
+            aria-label={
+              notificationCount > 0
+                ? `${notificationCount > 99 ? "99+" : notificationCount} new notifications`
+                : "Notifications"
+            }
             className="portal-icon-button portal-notification"
             href={notificationLink.href}
-            title="New enquiries and contact form submissions"
+            title="New enquiries and notifications"
           >
             <Bell size={20} />
             {notificationCount > 0 ? (

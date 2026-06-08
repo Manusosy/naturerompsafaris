@@ -28,6 +28,31 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 ALTER TABLE gallery ADD COLUMN IF NOT EXISTS featured boolean DEFAULT false;
 ALTER TABLE gallery ADD COLUMN IF NOT EXISTS status enum_gallery_status NOT NULL DEFAULT 'draft';
 
+CREATE TABLE IF NOT EXISTS gallery_rels (
+  id serial PRIMARY KEY,
+  "order" integer,
+  parent_id integer NOT NULL REFERENCES gallery(id) ON DELETE CASCADE,
+  path varchar NOT NULL,
+  media_id integer REFERENCES media(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS gallery_rels_order_idx ON gallery_rels("order");
+CREATE INDEX IF NOT EXISTS gallery_rels_parent_idx ON gallery_rels(parent_id);
+CREATE INDEX IF NOT EXISTS gallery_rels_path_idx ON gallery_rels(path);
+
+ALTER TABLE gallery ALTER COLUMN image_id DROP NOT NULL;
+
+INSERT INTO gallery_rels (parent_id, path, media_id, "order")
+SELECT g.id, 'images', g.image_id, 1
+FROM gallery g
+WHERE g.image_id IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1
+    FROM gallery_rels rel
+    WHERE rel.parent_id = g.id
+      AND rel.path = 'images'
+      AND rel.media_id = g.image_id
+  );
+
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS location varchar;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS avatar_id integer REFERENCES media(id) ON DELETE SET NULL;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS featured boolean DEFAULT false;
@@ -38,6 +63,8 @@ CREATE TABLE IF NOT EXISTS homepage_slides (
   title varchar NOT NULL,
   description varchar NOT NULL,
   image_id integer REFERENCES media(id) ON DELETE SET NULL,
+  slide_interval_seconds numeric DEFAULT 6,
+  background_video_url varchar,
   destination_focus varchar DEFAULT 'Kenya & Tanzania',
   cta_label varchar DEFAULT 'Plan My Safari',
   cta_href varchar DEFAULT '/contact',
@@ -48,6 +75,22 @@ CREATE TABLE IF NOT EXISTS homepage_slides (
 );
 CREATE INDEX IF NOT EXISTS homepage_slides_sort_order_idx ON homepage_slides(sort_order);
 CREATE INDEX IF NOT EXISTS homepage_slides_status_idx ON homepage_slides(status);
+
+CREATE TABLE IF NOT EXISTS homepage_slides_rels (
+  id serial PRIMARY KEY,
+  "order" integer,
+  parent_id integer NOT NULL REFERENCES homepage_slides(id) ON DELETE CASCADE,
+  path varchar NOT NULL,
+  media_id integer REFERENCES media(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS homepage_slides_rels_order_idx ON homepage_slides_rels("order");
+CREATE INDEX IF NOT EXISTS homepage_slides_rels_parent_idx ON homepage_slides_rels(parent_id);
+CREATE INDEX IF NOT EXISTS homepage_slides_rels_path_idx ON homepage_slides_rels(path);
+
+ALTER TABLE homepage_slides
+  ADD COLUMN IF NOT EXISTS slide_interval_seconds numeric DEFAULT 6,
+  ADD COLUMN IF NOT EXISTS background_video_url varchar;
+ALTER TABLE homepage_slides ALTER COLUMN image_id DROP NOT NULL;
 
 CREATE TABLE IF NOT EXISTS faqs (
   id serial PRIMARY KEY,
@@ -133,7 +176,10 @@ BEGIN
     'trips_itinerary_days',
     'trips_price_seasons',
     'trips_route_waypoints',
-    'trips_why_book'
+    'trips_why_book',
+    'trips_optional_experiences',
+    'trips_accommodation_options',
+    'trips_best_for'
   ]
   LOOP
     IF EXISTS (

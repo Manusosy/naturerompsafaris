@@ -33,8 +33,8 @@ describe("portal signup verification", () => {
   });
 
   it("applies the email resend cooldown window", () => {
-    const recent = new Date(Date.now() - 60_000).toISOString();
-    const older = new Date(Date.now() - 3 * 60_000).toISOString();
+    const recent = new Date(Date.now() - 30_000).toISOString();
+    const older = new Date(Date.now() - 90_000).toISOString();
 
     expect(isWithinEmailCooldown(recent)).toBe(true);
     expect(isWithinEmailCooldown(older)).toBe(false);

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Mail, MessageCircle } from "lucide-react";
 
 import { StatusBadge } from "@/components/portal/PortalCards";
@@ -98,98 +98,86 @@ export function EnquiryInbox({
   }
 
   return (
-    <div className="portal-table-card wp-style enquiry-inbox">
-      <div className="enquiry-inbox__toolbar">
-        <input
-          className="enquiry-inbox__search"
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search leads…"
-          type="search"
-          value={query}
-        />
-        <select
-          className="enquiry-inbox__filter"
-          onChange={(event) => setTypeFilter(event.target.value)}
-          value={typeFilter}
-        >
-          <option value="__all">All form types</option>
-          <option value="quick">Quick enquiry</option>
-          <option value="quote">Full quote</option>
-        </select>
-      </div>
+    <div className="enquiry-inbox">
+      <div className="enquiry-inbox__header">
+        <div className="enquiry-inbox__toolbar">
+          <input
+            className="enquiry-inbox__search"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search leads…"
+            type="search"
+            value={query}
+          />
+          <select
+            className="enquiry-inbox__filter"
+            onChange={(event) => setTypeFilter(event.target.value)}
+            value={typeFilter}
+          >
+            <option value="__all">All form types</option>
+            <option value="quick">Quick enquiry</option>
+            <option value="quote">Full quote</option>
+          </select>
+        </div>
 
-      <ul className="wp-subsubsub">
-        {statusFilters.map((item) => (
-          <li key={item.value}>
+        <div className="enquiry-inbox__status-tabs" role="tablist" aria-label="Filter enquiries by status">
+          {statusFilters.map((item) => (
             <button
-              className={statusFilter === item.value ? "current" : undefined}
+              aria-selected={statusFilter === item.value}
+              className={statusFilter === item.value ? "is-active" : undefined}
+              key={item.value}
               onClick={() => setStatusFilter(item.value)}
+              role="tab"
               type="button"
             >
               {item.label}
             </button>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </div>
 
-      <div className="portal-table-wrap">
-        <table className="portal-table wp-list-table">
-          <thead>
-            <tr>
-              <th>Lead</th>
-              <th>Type</th>
-              <th>Interest</th>
-              <th>Source</th>
-              <th>Status</th>
-              <th>Received</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleDocs.map((doc) => {
-              const id = String(doc.id);
-              const name = formatValue(getValue(doc, "name"));
-              const email = formatValue(getValue(doc, "email"));
-              const formType = inferEnquiryFormType(doc);
-              const sourcePage = String(getValue(doc, "sourcePage") ?? "");
-              const sourceShort = sourcePage ? sourcePage.replace(/^\//, "") || "/" : "-";
-              const whatsappHref = buildEnquiryWhatsAppHref(doc);
-              const mailto = buildEnquiryMailto(doc);
-              const isBusy = busyId === id;
+      {visibleDocs.length ? (
+        <div className="enquiry-inbox__table-wrap">
+          <table className="enquiry-inbox__table">
+            <thead>
+              <tr>
+                <th>Lead</th>
+                <th>Type</th>
+                <th>Interest</th>
+                <th className="enquiry-inbox__col-source">Source</th>
+                <th>Status</th>
+                <th className="enquiry-inbox__col-received">Received</th>
+                <th className="enquiry-inbox__col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleDocs.map((doc) => {
+                const id = String(doc.id);
+                const name = formatValue(getValue(doc, "name"));
+                const email = formatValue(getValue(doc, "email"));
+                const formType = inferEnquiryFormType(doc);
+                const sourcePage = String(getValue(doc, "sourcePage") ?? "");
+                const sourceShort = sourcePage ? sourcePage.replace(/^\//, "") || "/" : "—";
+                const whatsappHref = buildEnquiryWhatsAppHref(doc);
+                const mailto = buildEnquiryMailto(doc);
+                const isBusy = busyId === id;
 
-              return (
-                <Fragment key={id}>
-                  <tr className="wp-row-hover">
-                    <td className="is-primary">
-                      <Link className="row-title" href={`/admin/enquiries/${id}`}>
+                return (
+                  <tr key={id}>
+                    <td className="enquiry-inbox__lead">
+                      <Link className="enquiry-inbox__name" href={`/admin/enquiries/${id}`}>
                         {name}
                       </Link>
                       <span className="enquiry-inbox__email">{email}</span>
-                      <div className="row-actions">
-                        <span className="view">
-                          <Link href={`/admin/enquiries/${id}`}>Open</Link>{" "}
-                          <span className="divider">|</span>
-                        </span>
-                        <span className="edit">
-                          <a href={mailto}>Reply</a>{" "}
-                          <span className="divider">|</span>
-                        </span>
-                        {whatsappHref ? (
-                          <span className="inline-edit">
-                            <a href={whatsappHref} rel="noreferrer" target="_blank">
-                              WhatsApp
-                            </a>{" "}
-                            <span className="divider">|</span>
-                          </span>
-                        ) : null}
-                        <span className="trash">
-                          <button
-                            disabled={isBusy}
-                            onClick={() => updateStatus(id, "contacted")}
-                            type="button"
-                          >
-                            Mark contacted
-                          </button>
-                        </span>
+                      <div className="enquiry-inbox__row-links">
+                        <Link href={`/admin/enquiries/${id}`}>Open</Link>
+                        <span aria-hidden>·</span>
+                        <button
+                          disabled={isBusy}
+                          onClick={() => updateStatus(id, "contacted")}
+                          type="button"
+                        >
+                          Mark contacted
+                        </button>
                       </div>
                     </td>
                     <td>
@@ -197,36 +185,52 @@ export function EnquiryInbox({
                         {formType === "quote" ? "Full quote" : "Quick"}
                       </span>
                     </td>
-                    <td>{getEnquiryInterestLabel(doc)}</td>
+                    <td className="enquiry-inbox__interest">{getEnquiryInterestLabel(doc)}</td>
                     <td className="enquiry-inbox__source">{sourceShort}</td>
                     <td>
                       <StatusBadge value={getValue(doc, "status")} />
                     </td>
-                    <td>{formatValue(getValue(doc, "createdAt"))}</td>
+                    <td className="enquiry-inbox__received">{formatValue(getValue(doc, "createdAt"))}</td>
+                    <td className="enquiry-inbox__actions">
+                      <div className="enquiry-row-actions">
+                        <a className="enquiry-action-btn enquiry-action-btn--primary enquiry-action-btn--compact" href={mailto}>
+                          <Mail size={15} /> Reply
+                        </a>
+                        {whatsappHref ? (
+                          <a
+                            className="enquiry-action-btn enquiry-action-btn--whatsapp enquiry-action-btn--compact"
+                            href={whatsappHref}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            <MessageCircle size={15} /> WhatsApp
+                          </a>
+                        ) : (
+                          <span className="enquiry-action-btn enquiry-action-btn--disabled enquiry-action-btn--compact" title="No phone number provided">
+                            <MessageCircle size={15} /> WhatsApp
+                          </span>
+                        )}
+                      </div>
+                    </td>
                   </tr>
-                </Fragment>
-              );
-            })}
-            {!visibleDocs.length ? (
-              <tr>
-                <td colSpan={6}>
-                  <div className="portal-table-empty">
-                    <strong>{docs.length ? "No enquiries match the filters" : emptyLabel}</strong>
-                    <span>
-                      {docs.length
-                        ? "Try adjusting the search or filter above."
-                        : "New website enquiries will appear here and email info@naturerompsafaris.com."}
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
-      </div>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="enquiry-inbox__empty">
+          <strong>{docs.length ? "No enquiries match the filters" : emptyLabel}</strong>
+          <span>
+            {docs.length
+              ? "Try adjusting the search or filter above."
+              : "New website enquiries will appear here when travelers submit a form."}
+          </span>
+        </div>
+      )}
 
       {totalPages > 1 ? (
-        <div className="portal-pagination">
+        <div className="enquiry-inbox__pagination portal-pagination">
           <span className="portal-pagination__info">
             Page {page} of {totalPages}
           </span>
@@ -257,9 +261,7 @@ export function EnquiryInbox({
       ) : null}
 
       <p className="enquiry-inbox__hint">
-        <Mail size={14} /> Submissions are emailed to info@naturerompsafaris.com. Use Reply or WhatsApp to follow up
-        with the traveler.
-        <MessageCircle size={14} />
+        Use <strong>Reply</strong> to email the traveler or <strong>WhatsApp</strong> for a quick chat. Both actions are available on each lead.
       </p>
     </div>
   );

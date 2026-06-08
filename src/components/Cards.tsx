@@ -186,6 +186,7 @@ export type Trip = {
   galleryImages?: unknown[];
   heroImage?: unknown;
   overview?: string;
+  cardSummary?: string;
   featured?: boolean;
 };
 
@@ -240,7 +241,10 @@ export function TripCard({ item }: { item: Trip }) {
     experienceTypes: item.experienceTypes,
     packageTier: item.packageTier,
   });
-  const overview = item.overview ? item.overview.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+  const cardTextSource = item.cardSummary || item.overview || "";
+  const cardText = cardTextSource
+    ? cardTextSource.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+    : "";
 
   return (
     <article className="acc-card">
@@ -268,10 +272,10 @@ export function TripCard({ item }: { item: Trip }) {
           <Link href={`/trips/${item.slug}`}>{item.title}</Link>
         </h2>
         <p className="acc-card__desc">
-          {overview
-            ? overview.length > 120
-              ? `${overview.slice(0, 120)}…`
-              : overview
+          {cardText
+            ? cardText.length > 160
+              ? `${cardText.slice(0, 160)}…`
+              : cardText
             : "Experience the raw majesty of East African wild reserves, luxury camps, and scenic landscapes."}
         </p>
         <div className="acc-card__footer">

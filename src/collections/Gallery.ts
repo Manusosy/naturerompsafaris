@@ -18,7 +18,25 @@ export const Gallery: CollectionConfig = {
   fields: [
     { name: "title", type: "text", required: true },
     { name: "category", type: "text", defaultValue: "Safari Moments" },
-    { name: "image", type: "upload", relationTo: "media", required: true },
+    {
+      name: "image",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description: "Legacy single image. Prefer the photo gallery below.",
+        hidden: true,
+      },
+    },
+    {
+      name: "images",
+      label: "Photos",
+      type: "upload",
+      relationTo: "media",
+      hasMany: true,
+      admin: {
+        description: "Select one or more photos for this gallery entry.",
+      },
+    },
     { name: "alt", type: "text", required: true },
     { name: "featured", type: "checkbox", defaultValue: false },
     { name: "sortOrder", type: "number", defaultValue: 0 },

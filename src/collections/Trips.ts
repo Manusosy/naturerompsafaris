@@ -55,9 +55,13 @@ export const Trips: CollectionConfig = {
     },
     {
       name: "heroEyebrow",
-      label: "Hero eyebrow / category",
+      label: "Hero category line",
       type: "text",
-      admin: { placeholder: "e.g. Signature Kenya Safari" },
+      admin: {
+        placeholder: "e.g. Luxury Fly-In Safari",
+        description:
+          "Short line above the title on the trip detail hero only. Use Package Tier and Experience Types for filters and listing badges.",
+      },
     },
     {
       name: "heroSubtitle",
@@ -82,8 +86,27 @@ export const Trips: CollectionConfig = {
       name: "overview",
       type: "textarea",
       admin: {
-        description: "Full trip overview paragraph shown at the top of the detail page.",
+        description: "Full trip overview shown on the detail page Overview section.",
         rows: 6,
+      },
+    },
+    {
+      name: "cardSummary",
+      label: "Listing card summary",
+      type: "textarea",
+      admin: {
+        description:
+          "Short excerpt for trip listing cards (about 120–160 characters). Leave empty to auto-truncate the overview.",
+        rows: 3,
+      },
+    },
+    {
+      name: "departurePoint",
+      label: "Departure / flight point",
+      type: "text",
+      admin: {
+        placeholder: "e.g. Wilson Airport, Nairobi",
+        description: "Shown in the tour summary and route facts when relevant.",
       },
     },
     {
@@ -372,6 +395,18 @@ export const Trips: CollectionConfig = {
           ],
         },
         { name: "seasonLabel", label: "Season", type: "text" },
+        {
+          name: "packageLabel",
+          label: "Package table label",
+          type: "text",
+          admin: { placeholder: "e.g. Luxury Accommodations" },
+        },
+        {
+          name: "partySizeLabel",
+          label: "Group size",
+          type: "text",
+          admin: { placeholder: "e.g. 2–3 pax, 4–5 pax, 6+ pax" },
+        },
         { name: "dateRange", label: "Date range", type: "text" },
         { name: "currency", type: "text", defaultValue: "USD" },
         { name: "min", type: "number" },
@@ -395,6 +430,53 @@ export const Trips: CollectionConfig = {
       type: "array",
       admin: { description: "What is NOT included — international flights, tips, visa fees, etc." },
       fields: [{ name: "item", type: "text", required: true }],
+    },
+    {
+      name: "optionalExperiences",
+      label: "Optional add-on experiences",
+      type: "array",
+      admin: {
+        description: "Paid extras such as balloon safaris or cultural visits. Shown on the trip detail page.",
+      },
+      fields: [
+        { name: "title", type: "text", required: true },
+        { name: "description", type: "textarea" },
+        { name: "priceNote", label: "Price note", type: "text", admin: { placeholder: "e.g. From USD 480 per person" } },
+      ],
+    },
+    {
+      name: "accommodationSummary",
+      label: "Accommodation summary",
+      type: "textarea",
+      admin: {
+        description: "Introductory copy for the accommodation section on the trip detail page.",
+        rows: 4,
+      },
+    },
+    {
+      name: "accommodationOptions",
+      label: "Accommodation options",
+      type: "array",
+      fields: [
+        { name: "name", type: "text", required: true },
+        { name: "note", type: "text", admin: { placeholder: "Optional note" } },
+      ],
+    },
+    {
+      name: "bestFor",
+      label: "Best for",
+      type: "array",
+      admin: { description: "Traveller types this trip suits, e.g. honeymooners, families, photographers." },
+      fields: [{ name: "item", type: "text", required: true }],
+    },
+    {
+      name: "bestTimeToVisit",
+      label: "Best time to visit",
+      type: "textarea",
+      admin: {
+        description: "Seasonal guidance for when to book or travel.",
+        rows: 4,
+      },
     },
 
     // ─── Gallery ───────────────────────────────────────────────────────────

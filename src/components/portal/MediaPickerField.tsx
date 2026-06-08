@@ -2,7 +2,7 @@
 
 import { CheckCircle2, ImagePlus, Search, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { fetchMoreMediaOptions, fetchTotalMediaCount } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
 
@@ -80,16 +80,52 @@ export function MediaPickerField({
   const [hasMore, setHasMore] = useState(options.length >= 36);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
+  const emptyFetchAttempted = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    setMediaOptions(options);
+    setHasMore(options.length >= 36);
+    if (options.length > 0) {
+      setCurrentPage(Math.max(1, Math.ceil(options.length / 36)));
+    }
+  }, [options]);
+
+  useEffect(() => {
     if (open && totalCount === undefined) {
       fetchTotalMediaCount().then(setTotalCount).catch(console.error);
     }
   }, [open, totalCount]);
+
+  useEffect(() => {
+    if (!open) {
+      emptyFetchAttempted.current = false;
+      return;
+    }
+    if (mediaOptions.length > 0 || loadingMore || emptyFetchAttempted.current) return;
+
+    emptyFetchAttempted.current = true;
+    let cancelled = false;
+    setLoadingMore(true);
+    fetchMoreMediaOptions(1)
+      .then((nextOptions) => {
+        if (cancelled) return;
+        setMediaOptions(nextOptions);
+        setCurrentPage(1);
+        setHasMore(nextOptions.length >= 36);
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) setLoadingMore(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, loadingMore, mediaOptions.length]);
 
   useEffect(() => {
     if (!open) return;

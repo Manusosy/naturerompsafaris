@@ -4,60 +4,69 @@ import { getPayload } from "payload";
 
 import configPromise from "@payload-config";
 import { packages, posts, seoHubs, site } from "@/content/site";
+import { fetchPublishedRoutes, mergeSitemapRoutes } from "@/lib/sitemap-data";
+
+const STATIC_ROUTES = [
+  "/",
+  "/about",
+  "/safari-packages",
+  "/trips",
+  "/destinations",
+  "/accommodations",
+  "/blog",
+  "/photo-gallery",
+  "/contact",
+];
+
+const publishedWhere = { status: { equals: "published" } };
 
 async function getCmsRoutes() {
   try {
     const payload = await getPayload({ config: configPromise });
-    const [cmsPackages, cmsPosts, destinations, trips] = await Promise.all([
-      payload.find({
-        collection: "packages" as never,
-        limit: 100,
-        overrideAccess: true,
-        where: { status: { equals: "published" } } as never,
-      }),
-      payload.find({
-        collection: "posts" as never,
-        limit: 100,
-        overrideAccess: true,
-      }),
-      payload.find({
-        collection: "destinations" as never,
-        limit: 100,
-        overrideAccess: true,
-      }),
-      payload.find({
-        collection: "trips" as never,
-        limit: 100,
-        overrideAccess: true,
-        where: { status: { equals: "published" } } as never,
-      }),
-    ]);
+    const [packageRoutes, postRoutes, destinationRoutes, tripRoutes, accommodationRoutes] =
+      await Promise.all([
+        fetchPublishedRoutes(payload, "packages", "/safari-packages", publishedWhere),
+        fetchPublishedRoutes(payload, "posts", "/blog", publishedWhere),
+        fetchPublishedRoutes(payload, "destinations", "/destinations", publishedWhere),
+        fetchPublishedRoutes(payload, "trips", "/trips", publishedWhere),
+        fetchPublishedRoutes(payload, "accommodations", "/accommodations", publishedWhere),
+      ]);
 
-    return [
-      ...cmsPackages.docs.map((item) => `/safari-packages/${(item as { slug?: string }).slug}`),
-      ...cmsPosts.docs.map((item) => `/blog/${(item as { slug?: string }).slug}`),
-      ...destinations.docs.map((item) => `/destinations/${(item as { slug?: string }).slug}`),
-      ...trips.docs.map((item) => `/trips/${(item as { slug?: string }).slug}`),
-    ].filter((route) => !route.endsWith("/undefined"));
+    return mergeSitemapRoutes([
+      ...packageRoutes,
+      ...postRoutes,
+      ...destinationRoutes,
+      ...tripRoutes,
+      ...accommodationRoutes,
+    ]);
   } catch {
-    return [];
+    return new Map<string, Date | undefined>();
   }
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ["/", "/about", "/safari-packages", "/blog", "/photo-gallery", "/contact"];
-  const routes = [
-    ...staticRoutes,
-    ...seoHubs.map((item) => `/${item.slug}`),
-    ...packages.map((item) => `/safari-packages/${item.slug}`),
-    ...posts.map((item) => `/blog/${item.slug}`),
-    ...(await getCmsRoutes()),
-  ];
+function routePriority(route: string): number {
+  if (route === "/") return 1;
+  if (route.includes("safari") || route.startsWith("/trips")) return 0.9;
+  if (route.startsWith("/blog")) return 0.8;
+  return 0.7;
+}
 
-  return Array.from(new Set(routes)).map((route) => ({
-    url: `${site.canonicalUrl}${route === "/" ? "" : route}`,
-    lastModified: new Date(),
-    changeFrequency: route === "/" ? "weekly" : "monthly",
-    priority: route === "/" ? 1 : route.includes("safari") ? 0.9 : 0.7,
-  }));
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const cmsRoutes = await getCmsRoutes();
+  const routeMap = mergeSitemapRoutes([
+    ...STATIC_ROUTES.map((route) => ({ route })),
+    ...seoHubs.map((item) => ({ route: `/${item.slug}` })),
+    ...packages.map((item) => ({ route: `/safari-packages/${item.slug}` })),
+    ...posts.map((item) => ({ route: `/blog/${item.slug}` })),
+    ...Array.from(cmsRoutes.entries()).map(([route, lastModified]) => ({ route, lastModified })),
+  ]);
+
+  return Array.from(routeMap.entries())
+    .filter(([route]) => !route.endsWith("/undefined"))
+    .map(([route, lastModified]) => ({
+      url: `${site.canonicalUrl}${route === "/" ? "" : route}`,
+      ...(lastModified ? { lastModified } : {}),
+      changeFrequency: route === "/" ? ("weekly" as const) : ("monthly" as const),
+      priority: routePriority(route),
+    }));
 }

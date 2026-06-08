@@ -8,18 +8,34 @@ import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = buildMetadata({
+type BlogSearchParams = {
+  category?: string;
+  q?: string;
+};
+
+const blogMetadata = {
   title: "Travel Blog",
   description:
     "Kenya Tanzania safari guides covering cost, best time, itineraries, migration routes, Kenya adventure and Tanzania adventure planning.",
   path: "/blog",
   keywords: "Kenya Tanzania safari blog, safari cost, best time safari, Masai Mara Serengeti",
-});
-
-type BlogSearchParams = {
-  category?: string;
-  q?: string;
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<BlogSearchParams>;
+}): Promise<Metadata> {
+  const params = (await searchParams) || {};
+  const query = (params.q || "").trim();
+  const category = params.category || "__all";
+  const isFiltered = category !== "__all" || query.length > 0;
+
+  return buildMetadata({
+    ...blogMetadata,
+    noIndex: isFiltered,
+  });
+}
 
 type BlogCategory = {
   id?: string;

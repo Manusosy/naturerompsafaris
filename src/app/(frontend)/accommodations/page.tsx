@@ -3,14 +3,38 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { getAllAccommodations, getAccommodationLocations } from "@/lib/accommodation-content";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Safari Accommodations & Lodges | Nature Romp Safaris",
+const accommodationsMetadata = {
+  title: "Safari Accommodations & Lodges",
   description:
     "Browse our handpicked collection of safari lodges, tented camps, hotels and Airbnbs across East Africa. Enquire directly via WhatsApp.",
+  path: "/accommodations",
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const country = (params.country ?? "__all").toLowerCase();
+  const type = params.type ?? "__all";
+  const location = params.location ?? "";
+  const isFiltered =
+    country !== "__all" ||
+    type !== "__all" ||
+    location.length > 0 ||
+    Boolean(params.min) ||
+    Boolean(params.max);
+
+  return buildMetadata({
+    ...accommodationsMetadata,
+    noIndex: isFiltered,
+  });
+}
 
 const TYPE_LABELS: Record<string, string> = {
   lodge: "Safari Lodge",

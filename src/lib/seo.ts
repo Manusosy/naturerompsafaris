@@ -8,6 +8,7 @@ type SeoInput = {
   path?: string;
   keywords?: string;
   image?: string;
+  noIndex?: boolean;
 };
 
 export function buildMetadata({
@@ -16,6 +17,7 @@ export function buildMetadata({
   path = "/",
   keywords,
   image = "/assets/img/banner1.webp",
+  noIndex = false,
 }: SeoInput): Metadata {
   const url = `${site.canonicalUrl}${path === "/" ? "" : path}`;
   const fullTitle = `${title} | ${site.company}`;
@@ -24,6 +26,7 @@ export function buildMetadata({
     title,
     description,
     keywords,
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical: url,
     },

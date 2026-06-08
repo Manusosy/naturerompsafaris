@@ -13,15 +13,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Safari Tours",
-  description:
-    "Browse quote-first Kenya, Tanzania, Zanzibar, and combined East Africa safari tours by Nature Romp Safaris.",
-  keywords:
-    "Kenya safari tours, Tanzania safari tours, Zanzibar safari holiday, Kenya Tanzania safari adventure",
-  path: "/trips",
-});
-
 type TripSearchParams = {
   country?: string;
   experience?: string;
@@ -29,6 +20,37 @@ type TripSearchParams = {
   minDays?: string;
   tier?: string;
 };
+
+const tripsMetadata = {
+  title: "Safari Tours",
+  description:
+    "Browse quote-first Kenya, Tanzania, Zanzibar, and combined East Africa safari tours by Nature Romp Safaris.",
+  keywords:
+    "Kenya safari tours, Tanzania safari tours, Zanzibar safari holiday, Kenya Tanzania safari adventure",
+  path: "/trips",
+};
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<TripSearchParams>;
+}): Promise<Metadata> {
+  const params = (await searchParams) || {};
+  const country = (params.country ?? "__all").toLowerCase();
+  const tier = params.tier ?? "__all";
+  const experience = params.experience ?? "__all";
+  const isFiltered =
+    country !== "__all" ||
+    tier !== "__all" ||
+    experience !== "__all" ||
+    Boolean(params.minDays) ||
+    Boolean(params.maxDays);
+
+  return buildMetadata({
+    ...tripsMetadata,
+    noIndex: isFiltered,
+  });
+}
 
 function normalizeTrip(doc: Record<string, unknown>): Trip {
   const gallery = Array.isArray(doc.gallery) ? doc.gallery : [];

@@ -51,6 +51,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/travel-blog",
+        destination: "/blog",
+        permanent: true,
+      },
+      {
         source: "/blog-details.html",
         destination: "/blog/why-choose-east-africa-tour-operators",
         permanent: true,

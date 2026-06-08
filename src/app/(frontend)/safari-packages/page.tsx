@@ -17,20 +17,37 @@ import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = buildMetadata({
+type PackageSearchParams = {
+  category?: string;
+  group?: string;
+  tier?: string;
+};
+
+const packagesMetadata = {
   title: "Safari Packages",
   description:
     "Browse Kenya safari packages, Tanzania safari packages and combined Kenya Tanzania safari adventures by Nature Romp Safaris.",
   path: "/safari-packages",
   keywords:
     "Kenya Tanzania safari packages, Kenya safari packages, Tanzania safari packages, budget safari, private safari",
-});
-
-type PackageSearchParams = {
-  category?: string;
-  group?: string;
-  tier?: string;
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<PackageSearchParams>;
+}): Promise<Metadata> {
+  const params = (await searchParams) || {};
+  const category = params.category ?? "__all";
+  const group = params.group ?? "__all";
+  const tier = params.tier ?? "__all";
+  const isFiltered = category !== "__all" || group !== "__all" || tier !== "__all";
+
+  return buildMetadata({
+    ...packagesMetadata,
+    noIndex: isFiltered,
+  });
+}
 
 export default async function PackagesPage({
   searchParams,

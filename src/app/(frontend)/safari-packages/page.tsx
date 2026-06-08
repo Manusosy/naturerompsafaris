@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
 import { PackageCard, type Package } from "@/components/Cards";
-import { PageHero } from "@/components/PageHero";
-import { SectionHeader } from "@/components/Sections";
 import { enrichPackageForCatalog, fetchLinkedTripsByPackageIds } from "@/lib/package-trips";
+import {
+  PACKAGE_CATEGORY_FILTER_OPTIONS,
+  PACKAGE_TIER_FILTER_OPTIONS,
+  packageGroupLabel,
+  packageGroupsForCategory,
+  packageHeroCategoryKey,
+  packageTierLabel,
+} from "@/lib/package-labels";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -19,28 +26,37 @@ export const metadata: Metadata = buildMetadata({
     "Kenya Tanzania safari packages, Kenya safari packages, Tanzania safari packages, budget safari, private safari",
 });
 
-export default async function PackagesPage(props: {
-  searchParams?: Promise<{ category?: string; experience?: string; group?: string; tier?: string }>;
+type PackageSearchParams = {
+  category?: string;
+  group?: string;
+  tier?: string;
+};
+
+export default async function PackagesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<PackageSearchParams>;
 }) {
-  const searchParams = await props.searchParams;
+  const params = (await searchParams) || {};
+  const category = params.category ?? "__all";
+  const group = params.group ?? "__all";
+  const tier = params.tier ?? "__all";
   const payload = await getPayload({ config: configPromise });
-  const category = searchParams?.category;
-  const group = searchParams?.group;
-  const tier = searchParams?.tier;
 
   const result = await payload.find({
     collection: "packages",
-    where: { 
+    where: {
       and: [
         { status: { equals: "published" } },
-        ...(category ? [{ category: { equals: category } }] : []),
-        ...(group ? [{ packageGroup: { equals: group } }] : []),
-        ...(tier ? [{ packageTier: { equals: tier } }] : []),
-      ] 
+        ...(category !== "__all" ? [{ category: { equals: category } }] : []),
+        ...(group !== "__all" ? [{ packageGroup: { equals: group } }] : []),
+        ...(tier !== "__all" ? [{ packageTier: { equals: tier } }] : []),
+      ],
     },
     limit: 100,
     depth: 1,
     overrideAccess: true,
+    sort: "-updatedAt",
   });
 
   const rawPackages = result.docs as Array<Package & { id?: string | number }>;
@@ -50,17 +66,113 @@ export default async function PackagesPage(props: {
   );
   const packages = rawPackages.map((item) => enrichPackageForCatalog(item, tripsByPackageId));
 
+  const activeCategoryLabel =
+    PACKAGE_CATEGORY_FILTER_OPTIONS.find((option) => option.value === category)?.label ?? "";
+  const visibleGroups = packageGroupsForCategory(category);
+  const isFiltered = category !== "__all" || group !== "__all" || tier !== "__all";
+
   return (
-    <main className="packages-page">
-      <PageHero title="Package Listing" />
-      <section className="section">
-        <div className="container">
-          <SectionHeader title={category || group || tier ? "Filtered Packages" : "Our Safari Packages"} />
-          <div className="card-grid">
-            {packages.map((item) => <PackageCard item={item} key={item.slug} />)}
-          </div>
+    <main className="acc-page packages-page">
+      <section
+        className="acc-page__hero acc-page__hero--packages"
+        data-hero={packageHeroCategoryKey(category)}
+      >
+        <div className="acc-page__hero-inner">
+          <span className="acc-page__eyebrow">Curated Itineraries</span>
+          <h1 className="acc-page__title">
+            {activeCategoryLabel && category !== "__all"
+              ? activeCategoryLabel
+              : "Safari Packages"}
+          </h1>
+          <p className="acc-page__subtitle">
+            Browse Kenya, Tanzania, Zanzibar, and combined East Africa safari packages. Filter by
+            market, package style, and comfort tier to find the right route for your group.
+          </p>
         </div>
       </section>
+
+      <div className="acc-page__layout">
+        <aside className="acc-sidebar" aria-label="Safari package filters">
+          <form action="/safari-packages" className="acc-filter-form" method="get">
+            <div className="acc-filter-group">
+              <h3 className="acc-filter-heading">Market / Destination</h3>
+              {PACKAGE_CATEGORY_FILTER_OPTIONS.map(({ label, value }) => (
+                <label className="acc-filter-radio" key={value}>
+                  <input
+                    defaultChecked={category === value}
+                    name="category"
+                    type="radio"
+                    value={value}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            <div className="acc-filter-group">
+              <h3 className="acc-filter-heading">Package Type</h3>
+              {visibleGroups.map(({ label, value }) => (
+                <label className="acc-filter-radio" key={value}>
+                  <input defaultChecked={group === value} name="group" type="radio" value={value} />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            <div className="acc-filter-group">
+              <h3 className="acc-filter-heading">Package Tier</h3>
+              {PACKAGE_TIER_FILTER_OPTIONS.map(({ label, value }) => (
+                <label className="acc-filter-radio" key={value}>
+                  <input defaultChecked={tier === value} name="tier" type="radio" value={value} />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            <button className="acc-filter-btn" type="submit">
+              Apply Filters
+            </button>
+
+            {isFiltered ? (
+              <Link className="acc-filter-clear" href="/safari-packages">
+                Clear all filters
+              </Link>
+            ) : null}
+          </form>
+        </aside>
+
+        <section className="acc-results" aria-label="Safari package results">
+          <div className="acc-results__header">
+            <p className="acc-results__count">
+              {packages.length} {packages.length === 1 ? "package" : "packages"} found
+            </p>
+            {isFiltered ? (
+              <span>
+                {category !== "__all" ? `Market: ${activeCategoryLabel}` : null}
+                {category !== "__all" && group !== "__all" ? " / " : null}
+                {group !== "__all" ? `Type: ${packageGroupLabel(group)}` : null}
+                {(category !== "__all" || group !== "__all") && tier !== "__all" ? " / " : null}
+                {tier !== "__all" ? `Tier: ${packageTierLabel(tier)}` : null}
+              </span>
+            ) : null}
+          </div>
+
+          {packages.length === 0 ? (
+            <div className="acc-empty">
+              <p>No safari packages match your filters.</p>
+              <Link className="acc-empty-link" href="/safari-packages">
+                View all packages →
+              </Link>
+            </div>
+          ) : (
+            <div className="acc-grid acc-grid--packages">
+              {packages.map((item) => (
+                <PackageCard item={item} key={item.slug} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

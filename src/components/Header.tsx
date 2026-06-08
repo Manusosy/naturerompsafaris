@@ -447,41 +447,31 @@ export function Header({
 
           <div className="topbar__social" aria-label="Social media">
 
-            {socialLinks.map(({ href, icon: Icon, label }) =>
+            {socialLinks.map(({ href, icon: Icon, label }) => {
+              const platformClass = label.toLowerCase().replace(/\s+/g, "-");
 
-              href?.trim() ? (
-
+              return href?.trim() ? (
                 <a
-
                   aria-label={label}
-
-                  className="topbar__social-link"
-
+                  className={`topbar__social-link topbar__social-link--${platformClass}`}
                   href={href}
-
                   key={label}
-
                   rel="noopener noreferrer"
-
                   target="_blank"
-
                 >
-
                   <Icon height={20} width={20} />
-
                 </a>
-
               ) : (
-
-                <span aria-hidden className="topbar__social-link is-disabled" key={label} title={`${label} link coming soon`}>
-
+                <span
+                  aria-hidden
+                  className={`topbar__social-link is-disabled topbar__social-link--${platformClass}`}
+                  key={label}
+                  title={`${label} link coming soon`}
+                >
                   <Icon height={20} width={20} />
-
                 </span>
-
-              ),
-
-            )}
+              );
+            })}
 
           </div>
 

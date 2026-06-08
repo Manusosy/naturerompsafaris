@@ -196,10 +196,29 @@ img {
 
 .topbar__social-link:hover,
 .topbar__social-link:focus-visible {
-  color: var(--header-social);
-  opacity: 0.82;
+  opacity: 1;
   outline: none;
   transform: translateY(-1px);
+}
+
+.topbar__social-link--facebook:hover,
+.topbar__social-link--facebook:focus-visible {
+  color: #1877f2;
+}
+
+.topbar__social-link--instagram:hover,
+.topbar__social-link--instagram:focus-visible {
+  color: #e4405f;
+}
+
+.topbar__social-link--youtube:hover,
+.topbar__social-link--youtube:focus-visible {
+  color: #ff0000;
+}
+
+.topbar__social-link--tiktok:hover,
+.topbar__social-link--tiktok:focus-visible {
+  color: #ee1d52;
 }
 
 .topbar__social-link.is-disabled {
@@ -9327,7 +9346,36 @@ textarea {
   color: white;
 }
 
-.acc-page__hero-inner { max-width: 600px; margin: 0 auto; }
+.acc-page__hero--packages {
+  background:
+    linear-gradient(rgba(8, 14, 8, 0.5), rgba(8, 14, 8, 0.72)),
+    url("/assets/img/packages/hero-kenya-safaris.png") center 55% / cover no-repeat;
+}
+
+.acc-page__hero--packages[data-hero="tanzania-safaris"],
+.acc-page__hero--packages[data-hero="tanzania-adventure-safaris"],
+.acc-page__hero--packages[data-hero="kenya-tanzania-combined-safaris"] {
+  background:
+    linear-gradient(rgba(8, 14, 8, 0.5), rgba(8, 14, 8, 0.72)),
+    url("/assets/img/packages/hero-tanzania-safaris.png") center center / cover no-repeat;
+}
+
+.acc-page__hero--packages[data-hero="zanzibar-holidays"] {
+  background:
+    linear-gradient(rgba(8, 14, 8, 0.5), rgba(8, 14, 8, 0.72)),
+    url("/assets/img/packages/hero-zanzibar-holidays.png") center 40% / cover no-repeat;
+}
+
+.acc-page__hero-inner {
+  margin: 0 auto;
+  max-width: 600px;
+  width: 100%;
+}
+
+.acc-page__title,
+.acc-page__subtitle {
+  margin-inline: auto;
+}
 
 .acc-page__eyebrow {
   display: inline-block;
@@ -9517,6 +9565,24 @@ textarea {
 .acc-grid--trips {
   grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
   justify-content: start;
+}
+
+.acc-grid--packages {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
+  justify-content: start;
+}
+
+.acc-grid--packages .acc-card {
+  max-width: 300px;
+  width: 100%;
+}
+
+.acc-card__route {
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: -4px 0 8px;
 }
 
 .acc-grid--trips .acc-card {

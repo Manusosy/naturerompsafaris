@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 
 import { getTripDesignationLabel } from "@/lib/trip-labels";
 import { getTripPriceParts } from "@/lib/trip-pricing";
@@ -91,8 +91,20 @@ function limitWords(value: string | undefined, maxWords: number) {
   return `${words.slice(0, maxWords).join(" ")}...`;
 }
 
-function cleanFromPrice(value: string | undefined) {
-  return (value || "").replace(/^from\s+/i, "").trim();
+function CatalogCardPrice(input: Parameters<typeof getTripPriceParts>[0]) {
+  const parts = getTripPriceParts(input);
+
+  if (parts.kind === "quote") {
+    return <span className="acc-card__price-quote">{parts.label}</span>;
+  }
+
+  return (
+    <>
+      <span className="acc-card__price-kicker">From</span>
+      <strong className="acc-card__price-amount">{parts.amount}</strong>
+      <span className="acc-card__price-basis">{parts.basis}</span>
+    </>
+  );
 }
 
 export function PackageCard({ item }: { item: Package }) {
@@ -101,64 +113,43 @@ export function PackageCard({ item }: { item: Package }) {
   const route = formatPackageDestinations(item, "");
   const summary = limitWords(
     item.excerpt || "Join Nature Romp Safaris on an unforgettable classic game viewing and exploration journey.",
-    28,
+    22,
   );
-  const price = cleanFromPrice(item.priceText);
 
   return (
-    <article className="tour-card">
-      <div className="tour-card__image">
-        <Link href={`/safari-packages/${item.slug}`}>
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            width={640}
-            height={420}
-            unoptimized
-          />
-        </Link>
-        <span className="tour-card__duration">
-          {item.duration || "Custom duration"}
-        </span>
-        {item.discount?.enabled && (
-          <span className="tour-card__deal">
-            {item.discount.label || "Special Deal"}
-          </span>
-        )}
-      </div>
-      <div className="tour-card__body">
-        <div className="tour-card__meta">
-          <span><CalendarDays size={16} /> {item.duration || "Custom duration"}</span>
-          <span><MapPin size={16} /> {item.category || "Classic Safari"}</span>
-        </div>
-        <h3>
-          <Link href={`/safari-packages/${item.slug}`}>{item.title}</Link>
-        </h3>
-        {route ? (
-          <p className="tour-card__route">
-            <strong>Route:</strong> {route}
-          </p>
+    <article className="acc-card acc-card--package">
+      <Link className="acc-card__img-wrap" href={`/safari-packages/${item.slug}`}>
+        <Image
+          alt={imageAlt}
+          fill
+          sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 300px"
+          src={imageSrc}
+          style={{ objectFit: "cover" }}
+          unoptimized
+        />
+        {item.duration ? <span className="acc-card__type">{item.duration}</span> : null}
+        {item.discount?.enabled ? (
+          <span className="acc-card__avail avail--limited">{item.discount.label || "Special Deal"}</span>
         ) : null}
-        <p>
-          {summary}
-        </p>
-        <div className="tour-card__footer tour-card__footer--listing">
-          {price ? (
-            <div className="tour-card__price">
-              <span>From</span>
-              <strong>{price}</strong>
-            </div>
-          ) : (
-            <div className="tour-card__price tour-card__price--request">
-              <span>From</span>
-              <strong>Custom quote</strong>
-            </div>
-          )}
-          <Link
-            href={`/safari-packages/${item.slug}`}
-            className="tour-card__button"
-          >
-            View Details
+      </Link>
+
+      <div className="acc-card__body">
+        <div className="acc-card__location">
+          <MapPin size={12} />
+          {[item.category || "Safari Package", item.duration].filter(Boolean).join(" · ")}
+        </div>
+        <h2 className="acc-card__name">
+          <Link href={`/safari-packages/${item.slug}`}>{item.title}</Link>
+        </h2>
+        {route ? <p className="acc-card__route">{route}</p> : null}
+        <p className="acc-card__desc">{summary}</p>
+        <div className="acc-card__footer">
+          <div className="acc-card__price acc-card__price--trip">
+            <CatalogCardPrice priceText={item.priceText} />
+          </div>
+          <Link className="acc-card__explore" href={`/safari-packages/${item.slug}`}>
+            <span>View Details</span>
+            <ArrowRight aria-hidden className="acc-card__explore-icon" size={14} strokeWidth={2.5} />
           </Link>
         </div>
       </div>
@@ -205,25 +196,15 @@ function tripDurationLabel(days?: number, nights?: number) {
 }
 
 function TripCardPrice({ item }: { item: Trip }) {
-  const parts = getTripPriceParts({
-    currency: item.budget?.currency,
-    displayText: item.budget?.displayText,
-    max: item.budget?.max,
-    min: item.budget?.min,
-    priceText: item.priceText,
-    pricingBasis: item.budget?.pricingBasis,
-  });
-
-  if (parts.kind === "quote") {
-    return <span className="acc-card__price-quote">{parts.label}</span>;
-  }
-
   return (
-    <>
-      <span className="acc-card__price-kicker">From</span>
-      <strong className="acc-card__price-amount">{parts.amount}</strong>
-      <span className="acc-card__price-basis">{parts.basis}</span>
-    </>
+    <CatalogCardPrice
+      currency={item.budget?.currency}
+      displayText={item.budget?.displayText}
+      max={item.budget?.max}
+      min={item.budget?.min}
+      priceText={item.priceText}
+      pricingBasis={item.budget?.pricingBasis}
+    />
   );
 }
 

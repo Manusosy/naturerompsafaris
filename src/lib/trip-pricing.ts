@@ -41,7 +41,7 @@ export type TripPriceParts =
 
 function parseLegacyTripPriceParts(text: string): TripPriceParts | null {
   const rangeMatch = text.match(
-    /(?:estimated\s+)?([A-Z]{3})\s*\$?([\d,]+)\s*[-–]\s*\$?([\d,]+)(?:\s*\/\s*|\s+)(per person(?: sharing)?)/i,
+    /(?:estimated\s+)?(?:from\s+)?([A-Z]{3})\s*\$?([\d,]+)\s*[-–]\s*\$?([\d,]+)(?:\s*\/\s*|\s+)(per person(?: sharing)?)/i,
   );
   if (rangeMatch) {
     return {
@@ -86,7 +86,7 @@ export function getTripPriceParts(input: {
     return { kind: "priced", amount, basis };
   }
 
-  const legacy = (input.displayText || input.priceText || "").trim();
+  const legacy = (input.displayText || input.priceText || "").trim().replace(/^from\s+/i, "");
   if (legacy) {
     const parsed = parseLegacyTripPriceParts(legacy);
     if (parsed) return parsed;

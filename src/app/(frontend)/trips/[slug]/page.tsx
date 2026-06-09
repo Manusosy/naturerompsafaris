@@ -11,6 +11,7 @@ import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { formatTripPrice } from "@/lib/trip-pricing";
+import { resolveTripPackageTier } from "@/lib/trip-labels";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -209,7 +210,7 @@ function normalizeTrip(doc: Record<string, unknown>, reviewSettings: Record<stri
       const title = pkg ? relationName(pkg) : "";
       return slug && title ? { slug, title } : undefined;
     })(),
-    packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
+    packageTier: resolveTripPackageTier(doc),
     positiveImpact: typeof doc.positiveImpact === "string" ? doc.positiveImpact : undefined,
     priceSeasons: Array.isArray(doc.priceSeasons)
       ? (doc.priceSeasons as Array<Record<string, unknown>>).map((item) => ({

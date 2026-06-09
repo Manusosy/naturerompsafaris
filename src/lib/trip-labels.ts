@@ -117,21 +117,44 @@ export const TIER_MATRIX_CLASS: Record<string, string> = {
   "high-end": "flash-trip__matrix--high-end",
 };
 
-export function getTripDesignationLabel(input: {
-  experienceTypes?: string[];
-  packageTier?: string;
-}) {
-  if (input.packageTier && TRIP_TIER_LABELS[input.packageTier]) {
-    return TRIP_TIER_LABELS[input.packageTier];
-  }
+export function normalizePackageTier(value: unknown) {
+  if (typeof value !== "string" || !value.trim()) return undefined;
 
-  const firstExperience = Array.isArray(input.experienceTypes)
-    ? input.experienceTypes.find((value) => value.trim())
-    : undefined;
+  const trimmed = value.trim();
+  const slug = trimmed.toLowerCase().replace(/_/g, "-").replace(/\s+/g, "-");
+  if (TRIP_TIER_LABELS[slug]) return slug;
 
-  if (firstExperience) {
-    return formatExperienceLabel(firstExperience);
+  const byLabel = TRIP_TIER_FILTER_OPTIONS.find(
+    (option) =>
+      option.value !== "__all" &&
+      option.label.localeCompare(trimmed, undefined, { sensitivity: "accent" }) === 0,
+  );
+  if (byLabel) return byLabel.value;
+
+  return undefined;
+}
+
+export function resolveTripPackageTier(doc: Record<string, unknown>) {
+  const direct = normalizePackageTier(doc.packageTier);
+  if (direct) return direct;
+
+  const linkedPackage = doc.package;
+  if (linkedPackage && typeof linkedPackage === "object") {
+    return normalizePackageTier((linkedPackage as Record<string, unknown>).packageTier);
   }
 
   return undefined;
+}
+
+export function getTripTierBadgeLabel(tier: string | undefined) {
+  const normalized = normalizePackageTier(tier);
+  if (!normalized) return undefined;
+  return TRIP_TIER_LABELS[normalized];
+}
+
+/** Card/listing badge: package tier only (Budget, Mid Range, Luxury, High End). */
+export function getTripDesignationLabel(input: {
+  packageTier?: string;
+}) {
+  return getTripTierBadgeLabel(input.packageTier);
 }

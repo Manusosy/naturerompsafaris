@@ -29,12 +29,14 @@ export default async function NewPortalRecordPage({
   }
 
   if (moduleSlug === "packages") {
-    const [media, destinations, itineraries] = await Promise.all([
+    const [media, destinations, accommodations] = await Promise.all([
       getMediaOptions(),
       getRelationOptions("destinations"),
-      getRelationOptions("itineraries"),
+      getRelationOptions("accommodations"),
     ]);
-    return <PackageWizard destinations={destinations} itineraries={itineraries} media={media} />;
+    return (
+      <PackageWizard accommodations={accommodations} destinations={destinations} media={media} />
+    );
   }
 
   if (moduleSlug === "destinations") {

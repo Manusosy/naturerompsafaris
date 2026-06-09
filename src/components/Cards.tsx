@@ -219,7 +219,6 @@ export function TripCard({ item }: { item: Trip }) {
   const availability =
     TRIP_AVAILABILITY_LABELS[item.availability || "on-request"] ?? TRIP_AVAILABILITY_LABELS["on-request"];
   const designationLabel = getTripDesignationLabel({
-    experienceTypes: item.experienceTypes,
     packageTier: item.packageTier,
   });
   const cardTextSource = item.cardSummary || item.overview || "";

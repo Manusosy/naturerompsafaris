@@ -1,40 +1,37 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Check, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { AlertCircle, Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 
 import { slugify } from "@/lib/portal/format";
 import { MediaPickerField, type PortalMediaOption } from "@/components/portal/MediaPickerField";
 
 type RelationOption = { label: string; value: string };
+type QaItem = { question: string; answer: string };
 
 type WizardData = {
   title: string;
   slug: string;
   category: string;
-  packageGroup: string;
   packageTier: string;
   duration: string;
   imageId: string;
   priceText: string;
   bestTime: string;
-  discountEnabled: boolean;
-  discountLabel: string;
-  discountAmount: string;
   destinationIds: string[];
   destinationsText: string;
-  itineraryId: string;
-  excerpt: string;
   content: string;
-  featured: boolean;
+  excerpt: string;
+  faqs: QaItem[];
+  accommodationIds: string[];
 };
 
 const STEPS = [
-  { id: 1, label: "Details", description: "Title, market & type" },
-  { id: 2, label: "Cover", description: "Hero image" },
-  { id: 3, label: "Pricing", description: "Price & best time" },
-  { id: 4, label: "Route", description: "Destinations & content" },
+  { id: 1, label: "Basics", description: "Title, market & style" },
+  { id: 2, label: "Hero", description: "Cover image" },
+  { id: 3, label: "Quick facts", description: "Duration, route & price" },
+  { id: 4, label: "Page content", description: "Overview & FAQs" },
   { id: 5, label: "Publish", description: "Review & save" },
 ] as const;
 
@@ -46,47 +43,6 @@ const CATEGORY_OPTIONS = [
   { label: "Kenya Adventure", value: "Kenya Adventure Safaris" },
   { label: "Tanzania Adventure", value: "Tanzania Adventure Safaris" },
 ];
-
-const PACKAGE_GROUP_OPTIONS = [
-  { label: "Economy Private Safaris", value: "economy-private" },
-  { label: "Group Joining Safaris", value: "group-joining" },
-  { label: "Kenya Lodge Safaris", value: "kenya-lodge" },
-  { label: "Kenya Fly In Safaris", value: "kenya-fly-in" },
-  { label: "Tanzania Lodge Safaris", value: "tanzania-lodge" },
-  { label: "Tanzania Budget Camping Safaris", value: "tanzania-budget-camping" },
-  { label: "Kenya & Tanzania Lodge Safaris", value: "combined-lodge" },
-  { label: "Combined Private Economy Safaris", value: "combined-private-economy" },
-  { label: "Combined Group Joining Safaris", value: "combined-group-joining" },
-  { label: "Combined Lodge Safari", value: "combined-lodge-safari" },
-  { label: "Combined Budget Safari", value: "combined-budget" },
-  { label: "Mount Kenya Climbing", value: "mount-kenya-climbing" },
-  { label: "Mount Kilimanjaro Climbing", value: "kilimanjaro-climbing" },
-  { label: "Nairobi Excursion", value: "nairobi-excursion" },
-  { label: "Day Trips", value: "day-trips" },
-  { label: "Beach Extension", value: "beach-extension" },
-  { label: "4x4 Safaris", value: "4x4-safaris" },
-  { label: "Short Safaris", value: "short-safaris" },
-];
-
-const GROUPS_BY_CATEGORY: Record<string, string[]> = {
-  "Kenya Safaris": [
-    "economy-private", "group-joining", "kenya-lodge", "kenya-fly-in", "beach-extension",
-    "4x4-safaris", "short-safaris", "mount-kenya-climbing", "nairobi-excursion", "day-trips",
-  ],
-  "Tanzania Safaris": [
-    "tanzania-lodge", "tanzania-budget-camping", "kilimanjaro-climbing", "beach-extension",
-    "short-safaris", "day-trips", "economy-private", "group-joining",
-  ],
-  "Zanzibar Holidays": ["beach-extension"],
-  "Kenya Tanzania Combined Safaris": [
-    "combined-lodge", "combined-private-economy", "combined-group-joining",
-    "combined-lodge-safari", "combined-budget",
-  ],
-  "Kenya Adventure Safaris": [
-    "mount-kenya-climbing", "nairobi-excursion", "day-trips", "4x4-safaris", "short-safaris",
-  ],
-  "Tanzania Adventure Safaris": ["kilimanjaro-climbing", "day-trips", "4x4-safaris"],
-};
 
 const TIER_OPTIONS = [
   { label: "Budget", value: "budget" },
@@ -108,6 +64,21 @@ function relationIds(value: unknown) {
   return value.map(relationId).filter(Boolean);
 }
 
+function parseQaItems(value: unknown): QaItem[] {
+  if (!Array.isArray(value)) return [{ question: "", answer: "" }];
+  const items = value
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const item = entry as Record<string, unknown>;
+      return {
+        question: String(item.question ?? ""),
+        answer: String(item.answer ?? ""),
+      };
+    })
+    .filter((item): item is QaItem => !!item && (!!item.question || !!item.answer));
+  return items.length ? items : [{ question: "", answer: "" }];
+}
+
 function toPayloadMediaId(id: string) {
   const numericId = Number(id);
   return Number.isInteger(numericId) && String(numericId) === id ? numericId : id;
@@ -122,42 +93,134 @@ function buildDestinationsText(ids: string[], destinations: RelationOption[], cu
 }
 
 function buildFromDoc(doc: Record<string, unknown>): WizardData {
-  const discount =
-    doc.discount && typeof doc.discount === "object"
-      ? (doc.discount as Record<string, unknown>)
-      : {};
-
   return {
     title: String(doc.title ?? ""),
     slug: String(doc.slug ?? ""),
     category: String(doc.category ?? "Kenya Safaris"),
-    packageGroup: String(doc.packageGroup ?? "economy-private"),
     packageTier: String(doc.packageTier ?? "mid-range"),
     duration: String(doc.duration ?? ""),
     imageId: relationId(doc.image),
     priceText: String(doc.priceText ?? ""),
     bestTime: String(doc.bestTime ?? ""),
-    discountEnabled: discount.enabled === true,
-    discountLabel: String(discount.label ?? ""),
-    discountAmount: String(discount.amountText ?? ""),
     destinationIds: relationIds(doc.destinations),
     destinationsText: String(doc.destinationsText ?? ""),
-    itineraryId: relationId(doc.itinerary),
-    excerpt: String(doc.excerpt ?? ""),
     content: String(doc.content ?? ""),
-    featured: doc.featured === true,
+    excerpt: String(doc.excerpt ?? ""),
+    faqs: parseQaItems(doc.faqs),
+    accommodationIds: relationIds(doc.accommodations),
   };
 }
 
+function QaEditor({
+  addLabel,
+  items,
+  onChange,
+  title,
+}: {
+  addLabel: string;
+  items: QaItem[];
+  onChange: (items: QaItem[]) => void;
+  title: string;
+}) {
+  const [expandedIndex, setExpandedIndex] = useState(0);
+
+  function updateItem(index: number, key: keyof QaItem, value: string) {
+    const next = [...items];
+    next[index] = { ...next[index], [key]: value };
+    onChange(next);
+  }
+
+  function addItem() {
+    const next = [...items, { question: "", answer: "" }];
+    onChange(next);
+    setExpandedIndex(next.length - 1);
+  }
+
+  function removeItem(index: number) {
+    const next = items.filter((_, i) => i !== index);
+    onChange(next.length ? next : [{ question: "", answer: "" }]);
+    setExpandedIndex((current) => {
+      if (current === index) return Math.max(0, index - 1);
+      if (current != null && current > index) return current - 1;
+      return current;
+    });
+  }
+
+  return (
+    <div className="acc-field acc-field--accordion">
+      <div className="acc-faq-head">
+        <label className="acc-label">{title}</label>
+        <button className="acc-amenity-btn" onClick={addItem} type="button">
+          <Plus size={14} /> {addLabel}
+        </button>
+      </div>
+      <div className="acc-accordion-list">
+        {items.map((item, index) => {
+          const isOpen = expandedIndex === index;
+          const summary = item.question.trim() || "New question";
+          return (
+            <div className={`acc-accordion-item${isOpen ? " is-open" : ""}`} key={index}>
+              <div className="acc-accordion-item__head">
+                <button
+                  aria-expanded={isOpen}
+                  className="acc-accordion-item__toggle"
+                  onClick={() => setExpandedIndex(isOpen ? -1 : index)}
+                  type="button"
+                >
+                  <ChevronRight aria-hidden size={16} />
+                  <span className="acc-accordion-item__label">FAQ {index + 1}</span>
+                  {!isOpen ? <span className="acc-accordion-item__summary">{summary}</span> : null}
+                </button>
+                <button
+                  aria-label="Remove FAQ"
+                  className="acc-accordion-item__remove"
+                  onClick={() => removeItem(index)}
+                  type="button"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              {isOpen ? (
+                <div className="acc-accordion-item__body">
+                  <div className="acc-field">
+                    <label className="acc-label">Question</label>
+                    <input
+                      className="acc-input"
+                      onChange={(e) => updateItem(index, "question", e.target.value)}
+                      placeholder="e.g. What is included in the price?"
+                      type="text"
+                      value={item.question}
+                    />
+                  </div>
+                  <div className="acc-field">
+                    <label className="acc-label">Answer</label>
+                    <textarea
+                      className="acc-textarea"
+                      onChange={(e) => updateItem(index, "answer", e.target.value)}
+                      placeholder="Write a clear answer for visitors…"
+                      rows={4}
+                      value={item.answer}
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function PackageWizard({
+  accommodations,
   destinations,
   document,
-  itineraries,
   media,
 }: {
+  accommodations: RelationOption[];
   destinations: RelationOption[];
   document?: Record<string, unknown>;
-  itineraries: RelationOption[];
   media: PortalMediaOption[];
 }) {
   const router = useRouter();
@@ -171,31 +234,22 @@ export function PackageWizard({
           title: "",
           slug: "",
           category: "Kenya Safaris",
-          packageGroup: "economy-private",
           packageTier: "mid-range",
           duration: "",
           imageId: "",
           priceText: "",
           bestTime: "",
-          discountEnabled: false,
-          discountLabel: "",
-          discountAmount: "",
           destinationIds: [],
           destinationsText: "",
-          itineraryId: "",
-          excerpt: "",
           content: "",
-          featured: false,
+          excerpt: "",
+          faqs: [{ question: "", answer: "" }],
+          accommodationIds: [],
         },
   );
   const [savingAs, setSavingAs] = useState<"draft" | "published" | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<"draft" | "published" | null>(null);
-
-  const groupOptions = useMemo(() => {
-    const allowed = GROUPS_BY_CATEGORY[data.category] ?? [];
-    return PACKAGE_GROUP_OPTIONS.filter((o) => allowed.includes(o.value));
-  }, [data.category]);
 
   function set<K extends keyof WizardData>(key: K, value: WizardData[K]) {
     setData((d) => ({ ...d, [key]: value }));
@@ -206,12 +260,6 @@ export function PackageWizard({
     if (!isEdit || !data.slug) {
       set("slug", slugify(val));
     }
-  }
-
-  function handleCategoryChange(category: string) {
-    const allowed = GROUPS_BY_CATEGORY[category] ?? [];
-    const nextGroup = allowed.includes(data.packageGroup) ? data.packageGroup : (allowed[0] ?? "economy-private");
-    setData((d) => ({ ...d, category, packageGroup: nextGroup }));
   }
 
   function toggleDestination(id: string) {
@@ -232,6 +280,17 @@ export function PackageWizard({
       destinationIds: next,
       destinationsText: buildDestinationsText(next, destinations, ""),
     }));
+  }
+
+  function toggleAccommodation(id: string) {
+    const next = data.accommodationIds.includes(id)
+      ? data.accommodationIds.filter((x) => x !== id)
+      : [...data.accommodationIds, id];
+    set("accommodationIds", next);
+  }
+
+  function removeAccommodation(id: string) {
+    set("accommodationIds", data.accommodationIds.filter((x) => x !== id));
   }
 
   function validateBeforeSave() {
@@ -259,7 +318,6 @@ export function PackageWizard({
       title: data.title.trim(),
       slug: finalSlug,
       category: data.category,
-      packageGroup: data.packageGroup,
       packageTier: data.packageTier,
       duration: data.duration.trim(),
       priceText: data.priceText.trim(),
@@ -267,20 +325,21 @@ export function PackageWizard({
       destinationsText: data.destinationsText.trim(),
       excerpt: data.excerpt.trim(),
       content: data.content.trim(),
-      featured: data.featured,
+      faqs: data.faqs.filter((item) => item.question.trim() && item.answer.trim()),
       status: targetStatus,
-      discount: {
-        enabled: data.discountEnabled,
-        label: data.discountLabel.trim(),
-        amountText: data.discountAmount.trim(),
-      },
     };
 
     if (data.imageId) payload.image = toPayloadMediaId(data.imageId);
     if (data.destinationIds.length) {
       payload.destinations = data.destinationIds.map(toPayloadMediaId);
+    } else {
+      payload.destinations = [];
     }
-    if (data.itineraryId) payload.itinerary = toPayloadMediaId(data.itineraryId);
+    if (data.accommodationIds.length) {
+      payload.accommodations = data.accommodationIds.map(toPayloadMediaId);
+    } else {
+      payload.accommodations = [];
+    }
 
     const body: Record<string, unknown> = {
       collection: "packages",
@@ -322,6 +381,12 @@ export function PackageWizard({
     .map((id) => destinations.find((d) => d.value === id)?.label)
     .filter(Boolean);
 
+  const selectedAccommodationLabels = data.accommodationIds
+    .map((id) => accommodations.find((a) => a.value === id)?.label)
+    .filter(Boolean);
+
+  const faqCount = data.faqs.filter((item) => item.question.trim() && item.answer.trim()).length;
+
   return (
     <div className="acc-wizard">
       <div className="acc-wizard__steps">
@@ -352,9 +417,9 @@ export function PackageWizard({
       <div className="acc-wizard__body">
         {step === 1 && (
           <div className="acc-wizard__panel">
-            <h2 className="acc-wizard__heading">Package Details</h2>
+            <h2 className="acc-wizard__heading">Package basics</h2>
             <p className="acc-wizard__sub">
-              Title, URL, market, safari type and duration. Start with where the package is sold and what kind of trip it is.
+              These fields power the hero badge, title, and style row on the public package page.
             </p>
 
             <div className="acc-field">
@@ -396,18 +461,18 @@ export function PackageWizard({
                 <select
                   className="acc-select"
                   id="pkg-category"
-                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  onChange={(e) => set("category", e.target.value)}
                   value={data.category}
                 >
                   {CATEGORY_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
-                <span className="acc-hint">Kenya, Tanzania, Zanzibar, or a combined route.</span>
+                <span className="acc-hint">Shown as the category badge above the package title.</span>
               </div>
 
               <div className="acc-field">
-                <label className="acc-label" htmlFor="pkg-tier">Package Tier</label>
+                <label className="acc-label" htmlFor="pkg-tier">Style / Tier</label>
                 <select
                   className="acc-select"
                   id="pkg-tier"
@@ -418,35 +483,7 @@ export function PackageWizard({
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
-              </div>
-            </div>
-
-            <div className="acc-row">
-              <div className="acc-field">
-                <label className="acc-label" htmlFor="pkg-group">Safari Type</label>
-                <select
-                  className="acc-select"
-                  id="pkg-group"
-                  onChange={(e) => set("packageGroup", e.target.value)}
-                  value={data.packageGroup}
-                >
-                  {groupOptions.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="acc-field">
-                <label className="acc-label" htmlFor="pkg-duration">Duration (fallback)</label>
-                <input
-                  className="acc-input"
-                  id="pkg-duration"
-                  onChange={(e) => set("duration", e.target.value)}
-                  placeholder="e.g. 7 Days / 6 Nights — auto-filled from linked trips when empty"
-                  type="text"
-                  value={data.duration}
-                />
-                <span className="acc-hint">Leave blank to use duration from linked published trips.</span>
+                <span className="acc-hint">Appears in the quick facts strip as “Style”.</span>
               </div>
             </div>
           </div>
@@ -454,9 +491,9 @@ export function PackageWizard({
 
         {step === 2 && (
           <div className="acc-wizard__panel">
-            <h2 className="acc-wizard__heading">Cover Image</h2>
+            <h2 className="acc-wizard__heading">Hero image</h2>
             <p className="acc-wizard__sub">
-              The hero image shown on package cards and the detail page header.
+              The cover photo used in the package page hero and mobile gallery.
             </p>
 
             <MediaPickerField
@@ -471,90 +508,26 @@ export function PackageWizard({
 
         {step === 3 && (
           <div className="acc-wizard__panel">
-            <h2 className="acc-wizard__heading">Pricing & Timing</h2>
+            <h2 className="acc-wizard__heading">Quick facts</h2>
             <p className="acc-wizard__sub">
-              Optional fallback text for listing cards. When published trips are linked to this package, their live pricing and duration appear automatically on the public site.
+              These populate the facts strip on the package page. Duration, route, and live pricing also come from linked tours when available.
             </p>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-price">Starting Price Text (fallback)</label>
+              <label className="acc-label" htmlFor="pkg-duration">Duration (fallback)</label>
               <input
                 className="acc-input"
-                id="pkg-price"
-                onChange={(e) => set("priceText", e.target.value)}
-                placeholder="e.g. From USD 2,400 per person — used only when no linked trip exists"
+                id="pkg-duration"
+                onChange={(e) => set("duration", e.target.value)}
+                placeholder="e.g. 7 Days / 6 Nights"
                 type="text"
-                value={data.priceText}
+                value={data.duration}
               />
-              <span className="acc-hint">Shown on cards only when no published trip is linked to this package.</span>
+              <span className="acc-hint">Leave blank to use duration from linked published tours.</span>
             </div>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-best-time">Best Time to Travel</label>
-              <input
-                className="acc-input"
-                id="pkg-best-time"
-                onChange={(e) => set("bestTime", e.target.value)}
-                placeholder="e.g. July – October (Wildebeest Migration)"
-                type="text"
-                value={data.bestTime}
-              />
-            </div>
-
-            <div className="acc-field">
-              <label className="acc-label acc-check-label">
-                <input
-                  checked={data.discountEnabled}
-                  onChange={(e) => set("discountEnabled", e.target.checked)}
-                  type="checkbox"
-                />
-                <span>Show promotional discount on listing card</span>
-              </label>
-            </div>
-
-            {data.discountEnabled && (
-              <div className="acc-row">
-                <div className="acc-field">
-                  <label className="acc-label" htmlFor="pkg-discount-label">Discount Label</label>
-                  <input
-                    className="acc-input"
-                    id="pkg-discount-label"
-                    onChange={(e) => set("discountLabel", e.target.value)}
-                    placeholder="e.g. Early Bird Offer"
-                    type="text"
-                    value={data.discountLabel}
-                  />
-                </div>
-                <div className="acc-field">
-                  <label className="acc-label" htmlFor="pkg-discount-amount">Discount Amount</label>
-                  <input
-                    className="acc-input"
-                    id="pkg-discount-amount"
-                    onChange={(e) => set("discountAmount", e.target.value)}
-                    placeholder="e.g. 10% off"
-                    type="text"
-                    value={data.discountAmount}
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="acc-whatsapp-note">
-              <strong>Enquiries via WhatsApp</strong>
-              <p>Guests enquire about packages directly via WhatsApp. No booking or payment is processed on this website.</p>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="acc-wizard__panel">
-            <h2 className="acc-wizard__heading">Route & Description</h2>
-            <p className="acc-wizard__sub">
-              Link the parks and regions visited, then write the card summary and full package description.
-            </p>
-
-            <div className="acc-field">
-              <label className="acc-label">Destinations Visited</label>
+              <label className="acc-label">Destinations</label>
               <div className="acc-amenities-list">
                 {data.destinationIds.map((id) => {
                   const label = destinations.find((d) => d.value === id)?.label ?? id;
@@ -593,7 +566,7 @@ export function PackageWizard({
             </div>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-dest-text">Destinations Label (cards)</label>
+              <label className="acc-label" htmlFor="pkg-dest-text">Destinations label</label>
               <input
                 className="acc-input"
                 id="pkg-dest-text"
@@ -602,65 +575,129 @@ export function PackageWizard({
                 type="text"
                 value={data.destinationsText}
               />
-              <span className="acc-hint">Short label shown on package cards. Auto-filled from selections above.</span>
+              <span className="acc-hint">Shown in the facts strip. Auto-filled from selections above when empty.</span>
             </div>
 
-            <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-itinerary">Linked Itinerary</label>
-              <select
-                className="acc-select"
-                id="pkg-itinerary"
-                onChange={(e) => set("itineraryId", e.target.value)}
-                value={data.itineraryId}
-              >
-                <option value="">— None —</option>
-                {itineraries.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
+            <div className="acc-row">
+              <div className="acc-field">
+                <label className="acc-label" htmlFor="pkg-best-time">Best time to travel</label>
+                <input
+                  className="acc-input"
+                  id="pkg-best-time"
+                  onChange={(e) => set("bestTime", e.target.value)}
+                  placeholder="e.g. July – October (Wildebeest Migration)"
+                  type="text"
+                  value={data.bestTime}
+                />
+              </div>
+
+              <div className="acc-field">
+                <label className="acc-label" htmlFor="pkg-price">Starting price (fallback)</label>
+                <input
+                  className="acc-input"
+                  id="pkg-price"
+                  onChange={(e) => set("priceText", e.target.value)}
+                  placeholder="e.g. From USD 2,400 per person"
+                  type="text"
+                  value={data.priceText}
+                />
+                <span className="acc-hint">Used only when no linked published tour supplies live pricing.</span>
+              </div>
             </div>
 
-            <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-excerpt">Card Summary</label>
-              <textarea
-                className="acc-textarea"
-                id="pkg-excerpt"
-                onChange={(e) => set("excerpt", e.target.value)}
-                placeholder="A short compelling summary for listing cards and search results…"
-                rows={4}
-                value={data.excerpt}
-              />
+            <div className="acc-whatsapp-note">
+              <strong>Linked tours &amp; route</strong>
+              <p>
+                The hero route pill and “Safaris Under this Package” section come from tours linked in the Trip wizard.
+                Open a tour, choose this package under Package, then publish the tour.
+              </p>
             </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="acc-wizard__panel">
+            <h2 className="acc-wizard__heading">Page content</h2>
+            <p className="acc-wizard__sub">
+              Overview copy, visitor FAQs, and optional lodge picks shown on the public package page.
+            </p>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-content">Full Description</label>
+              <label className="acc-label" htmlFor="pkg-content">Safari overview</label>
               <textarea
                 className="acc-textarea"
                 id="pkg-content"
                 onChange={(e) => set("content", e.target.value)}
-                placeholder="Full package description for the detail page. Supports basic markdown."
+                placeholder="Main overview text for the package page. Use “Tour Highlights” to split paragraphs if needed."
                 rows={10}
                 value={data.content}
               />
+            </div>
+
+            <div className="acc-field">
+              <label className="acc-label" htmlFor="pkg-excerpt">Overview fallback</label>
+              <textarea
+                className="acc-textarea"
+                id="pkg-excerpt"
+                onChange={(e) => set("excerpt", e.target.value)}
+                placeholder="Optional shorter text used only when the main overview above is empty."
+                rows={3}
+                value={data.excerpt}
+              />
+            </div>
+
+            <QaEditor
+              addLabel="Add FAQ"
+              items={data.faqs}
+              onChange={(items) => set("faqs", items)}
+              title="Frequently Asked Questions"
+            />
+
+            <div className="acc-field">
+              <label className="acc-label">Featured stays (optional)</label>
+              <div className="acc-amenities-list">
+                {data.accommodationIds.map((id) => {
+                  const label = accommodations.find((a) => a.value === id)?.label ?? id;
+                  return (
+                    <span className="acc-amenity-tag" key={id}>
+                      {label}
+                      <button onClick={() => removeAccommodation(id)} type="button">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  );
+                })}
+                {data.accommodationIds.length === 0 && (
+                  <span className="acc-amenities-empty">No stays linked yet.</span>
+                )}
+              </div>
+              {accommodations.length > 0 ? (
+                <div className="acc-amenity-suggestions">
+                  <span>Add:</span>
+                  {accommodations
+                    .filter((a) => !data.accommodationIds.includes(a.value))
+                    .map((a) => (
+                      <button
+                        className="acc-amenity-suggest"
+                        key={a.value}
+                        onClick={() => toggleAccommodation(a.value)}
+                        type="button"
+                      >
+                        + {a.label}
+                      </button>
+                    ))}
+                </div>
+              ) : (
+                <span className="acc-hint">Create accommodation pages first if you want to highlight lodges here.</span>
+              )}
             </div>
           </div>
         )}
 
         {step === 5 && (
           <div className="acc-wizard__panel">
-            <h2 className="acc-wizard__heading">Review & Publish</h2>
-            <p className="acc-wizard__sub">Check the summary, set visibility, then save.</p>
-
-            <div className="acc-field acc-publish-row">
-              <label className="acc-label acc-check-label">
-                <input
-                  checked={data.featured}
-                  onChange={(e) => set("featured", e.target.checked)}
-                  type="checkbox"
-                />
-                <span>Feature this package on the homepage and listing page</span>
-              </label>
-            </div>
+            <h2 className="acc-wizard__heading">Review &amp; publish</h2>
+            <p className="acc-wizard__sub">Check the summary, then save or publish the package page.</p>
 
             <div className="acc-review">
               <div className="acc-review__row">
@@ -678,31 +715,25 @@ export function PackageWizard({
                 </span>
               </div>
               <div className="acc-review__row">
-                <span className="acc-review__label">Safari Type</span>
-                <span className="acc-review__value">
-                  {PACKAGE_GROUP_OPTIONS.find((o) => o.value === data.packageGroup)?.label ?? data.packageGroup}
-                </span>
-              </div>
-              <div className="acc-review__row">
-                <span className="acc-review__label">Tier</span>
+                <span className="acc-review__label">Style</span>
                 <span className="acc-review__value">
                   {TIER_OPTIONS.find((o) => o.value === data.packageTier)?.label ?? data.packageTier}
                 </span>
               </div>
               <div className="acc-review__row">
                 <span className="acc-review__label">Duration</span>
-                <span className="acc-review__value">{data.duration || <em>—</em>}</span>
+                <span className="acc-review__value">{data.duration || <em>From linked tours</em>}</span>
               </div>
               <div className="acc-review__row">
                 <span className="acc-review__label">Price</span>
-                <span className="acc-review__value">{data.priceText || <em>Not set</em>}</span>
+                <span className="acc-review__value">{data.priceText || <em>From linked tours</em>}</span>
               </div>
               <div className="acc-review__row">
-                <span className="acc-review__label">Best Time</span>
+                <span className="acc-review__label">Best time</span>
                 <span className="acc-review__value">{data.bestTime || <em>—</em>}</span>
               </div>
               <div className="acc-review__row">
-                <span className="acc-review__label">Cover Image</span>
+                <span className="acc-review__label">Cover image</span>
                 <span className="acc-review__value">{data.imageId ? "Selected" : <em>None</em>}</span>
               </div>
               <div className="acc-review__row">
@@ -710,17 +741,25 @@ export function PackageWizard({
                 <span className="acc-review__value">
                   {selectedDestinationLabels.length
                     ? selectedDestinationLabels.join(" · ")
-                    : <em>None</em>}
+                    : data.destinationsText || <em>None</em>}
                 </span>
               </div>
               <div className="acc-review__row">
-                <span className="acc-review__label">Featured</span>
-                <span className="acc-review__value">{data.featured ? "Yes" : "No"}</span>
+                <span className="acc-review__label">Overview</span>
+                <span className="acc-review__value">
+                  {data.content ? `${data.content.slice(0, 80)}…` : data.excerpt ? `${data.excerpt.slice(0, 80)}…` : <em>None</em>}
+                </span>
               </div>
               <div className="acc-review__row">
-                <span className="acc-review__label">Summary</span>
+                <span className="acc-review__label">FAQs</span>
+                <span className="acc-review__value">{faqCount ? `${faqCount} question(s)` : <em>None</em>}</span>
+              </div>
+              <div className="acc-review__row">
+                <span className="acc-review__label">Featured stays</span>
                 <span className="acc-review__value">
-                  {data.excerpt ? `${data.excerpt.slice(0, 80)}…` : <em>None</em>}
+                  {selectedAccommodationLabels.length
+                    ? selectedAccommodationLabels.join(" · ")
+                    : <em>None</em>}
                 </span>
               </div>
             </div>
@@ -729,7 +768,7 @@ export function PackageWizard({
               <strong>Ready to go?</strong>
               <p>
                 Use <em>Save Draft</em> to save without publishing, or <em>Publish</em> to make this
-                package live on the public safari packages page immediately.
+                package live on the public site immediately.
               </p>
             </div>
 

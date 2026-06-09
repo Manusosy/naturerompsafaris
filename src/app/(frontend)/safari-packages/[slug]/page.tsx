@@ -1,17 +1,21 @@
+import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CheckCircle2, ChevronRight, Clock, Compass, MapPin } from "lucide-react";
+import { ChevronRight, CircleDollarSign, Clock, Compass, MapPin, Sun } from "lucide-react";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
 import { DetailGallerySlider, type DetailGalleryImage } from "@/components/DetailGallerySlider";
-import { EnquiryForm } from "@/components/EnquiryForm";
 import { JsonLd } from "@/components/JsonLd";
 import { PackageEnhancementsView } from "@/components/PackageEnhancements";
+import { PackageFaqsSection } from "@/components/PackageFaqsSection";
 import { PackageLinkedTrips } from "@/components/PackageLinkedTrips";
 import { formatPackageDestinations } from "@/lib/cms-relations";
+import { packageTierLabel } from "@/lib/package-labels";
+import { createWhatsAppLink } from "@/lib/enquiry";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import {
   fetchLinkedTripsForPackage,
   packageRouteFromTrips,
@@ -54,6 +58,41 @@ function routeEndpoints(route: string) {
 function stripHtml(value: unknown) {
   if (typeof value !== "string") return "";
   return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function formatOverviewBlocks(text: string) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (!normalized) return [];
+
+  return normalized
+    .split(/(?=\bTour Highlights\b)/i)
+    .map((block) => block.trim())
+    .filter(Boolean);
+}
+
+function PackageRouteMini({
+  route,
+  variant = "hero",
+}: {
+  route: { start: string; end: string };
+  variant?: "hero" | "mobile";
+}) {
+  return (
+    <div
+      aria-label={`Route from ${route.start} to ${route.end}`}
+      className={`pkg-route-mini${variant === "mobile" ? " pkg-route-mini--mobile" : ""}`}
+    >
+      <span className="pkg-route-mini__point">
+        <Compass aria-hidden size={16} strokeWidth={2.2} />
+        <span>{route.start}</span>
+      </span>
+      <span aria-hidden className="pkg-route-mini__divider" />
+      <span className="pkg-route-mini__point">
+        <MapPin aria-hidden size={16} strokeWidth={2.2} />
+        <span>{route.end}</span>
+      </span>
+    </div>
+  );
 }
 
 function collectPackageGalleryImages(
@@ -143,6 +182,10 @@ export default async function PackageDetailPage({ params }: Props) {
   const destinationsLabel = formatPackageDestinations(item);
   const tripRoute = packageRouteFromTrips(linkedTrips);
   const route = tripRoute ?? routeEndpoints(destinationsLabel);
+  const bestTime = typeof item.bestTime === "string" ? item.bestTime.trim() : "";
+  const styleLabel = item.packageTier
+    ? packageTierLabel(String(item.packageTier))
+    : "Private safari";
 
   const packageFaqs = Array.isArray(item.faqs)
     ? (item.faqs as Array<Record<string, unknown>>)
@@ -155,16 +198,22 @@ export default async function PackageDetailPage({ params }: Props) {
   const tripFaqs = primaryTrip?.faqs ?? [];
   const faqs = packageFaqs.length ? packageFaqs : tripFaqs;
 
-  const inclusions = primaryTrip?.included?.length
-    ? primaryTrip.included
-    : [
-        "Private 4x4 safari vehicle with pop-up roof",
-        "Expert driver-guide and park fees guidance",
-        "Flexible pacing tailored to your group",
-        "Direct support from Nature Romp Safaris",
-      ];
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kenyatanzaniasafariadventures.com";
+  const enhancements = await getPackageEnhancements(slug);
+  const siteSettings = await getPublicSiteSettings();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? site.canonicalUrl;
+  const packagePageUrl = `${siteUrl}/safari-packages/${item.slug}`;
+  const packageSummaryParts = [
+    displayDuration ? `${displayDuration} safari` : "Safari package",
+    destinationsLabel ? `to ${destinationsLabel}` : "",
+    styleLabel ? `${styleLabel} style` : "",
+    displayPrice ? `from ${displayPrice}` : "",
+  ].filter(Boolean);
+  const packageSummary = packageSummaryParts.join(" · ");
+  const whatsappHref = createWhatsAppLink({
+    message: `Hi Nature Romp Safaris, I would like help planning "${item.title}". ${packageSummary}. ${packagePageUrl}`,
+    phone: siteSettings.whatsapp || site.whatsapp,
+  });
+  const factCount = 3 + (bestTime ? 1 : 0) + (displayPrice ? 1 : 0);
 
   const schema = {
     "@context": "https://schema.org",
@@ -186,7 +235,6 @@ export default async function PackageDetailPage({ params }: Props) {
       : {}),
   };
 
-  const enhancements = await getPackageEnhancements(slug);
   const imageSrc = getImageUrl(item.image);
   const imageAlt = getMediaAlt(item.image, item.title);
   const galleryImages = collectPackageGalleryImages(
@@ -198,7 +246,8 @@ export default async function PackageDetailPage({ params }: Props) {
     item.excerpt ||
     (primaryTrip?.overview
       ? stripHtml(primaryTrip.overview)
-      : `This ${displayDuration || "custom"} safari package is planned around ${destinationsLabel}, with flexible pacing, private guiding and practical support from Nature Romp Safaris.`);
+      : `This ${displayDuration || "custom"} safari package covers ${destinationsLabel} with private guiding and support from Nature Romp Safaris.`);
+  const overviewBlocks = formatOverviewBlocks(overviewText);
 
   return (
     <main className="pkg-detail">
@@ -217,19 +266,7 @@ export default async function PackageDetailPage({ params }: Props) {
         <div className="container">
           <span className="pkg-detail__category">{item.category || "Safari Package"}</span>
           <h1>{item.title}</h1>
-          <div className="pkg-route-card pkg-route-card--compact" aria-label="Trip route">
-            <div className="pkg-route-card__stop">
-              <Compass aria-hidden size={40} />
-              <span>Starts in</span>
-              <strong>{route.start}</strong>
-            </div>
-            <span className="pkg-route-card__line" aria-hidden />
-            <div className="pkg-route-card__stop">
-              <MapPin aria-hidden size={40} />
-              <span>Ends in</span>
-              <strong>{route.end}</strong>
-            </div>
-          </div>
+          <PackageRouteMini route={route} variant="mobile" />
         </div>
       </section>
 
@@ -246,19 +283,7 @@ export default async function PackageDetailPage({ params }: Props) {
         <div className="container pkg-detail__hero-inner">
           <span className="pkg-detail__category">{item.category || "Safari Package"}</span>
           <h1>{item.title}</h1>
-          <div className="pkg-route-card" aria-label="Trip route">
-            <div className="pkg-route-card__stop">
-              <Compass aria-hidden size={58} />
-              <span>Starts in</span>
-              <strong>{route.start}</strong>
-            </div>
-            <span className="pkg-route-card__line" aria-hidden />
-            <div className="pkg-route-card__stop">
-              <MapPin aria-hidden size={58} />
-              <span>Ends in</span>
-              <strong>{route.end}</strong>
-            </div>
-          </div>
+          <PackageRouteMini route={route} />
         </div>
       </section>
 
@@ -273,90 +298,63 @@ export default async function PackageDetailPage({ params }: Props) {
       </div>
 
       <section className="pkg-detail__body">
-        <div className="container pkg-detail__layout">
-          <div className="pkg-detail__main">
-            <section className="pkg-facts" aria-label="Package quick facts">
-              <div className="pkg-fact">
-                <Clock aria-hidden size={20} />
-                <span>Duration</span>
-                <strong>{displayDuration || "Custom duration"}</strong>
+        <div className="container pkg-detail__summary">
+          <dl
+            aria-label="Package quick facts"
+            className="pkg-facts pkg-facts--linear"
+            style={{ "--pkg-fact-cols": factCount } as CSSProperties}
+          >
+            <div className="pkg-fact-line">
+              <Clock aria-hidden className="pkg-fact-line__icon" size={20} />
+              <dt>Duration</dt>
+              <dd>{displayDuration || "Custom duration"}</dd>
+            </div>
+            <div className="pkg-fact-line">
+              <MapPin aria-hidden className="pkg-fact-line__icon" size={20} />
+              <dt>Destinations</dt>
+              <dd>{destinationsLabel}</dd>
+            </div>
+            <div className="pkg-fact-line">
+              <Compass aria-hidden className="pkg-fact-line__icon" size={20} />
+              <dt>Style</dt>
+              <dd>{styleLabel}</dd>
+            </div>
+            {bestTime ? (
+              <div className="pkg-fact-line">
+                <Sun aria-hidden className="pkg-fact-line__icon" size={20} />
+                <dt>Best time</dt>
+                <dd>{bestTime}</dd>
               </div>
-              <div className="pkg-fact pkg-fact--wide">
-                <MapPin aria-hidden size={20} />
-                <span>Route</span>
-                <strong>{destinationsLabel}</strong>
-              </div>
-              <div className="pkg-fact">
-                <Compass aria-hidden size={20} />
-                <span>Style</span>
-                <strong>{item.packageTier || "Private safari"}</strong>
-              </div>
-            </section>
-
-            <section className="pkg-panel">
-              <h2>Safari Overview</h2>
-              <div className="pkg-prose">
-                <p>{overviewText}</p>
-                <p>
-                  This route covers <strong>{destinationsLabel}</strong> with a plan that can be tuned for your travel season, comfort level, group size and pace.
-                </p>
-              </div>
-
-              <div className="pkg-inclusions">
-                <h3>{primaryTrip?.included?.length ? "What's included" : "Highlights & Inclusions"}</h3>
-                <ul>
-                  {inclusions.map((entry) => (
-                    <li key={entry}>
-                      <CheckCircle2 aria-hidden size={16} />
-                      <span>{entry}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-
-            <PackageLinkedTrips packageTitle={item.title} trips={linkedTrips} />
-
-            {faqs.length ? (
-              <section className="pkg-panel pkg-faq">
-                <h2>Frequently Asked Questions</h2>
-                <div className="pkg-faq__list">
-                  {faqs.map((entry) => (
-                    <article key={entry.question}>
-                      <h3>
-                        <Compass aria-hidden size={16} /> {entry.question}
-                      </h3>
-                      <p>{entry.answer}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
             ) : null}
+            {displayPrice ? (
+              <div className="pkg-fact-line pkg-fact-line--price">
+                <CircleDollarSign aria-hidden className="pkg-fact-line__icon" size={20} />
+                <dt>From</dt>
+                <dd>{displayPrice}</dd>
+              </div>
+            ) : null}
+          </dl>
 
-            <div className="pkg-detail__enhancements">
-              <PackageEnhancementsView {...enhancements} />
+          <div className="pkg-detail__intro">
+            <div className="pkg-detail__lede">
+              {overviewBlocks.map((block, index) => (
+                <p key={index}>{block}</p>
+              ))}
             </div>
+            <p className="pkg-detail__note">
+              {linkedTrips.length
+                ? "This page is the package overview. Open any tour below for the full day-by-day itinerary, seasonal pricing, inclusions, exclusions and enquiries."
+                : "Published tours for this package will appear here once linked from the dashboard."}
+            </p>
           </div>
+        </div>
 
-          <aside className="pkg-sidebar">
-            <div className="pkg-sidebar__summary">
-              <span>Package inquiry</span>
-              <h2>{item.title}</h2>
-              {displayPrice ? <p className="pkg-sidebar__price">{displayPrice}</p> : null}
-              <p>
-                {linkedTrips.length
-                  ? "Choose a linked tour above for full pricing tables, or send your dates here for a tailored quote."
-                  : "Share your travel dates, group size and comfort level. We will respond with a specific quote for this safari."}
-              </p>
-            </div>
-            <EnquiryForm
-              messagePlaceholder={`I am interested in ${item.title}. My preferred travel dates, group size and accommodation level are...`}
-              subject={item.title}
-              submitLabel="Send Package Inquiry"
-              title="Request This Safari"
-              variant="package"
-            />
-          </aside>
+        <PackageLinkedTrips packageTitle={item.title} trips={linkedTrips} />
+
+        <PackageFaqsSection faqs={faqs} packageSummary={packageSummary} whatsappHref={whatsappHref} />
+
+        <div className="container pkg-detail__extras">
+          <PackageEnhancementsView {...enhancements} />
         </div>
       </section>
     </main>

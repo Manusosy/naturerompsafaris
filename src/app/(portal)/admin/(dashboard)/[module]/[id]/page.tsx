@@ -32,16 +32,16 @@ export default async function EditPortalRecordPage({
   }
 
   if (moduleSlug === "packages") {
-    const [media, destinations, itineraries] = await Promise.all([
+    const [media, destinations, accommodations] = await Promise.all([
       getMediaOptions(),
       getRelationOptions("destinations"),
-      getRelationOptions("itineraries"),
+      getRelationOptions("accommodations"),
     ]);
     return (
       <PackageWizard
+        accommodations={accommodations}
         destinations={destinations}
         document={document}
-        itineraries={itineraries}
         media={media}
       />
     );

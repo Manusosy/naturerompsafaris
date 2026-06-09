@@ -7,6 +7,7 @@ import { TripCard, type Trip } from "@/components/Cards";
 import { buildMetadata } from "@/lib/seo";
 import {
   mergeExperienceTypes,
+  resolveTripPackageTier,
   TRIP_EXPERIENCE_FILTER_OPTIONS,
   TRIP_TIER_FILTER_OPTIONS,
 } from "@/lib/trip-labels";
@@ -70,7 +71,7 @@ function normalizeTrip(doc: Record<string, unknown>): Trip {
     nights: typeof doc.nights === "number" ? doc.nights : undefined,
     cardSummary: typeof doc.cardSummary === "string" ? doc.cardSummary : undefined,
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
-    packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
+    packageTier: resolveTripPackageTier(doc),
     priceText: typeof doc.priceText === "string" ? doc.priceText : undefined,
     slug: typeof doc.slug === "string" ? doc.slug : undefined,
     title: typeof doc.title === "string" ? doc.title : undefined,

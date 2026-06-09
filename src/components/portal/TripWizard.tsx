@@ -1008,6 +1008,9 @@ export function TripWizard({
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </select>
+                  <span className="acc-hint">
+                    Shown on trip cards as Budget, Mid Range, Luxury, or High End Safari. Experience types are for filters only.
+                  </span>
                 </div>
                 <div className="acc-field">
                   <label className="acc-label">Experience Types</label>

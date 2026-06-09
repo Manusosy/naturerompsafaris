@@ -1,7 +1,7 @@
 import type { Payload } from "payload";
 
 import type { Trip } from "@/components/Cards";
-import { mergeExperienceTypes } from "@/lib/trip-labels";
+import { mergeExperienceTypes, resolveTripPackageTier } from "@/lib/trip-labels";
 import { formatTripPrice, type TripPricingBasis } from "@/lib/trip-pricing";
 import {
   budgetRangeFromPackages,
@@ -136,7 +136,7 @@ export function normalizeLinkedTripSummary(doc: Record<string, unknown>): Linked
     location: typeof doc.location === "string" ? doc.location : undefined,
     nights: typeof doc.nights === "number" ? doc.nights : undefined,
     overview: typeof doc.overview === "string" ? doc.overview : undefined,
-    packageTier: typeof doc.packageTier === "string" ? doc.packageTier : undefined,
+    packageTier: resolveTripPackageTier(doc),
     priceText: typeof doc.priceText === "string" ? doc.priceText : undefined,
     routeLabel: typeof doc.routeLabel === "string" ? doc.routeLabel : undefined,
     slug: typeof doc.slug === "string" ? doc.slug : undefined,

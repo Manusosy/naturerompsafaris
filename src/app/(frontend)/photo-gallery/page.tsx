@@ -1,10 +1,10 @@
 import configPromise from "@payload-config";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { getPayload } from "payload";
 
 import { PageHero } from "@/components/PageHero";
-import { galleryItemImages, mediaUrl } from "@/lib/cms-media";
+import { PhotoGalleryGrid, type GalleryCategoryGroup } from "@/components/PhotoGalleryGrid";
+import { galleryItemImages } from "@/lib/cms-media";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -30,32 +30,26 @@ export default async function GalleryPage() {
   const gallery = result.docs as Array<Record<string, unknown>>;
   const categories = [...new Set(gallery.map((item) => String(item.category || "Safari Moments")))];
 
+  const categoryGroups: GalleryCategoryGroup[] = categories.map((category) => ({
+    name: category,
+    images: gallery
+      .filter((item) => String(item.category || "Safari Moments") === category)
+      .flatMap((item) => {
+        const alt = String(item.alt || item.title || "Nature Romp Safaris gallery");
+        return galleryItemImages(item).map((src, index) => ({
+          alt,
+          id: `${String(item.id)}-${index}`,
+          src,
+        }));
+      }),
+  }));
+
   return (
     <main>
       <PageHero title="Photo Gallery" subtitle="Field moments from Kenya and Tanzania safaris, organized from the dashboard gallery." />
       <section className="section gallery-page">
         <div className="container">
-          {categories.map((category) => {
-            const items = gallery.filter((item) => String(item.category || "Safari Moments") === category);
-            return (
-              <div className="gallery-category" key={category}>
-                <h2>{category}</h2>
-                <div className="gallery-grid">
-                  {items.flatMap((item) => {
-                    const alt = String(item.alt || item.title || "Nature Romp Safaris gallery");
-                    const title = String(item.title || category);
-                    return galleryItemImages(item).map((src, index) => (
-                      <a className="gallery-item" href={src} key={`${String(item.id)}-${index}`}>
-                        <Image alt={alt} height={390} src={src} unoptimized width={520} />
-                        <span>{title}</span>
-                      </a>
-                    ));
-                  })}
-                </div>
-              </div>
-            );
-          })}
-          {!gallery.length ? <p>Published gallery images will appear here once added from the dashboard media library.</p> : null}
+          <PhotoGalleryGrid categories={categoryGroups} />
         </div>
       </section>
     </main>

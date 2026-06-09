@@ -243,7 +243,7 @@ export async function GalleryPreview() {
       const featuredResult = await payload.find({
         collection: "gallery" as never,
         depth: 1,
-        limit: 8,
+        limit: 24,
         overrideAccess: true,
         sort: "sortOrder",
         where: { and: [{ status: { equals: "published" } }, { featured: { equals: true } }] } as never,
@@ -254,7 +254,7 @@ export async function GalleryPreview() {
         : await payload.find({
             collection: "gallery" as never,
             depth: 1,
-            limit: 8,
+            limit: 24,
             overrideAccess: true,
             sort: "sortOrder",
             where: { status: { equals: "published" } } as never,
@@ -273,7 +273,7 @@ export async function GalleryPreview() {
       id: `${String(item.id)}-${index}`,
       src,
     }));
-  }).slice(0, 8);
+  }).slice(0, 12);
 
   return (
     <section className="section gallery-section">
@@ -288,7 +288,14 @@ export async function GalleryPreview() {
             <p>Featured gallery images will appear here once they are published from the dashboard.</p>
           )}
         </div>
-        <div className="section-cta"><Link className="btn btn--outline" href="/photo-gallery">Open Gallery <ArrowRight size={16} /></Link></div>
+        <div className="section-cta">
+          <Link className="gallery-section__link" href="/photo-gallery">
+            <span className="gallery-section__link-text">Explore Our Gallery</span>
+            <span aria-hidden="true" className="gallery-section__link-icon">
+              <ArrowRight size={18} strokeWidth={2.2} />
+            </span>
+          </Link>
+        </div>
       </div>
     </section>
   );

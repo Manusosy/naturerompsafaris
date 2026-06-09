@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
 import { canManagePortalCollection, isTrustedPortalOrigin } from "@/lib/portal/security";
 
+function sanitizeUploadFilename(name: string) {
+  const trimmed = name.trim();
+  const dotIndex = trimmed.lastIndexOf(".");
+  const ext = dotIndex > 0 ? trimmed.slice(dotIndex).toLowerCase() : "";
+  const base = dotIndex > 0 ? trimmed.slice(0, dotIndex) : trimmed;
+  const safeBase = base
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9._-]+/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${safeBase || "upload"}${ext}`;
+}
+
 export async function POST(request: Request) {
   const user = await getPortalUser(request);
   if (!user) {
@@ -48,7 +61,7 @@ export async function POST(request: Request) {
         file: {
           data: buffer,
           mimetype: file.type,
-          name: file.name,
+          name: sanitizeUploadFilename(file.name),
           size: file.size,
         },
         overrideAccess: true,

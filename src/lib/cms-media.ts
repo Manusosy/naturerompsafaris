@@ -10,27 +10,47 @@ export function resolveUploadAlt(formAlt: string, file: File, fileCount: number)
   return defaultUploadAlt(file);
 }
 
+function encodePathSegment(segment: string) {
+  try {
+    return encodeURIComponent(decodeURIComponent(segment));
+  } catch {
+    return encodeURIComponent(segment);
+  }
+}
+
+export function encodeMediaPath(path: string) {
+  const queryIndex = path.indexOf("?");
+  const query = queryIndex >= 0 ? path.slice(queryIndex) : "";
+  const pathname = queryIndex >= 0 ? path.slice(0, queryIndex) : path;
+  const encoded = pathname
+    .split("/")
+    .map((segment, index) => (index === 0 ? segment : encodePathSegment(segment)))
+    .join("/");
+  return `${encoded}${query}`;
+}
+
 export function normalizeMediaUrl(url: string) {
   if (!url) return url;
 
-  let path = url;
-  if (!url.startsWith("/")) {
+  if (/^https?:\/\//i.test(url)) {
     try {
       const parsed = new URL(url);
       if (parsed.pathname.startsWith("/api/media/file/") || parsed.pathname.startsWith("/media/")) {
-        path = `${parsed.pathname}${parsed.search}`;
+        parsed.pathname = encodeMediaPath(parsed.pathname);
+        return parsed.toString();
       }
     } catch {
-      path = url;
+      return url;
     }
+    return url;
   }
 
-  // Convert any '/api/media/file/' prefix to '/media/'
+  let path = url;
   if (path.startsWith("/api/media/file/")) {
     path = path.replace("/api/media/file/", "/media/");
   }
 
-  return path;
+  return encodeMediaPath(path);
 }
 
 export function mediaUrl(value: unknown, fallback = "/assets/img/banner1.webp") {

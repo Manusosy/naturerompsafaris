@@ -1,3 +1,4 @@
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import { resendAdapter } from "@payloadcms/email-resend";
@@ -109,4 +110,14 @@ export default buildConfig({
       max: 5,
     },
   }),
+  plugins: [
+    vercelBlobStorage({
+      clientUploads: true,
+      collections: {
+        media: true,
+      },
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 });

@@ -27,6 +27,7 @@ import { getPackageEnhancements } from "@/lib/portal-content";
 import { site } from "@/content/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { getImageUrl, getMediaAlt } from "@/components/Cards";
+import { shouldSkipBuildTimePayload } from "@/lib/build-static-params";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -128,6 +129,8 @@ function collectPackageGalleryImages(
 }
 
 export async function generateStaticParams() {
+  if (shouldSkipBuildTimePayload()) return [];
+
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
     collection: "packages",

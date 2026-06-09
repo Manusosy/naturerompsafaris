@@ -52,6 +52,7 @@ async function uploadViaClientBlob({
       caption,
       filename: file.name,
       mimeType,
+      pathname: blob.pathname,
       size: file.size,
     }),
     credentials: "include",

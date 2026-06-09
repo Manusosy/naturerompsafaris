@@ -16,6 +16,7 @@ import { articleTocItemListSchema, buildArticleToc } from "@/lib/article-toc";
 import { normalizeMediaUrl } from "@/lib/cms-media";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize-html";
+import { shouldSkipBuildTimePayload } from "@/lib/build-static-params";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -114,6 +115,8 @@ function formatPublishedDate(value?: string) {
 const articleAuthor = "Yvonne A.";
 
 export async function generateStaticParams() {
+  if (shouldSkipBuildTimePayload()) return [];
+
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
     collection: "posts",

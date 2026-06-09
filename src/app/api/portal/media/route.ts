@@ -19,6 +19,7 @@ type BlobUploadBody = {
   caption?: string;
   filename?: string;
   mimeType?: string;
+  pathname?: string;
   size?: number;
 };
 
@@ -67,7 +68,9 @@ export async function POST(request: Request) {
     const originalFilename = String(body.filename || "").trim() || "upload";
     const alt = String(body.alt || originalFilename).trim();
     const caption = String(body.caption || "").trim();
-    const filename = sanitizeUploadFilename(originalFilename);
+    // Prefer the exact key the browser uploaded to so the media record's
+    // filename matches the existing blob and resolves to a valid URL.
+    const filename = sanitizeUploadFilename(String(body.pathname || "").trim() || originalFilename);
     const mimeType = inferImageMimeType(filename, String(body.mimeType || ""));
     const declaredSize = Number(body.size || 0);
 
@@ -88,6 +91,7 @@ export async function POST(request: Request) {
         );
       } else {
         const result = await createPortalMediaRecord({
+          alreadyUploaded: true,
           alt,
           buffer,
           caption,

@@ -24,6 +24,7 @@ export type PortalBlobUploadPayload = {
   caption?: string;
   filename: string;
   mimeType: string;
+  pathname?: string;
   size: number;
 };
 
@@ -130,6 +131,7 @@ export async function fetchBlobUploadBuffer(blobUrl: string) {
 }
 
 export async function createPortalMediaRecord({
+  alreadyUploaded = false,
   alt,
   buffer,
   caption,
@@ -138,6 +140,7 @@ export async function createPortalMediaRecord({
   payload,
   size,
 }: {
+  alreadyUploaded?: boolean;
   alt: string;
   buffer: Buffer;
   caption?: string;
@@ -147,6 +150,7 @@ export async function createPortalMediaRecord({
   size: number;
 }) {
   const resolvedMimeType = inferImageMimeType(filename, mimeType);
+  const storageName = sanitizeUploadFilename(filename);
 
   return payload.create({
     collection: "media",
@@ -157,9 +161,16 @@ export async function createPortalMediaRecord({
     file: {
       data: buffer,
       mimetype: resolvedMimeType,
-      name: sanitizeUploadFilename(filename),
+      name: storageName,
       size: buffer.length || size,
-    },
+      // When the browser already uploaded the original to Vercel Blob, signal
+      // the storage adapter to skip re-uploading it. Without this, the adapter
+      // PUTs the same blob key again and Vercel rejects the duplicate, which
+      // surfaces to users as a generic image-processing failure. Resized
+      // images (thumb/card/hero) are still generated from the buffer and
+      // uploaded normally because they ignore this flag.
+      ...(alreadyUploaded ? { clientUploadContext: { provider: "vercel-blob" } } : {}),
+    } as Parameters<Payload["create"]>[0]["file"],
     overrideAccess: true,
   });
 }

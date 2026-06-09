@@ -17,6 +17,14 @@ describe("normalizeMediaUrl", () => {
     const blobUrl = "https://example.public.blob.vercel-storage.com/photo.webp";
     expect(normalizeMediaUrl(blobUrl)).toBe(blobUrl);
   });
+
+  it("rewrites absolute payload media urls to local public media paths", () => {
+    expect(
+      normalizeMediaUrl(
+        "https://portal.kenyatanzaniasafariadventures.com/api/media/file/WhatsApp-Image-2026-06-08-at-9.09.14-PM-320x220.webp",
+      ),
+    ).toBe("/media/WhatsApp-Image-2026-06-08-at-9.09.14-PM-320x220.webp");
+  });
 });
 
 describe("encodeMediaPath", () => {

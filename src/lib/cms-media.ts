@@ -29,15 +29,29 @@ export function encodeMediaPath(path: string) {
   return `${encoded}${query}`;
 }
 
+function isPayloadMediaPath(pathname: string) {
+  return pathname.startsWith("/api/media/file/") || pathname.startsWith("/media/");
+}
+
+function toPublicMediaPath(pathname: string) {
+  if (pathname.startsWith("/api/media/file/")) {
+    return pathname.replace("/api/media/file/", "/media/");
+  }
+  return pathname;
+}
+
 export function normalizeMediaUrl(url: string) {
   if (!url) return url;
 
   if (/^https?:\/\//i.test(url)) {
     try {
       const parsed = new URL(url);
-      if (parsed.pathname.startsWith("/api/media/file/") || parsed.pathname.startsWith("/media/")) {
-        parsed.pathname = encodeMediaPath(parsed.pathname);
-        return parsed.toString();
+      if (isPayloadMediaPath(parsed.pathname)) {
+        // Payload prefixes media URLs with PAYLOAD_SERVER_URL. When developing
+        // locally, those absolute URLs point at production while files live in
+        // public/media on the dev server. Always serve them from the current
+        // origin via /media/.
+        return encodeMediaPath(toPublicMediaPath(parsed.pathname));
       }
     } catch {
       return url;
@@ -45,12 +59,7 @@ export function normalizeMediaUrl(url: string) {
     return url;
   }
 
-  let path = url;
-  if (path.startsWith("/api/media/file/")) {
-    path = path.replace("/api/media/file/", "/media/");
-  }
-
-  return encodeMediaPath(path);
+  return encodeMediaPath(toPublicMediaPath(url));
 }
 
 export function mediaUrl(value: unknown, fallback = "/assets/img/banner1.webp") {

@@ -20,7 +20,7 @@ function imageUrl(doc: Record<string, unknown>) {
   const sizes = doc.sizes && typeof doc.sizes === "object" ? doc.sizes as Record<string, unknown> : {};
   const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
   const card = sizes.card && typeof sizes.card === "object" ? sizes.card as Record<string, unknown> : {};
-  return normalizeMediaUrl(String(thumb.url ?? card.url ?? doc.url ?? ""));
+  return normalizeMediaUrl(String(thumb.url ?? card.url ?? doc.thumbUrl ?? doc.url ?? ""));
 }
 
 export function MediaLibrary({

@@ -2,25 +2,30 @@
 
 import { CheckCircle2, ImagePlus, Search, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { fetchMoreMediaOptions, fetchTotalMediaCount } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
 import { resolveUploadAlt } from "@/lib/cms-media";
 import {
+  getMediaCatalogSnapshot,
+  mergeMediaCatalog,
+  prependMediaCatalog,
+  publishMediaCatalog,
+  subscribeMediaCatalog,
+} from "@/lib/portal/media-catalog";
+import {
+  dedupeMediaOptions,
+  optionImageUrl,
+  toPortalMediaOption,
+  type PortalMediaOption,
+} from "@/lib/portal/media-option";
+import {
   fetchPortalMediaUploadConfig,
   parsePortalMediaUploadResponse,
-  portalUploadedMediaToDoc,
   uploadPortalMediaFile,
 } from "@/lib/portal/upload-media-client";
 
-export type PortalMediaOption = {
-  alt: string;
-  caption?: string;
-  filename: string;
-  id: string;
-  thumbUrl?: string;
-  url: string;
-};
+export type { PortalMediaOption };
 
 type MediaPickerFieldProps = {
   autoOpen?: boolean;
@@ -34,30 +39,8 @@ type MediaPickerFieldProps = {
   required?: boolean;
 };
 
-function optionImage(option: PortalMediaOption) {
-  return option.thumbUrl || option.url;
-}
-
-function normalizeUploadedMedia(result: Record<string, unknown>): PortalMediaOption {
-  const doc = portalUploadedMediaToDoc(result);
-  return {
-    alt: doc.alt,
-    caption: doc.caption,
-    filename: doc.filename,
-    id: doc.id,
-    thumbUrl: doc.thumbUrl,
-    url: doc.url,
-  };
-}
-
-function dedupeMediaOptions(items: PortalMediaOption[]) {
-  const seen = new Set<string>();
-  return items.filter((item) => {
-    const id = String(item.id);
-    if (seen.has(id)) return false;
-    seen.add(id);
-    return true;
-  });
+function mergeMediaSources(...sources: PortalMediaOption[][]) {
+  return dedupeMediaOptions(sources.flat());
 }
 
 function useIsClient() {
@@ -66,6 +49,10 @@ function useIsClient() {
     () => true,
     () => false,
   );
+}
+
+function useMediaCatalog() {
+  return useSyncExternalStore(subscribeMediaCatalog, getMediaCatalogSnapshot, getMediaCatalogSnapshot);
 }
 
 export function MediaPickerField({
@@ -79,60 +66,47 @@ export function MediaPickerField({
   options,
   required,
 }: MediaPickerFieldProps) {
-  const [mediaOptions, setMediaOptions] = useState(options);
-  const [selectedIds, setSelectedIds] = useState(initialValues.filter(Boolean));
+  const catalog = useMediaCatalog();
+  const [mediaOptions, setMediaOptions] = useState(() => mergeMediaSources(catalog, options));
+  const [selectedIds, setSelectedIds] = useState(() => initialValues.filter(Boolean).map(String));
   const [open, setOpen] = useState(autoOpen);
   const [query, setQuery] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(options.length >= 36);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   const [loadError, setLoadError] = useState("");
   const mounted = useIsClient();
-  const emptyFetchAttempted = useRef(false);
-  const incomingOptions = dedupeMediaOptions(options);
-  const optionsSyncKey = incomingOptions.map((item) => item.id).join("|");
-  const [syncedOptionsKey, setSyncedOptionsKey] = useState(optionsSyncKey);
 
-  if (optionsSyncKey !== syncedOptionsKey) {
-    setSyncedOptionsKey(optionsSyncKey);
-    setMediaOptions(incomingOptions);
-    setHasMore(incomingOptions.length >= 36);
-    if (incomingOptions.length > 0) {
-      setCurrentPage(Math.max(1, Math.ceil(incomingOptions.length / 36)));
-    }
-  }
+  const seedOptions = useMemo(() => dedupeMediaOptions(options), [options]);
+  const seedOptionsKey = seedOptions.map((item) => item.id).join("|");
 
   useEffect(() => {
-    if (open && totalCount === undefined) {
-      fetchTotalMediaCount()
-        .then(setTotalCount)
-        .catch((error) => {
-          console.error(error);
-          setLoadError(error instanceof Error ? error.message : "Unable to load the media library.");
-        });
-    }
-  }, [open, totalCount]);
+    setSelectedIds(initialValues.filter(Boolean).map(String));
+  }, [initialValues.join("|")]);
 
   useEffect(() => {
-    if (!open) {
-      emptyFetchAttempted.current = false;
-      return;
-    }
-    if (mediaOptions.length > 0 || loadingMore || emptyFetchAttempted.current) return;
+    setMediaOptions((prev) => mergeMediaSources(catalog, seedOptions, prev));
+  }, [catalog, seedOptionsKey, seedOptions]);
 
-    emptyFetchAttempted.current = true;
+  useEffect(() => {
+    if (!open) return;
+
     let cancelled = false;
-    setLoadingMore(true);
+    setRefreshing(true);
     setLoadError("");
+
     fetchMoreMediaOptions(1)
-      .then((nextOptions) => {
+      .then((freshOptions) => {
         if (cancelled) return;
-        setMediaOptions(dedupeMediaOptions(nextOptions));
+        const merged = mergeMediaSources(getMediaCatalogSnapshot(), freshOptions, seedOptions);
+        setMediaOptions(merged);
+        publishMediaCatalog(merged);
         setCurrentPage(1);
-        setHasMore(nextOptions.length >= 36);
+        setHasMore(freshOptions.length >= 36);
       })
       .catch((error) => {
         console.error(error);
@@ -141,13 +115,33 @@ export function MediaPickerField({
         }
       })
       .finally(() => {
-        if (!cancelled) setLoadingMore(false);
+        if (!cancelled) setRefreshing(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [open, loadingMore, mediaOptions.length]);
+  }, [open, seedOptions, seedOptionsKey]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    let cancelled = false;
+    fetchTotalMediaCount()
+      .then((count) => {
+        if (!cancelled) setTotalCount(count);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : "Unable to load the media library.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -181,27 +175,29 @@ export function MediaPickerField({
   }, [mediaOptions, query]);
 
   function commitSelection(ids: string[]) {
-    setSelectedIds(ids);
-    const selectedMediaObjects = ids
+    const normalizedIds = ids.map(String);
+    setSelectedIds(normalizedIds);
+    const selectedMediaObjects = normalizedIds
       .map((id) => mediaOptions.find((item) => String(item.id) === id))
       .filter(Boolean) as PortalMediaOption[];
-    onChange?.(ids, selectedMediaObjects);
+    onChange?.(normalizedIds, selectedMediaObjects);
   }
 
   function toggle(id: string) {
+    const normalizedId = String(id);
     if (!hasMany) {
-      commitSelection([id]);
+      commitSelection([normalizedId]);
       closeDialog();
       return;
     }
-    const nextIds = selectedIds.includes(id)
-      ? selectedIds.filter((item) => item !== id)
-      : [...selectedIds, id];
+    const nextIds = selectedIds.includes(normalizedId)
+      ? selectedIds.filter((item) => item !== normalizedId)
+      : [...selectedIds, normalizedId];
     commitSelection(nextIds);
   }
 
   function remove(id: string) {
-    commitSelection(selectedIds.filter((item) => item !== id));
+    commitSelection(selectedIds.filter((item) => item !== String(id)));
   }
 
   async function uploadMedia(event: React.FormEvent<HTMLFormElement>) {
@@ -251,7 +247,7 @@ export function MediaPickerField({
         const uploaded = parsePortalMediaUploadResponse(result);
 
         if (response.ok && uploaded) {
-          newMediaItems.push(normalizeUploadedMedia(uploaded));
+          newMediaItems.push(toPortalMediaOption(uploaded));
           successCount++;
         } else {
           errors.push(typeof result?.message === "string" ? result.message : `Failed to upload ${file.name}.`);
@@ -263,15 +259,18 @@ export function MediaPickerField({
     }
 
     if (newMediaItems.length > 0) {
+      prependMediaCatalog(newMediaItems);
       setMediaOptions((prev) => dedupeMediaOptions([...newMediaItems, ...prev]));
-      const newIds = newMediaItems.map((m) => m.id);
+      setTotalCount((count) => (count === undefined ? count : count + newMediaItems.length));
+
+      const newIds = newMediaItems.map((item) => item.id);
       const nextSelected = hasMany ? [...selectedIds, ...newIds] : [newIds[0]];
 
       setSelectedIds(nextSelected);
       onChange?.(
         nextSelected,
         nextSelected
-          .map((id) => [...newMediaItems, ...mediaOptions].find((m) => String(m.id) === id))
+          .map((id) => dedupeMediaOptions([...newMediaItems, ...mediaOptions]).find((item) => item.id === id))
           .filter(Boolean) as PortalMediaOption[],
       );
     }
@@ -314,7 +313,7 @@ export function MediaPickerField({
           <div className="portal-media-selected-grid">
             {selectedMedia.map((item) => (
               <div className="portal-media-selected" key={item.id}>
-                <Image alt={item.alt || item.filename} height={180} src={optionImage(item)} width={260} />
+                <Image alt={item.alt || item.filename} height={180} src={optionImageUrl(item)} width={260} />
                 <button aria-label={`Remove ${item.alt || item.filename}`} className="portal-media-selected__remove" onClick={() => remove(item.id)} type="button">
                   <X size={14} />
                 </button>
@@ -391,8 +390,12 @@ export function MediaPickerField({
                 {loadError ? <p className="portal-media-dialog__message portal-media-dialog__message--error">{loadError}</p> : null}
 
                 <div className="portal-media-dialog__grid">
+                  {refreshing && filteredOptions.length === 0 ? (
+                    <p className="portal-media-dialog__message">Loading media library...</p>
+                  ) : null}
                   {filteredOptions.map((item) => {
-                    const selected = selectedIds.includes(item.id);
+                    const selected = selectedIds.includes(String(item.id));
+                    const imageSrc = optionImageUrl(item);
                     return (
                       <button
                         className={selected ? "portal-media-tile is-selected" : "portal-media-tile"}
@@ -401,13 +404,17 @@ export function MediaPickerField({
                         type="button"
                       >
                         <span className="portal-media-tile__media">
-                          <img
-                            alt={item.alt || item.filename}
-                            className="portal-media-tile__img"
-                            draggable={false}
-                            loading="lazy"
-                            src={optionImage(item)}
-                          />
+                          {imageSrc ? (
+                            <img
+                              alt={item.alt || item.filename}
+                              className="portal-media-tile__img"
+                              draggable={false}
+                              loading="lazy"
+                              src={imageSrc}
+                            />
+                          ) : (
+                            <span className="portal-media-tile__empty">No preview</span>
+                          )}
                         </span>
                         <span className="portal-media-tile__label">{item.alt || item.filename}</span>
                         {selected ? <CheckCircle2 size={20} /> : null}
@@ -424,9 +431,9 @@ export function MediaPickerField({
                           try {
                             const nextOptions = await fetchMoreMediaOptions(currentPage + 1);
                             setMediaOptions((prev) => {
-                              const newIds = new Set(nextOptions.map((option) => String(option.id)));
-                              const filteredPrev = prev.filter((item) => !newIds.has(String(item.id)));
-                              return dedupeMediaOptions([...filteredPrev, ...nextOptions]);
+                              const merged = dedupeMediaOptions([...prev, ...nextOptions]);
+                              mergeMediaCatalog(nextOptions);
+                              return merged;
                             });
                             setCurrentPage((page) => page + 1);
                             if (nextOptions.length < 36) setHasMore(false);

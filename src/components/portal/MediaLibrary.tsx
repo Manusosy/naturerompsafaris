@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 
 import { formatValue } from "@/lib/portal/format";
 import { normalizeMediaUrl, resolveUploadAlt } from "@/lib/cms-media";
+import { prependMediaCatalog } from "@/lib/portal/media-catalog";
+import { toPortalMediaOption } from "@/lib/portal/media-option";
 import {
   fetchPortalMediaUploadConfig,
   parsePortalMediaUploadResponse,
@@ -115,7 +117,9 @@ export function MediaLibrary({
         const uploaded = parsePortalMediaUploadResponse(result);
 
         if (response.ok && uploaded) {
-          setLoadedDocs((prev) => [portalUploadedMediaToDoc(uploaded) as Record<string, unknown>, ...prev]);
+          const doc = portalUploadedMediaToDoc(uploaded) as Record<string, unknown>;
+          prependMediaCatalog([toPortalMediaOption(doc)]);
+          setLoadedDocs((prev) => [doc, ...prev]);
           successCount++;
         } else {
           errors.push(typeof result?.message === "string" ? result.message : `Failed to upload ${file.name}.`);

@@ -5,7 +5,6 @@ import { cache } from "react";
 import { getPayload } from "payload";
 
 import { getEnv } from "@/lib/env";
-import { normalizeMediaUrl } from "@/lib/cms-media";
 import { readPortalAuthToken, verifyPortalToken } from "@/lib/portal/session";
 
 export type PortalUser = {
@@ -248,19 +247,8 @@ export const getTripWizardRelations = cache(async () => {
 
 export const getMediaOptions = cache(async () => {
   const result = await findCollection("media", 36);
-  return (result.docs as Array<Record<string, unknown>>).map((doc) => {
-    const sizes = doc.sizes && typeof doc.sizes === "object" ? doc.sizes as Record<string, unknown> : {};
-    const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
-    const card = sizes.card && typeof sizes.card === "object" ? sizes.card as Record<string, unknown> : {};
-    return {
-      alt: String(doc.alt ?? ""),
-      caption: String(doc.caption ?? ""),
-      filename: String(doc.filename ?? ""),
-      id: String(doc.id),
-      thumbUrl: normalizeMediaUrl(String(thumb.url ?? card.url ?? doc.url ?? "")),
-      url: normalizeMediaUrl(String(card.url ?? doc.url ?? "")),
-    };
-  });
+  const { toPortalMediaOption } = await import("@/lib/portal/media-option");
+  return (result.docs as Array<Record<string, unknown>>).map(toPortalMediaOption);
 });
 
 export const findDocument = cache(async (collection: string, id: string) => {

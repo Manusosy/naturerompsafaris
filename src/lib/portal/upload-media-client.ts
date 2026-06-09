@@ -1,7 +1,7 @@
 "use client";
 
-import { normalizeMediaUrl } from "@/lib/cms-media";
 import { inferImageMimeType, sanitizeUploadFilename } from "@/lib/portal/media-upload";
+import { toPortalMediaOption } from "@/lib/portal/media-option";
 
 export type PortalMediaUploadConfig = {
   clientUploadUrl: string;
@@ -130,21 +130,9 @@ export function parsePortalMediaUploadResponse(result: unknown) {
 }
 
 export function portalUploadedMediaToDoc(result: PortalUploadedMedia) {
-  const sizes = result.sizes && typeof result.sizes === "object" ? (result.sizes as Record<string, unknown>) : {};
-  const thumb = sizes.thumb && typeof sizes.thumb === "object" ? (sizes.thumb as Record<string, unknown>) : {};
-  const card = sizes.card && typeof sizes.card === "object" ? (sizes.card as Record<string, unknown>) : {};
-
-  const fallbackUrl = String(result.url ?? "");
-  const thumbUrl = normalizeMediaUrl(String(thumb.url ?? card.url ?? fallbackUrl));
-  const url = normalizeMediaUrl(String(card.url ?? fallbackUrl ?? thumb.url ?? ""));
-
+  const option = toPortalMediaOption(result);
   return {
-    alt: String(result.alt ?? ""),
-    caption: result.caption ? String(result.caption) : "",
-    filename: String(result.filename ?? ""),
-    id: String(result.id),
-    thumbUrl,
-    url,
+    ...option,
     sizes: result.sizes,
   };
 }

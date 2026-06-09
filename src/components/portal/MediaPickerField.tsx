@@ -5,7 +5,13 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { fetchMoreMediaOptions, fetchTotalMediaCount } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
-import { normalizeMediaUrl, resolveUploadAlt } from "@/lib/cms-media";
+import { resolveUploadAlt } from "@/lib/cms-media";
+import {
+  fetchPortalMediaUploadConfig,
+  parsePortalMediaUploadResponse,
+  portalUploadedMediaToDoc,
+  uploadPortalMediaFile,
+} from "@/lib/portal/upload-media-client";
 
 export type PortalMediaOption = {
   alt: string;
@@ -33,16 +39,14 @@ function optionImage(option: PortalMediaOption) {
 }
 
 function normalizeUploadedMedia(result: Record<string, unknown>): PortalMediaOption {
-  const sizes = result.sizes && typeof result.sizes === "object" ? result.sizes as Record<string, unknown> : {};
-  const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
-  const card = sizes.card && typeof sizes.card === "object" ? sizes.card as Record<string, unknown> : {};
+  const doc = portalUploadedMediaToDoc(result);
   return {
-    alt: String(result.alt ?? ""),
-    caption: result.caption ? String(result.caption) : "",
-    filename: String(result.filename ?? ""),
-    id: String(result.id),
-    thumbUrl: normalizeMediaUrl(String(thumb.url ?? card.url ?? result.url ?? "")),
-    url: normalizeMediaUrl(String(card.url ?? result.url ?? thumb.url ?? "")),
+    alt: doc.alt,
+    caption: doc.caption,
+    filename: doc.filename,
+    id: doc.id,
+    thumbUrl: doc.thumbUrl,
+    url: doc.url,
   };
 }
 
@@ -213,34 +217,41 @@ export function MediaPickerField({
     const errors: string[] = [];
     const newMediaItems: PortalMediaOption[] = [];
 
+    let uploadConfig;
+    try {
+      uploadConfig = await fetchPortalMediaUploadConfig();
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+      setUploadMessage("Could not load upload settings. Please refresh and try again.");
+      return;
+    }
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const singleFormData = new FormData();
-      singleFormData.append("file", file);
-      singleFormData.append("alt", resolveUploadAlt(formAlt, file, files.length));
-      if (formCaption) singleFormData.append("caption", formCaption);
 
       setUploadMessage(`Uploading ${i + 1} of ${files.length}...`);
 
       try {
-        const response = await fetch("/api/portal/media", {
-          body: singleFormData,
-          credentials: "include",
-          method: "POST",
+        const { response } = await uploadPortalMediaFile({
+          alt: resolveUploadAlt(formAlt, file, files.length),
+          caption: formCaption || undefined,
+          file,
+          uploadConfig,
         });
 
         const result = await response.json().catch(() => null);
+        const uploaded = parsePortalMediaUploadResponse(result);
 
-        if (response.ok && result?.results?.[0]) {
-          const m = normalizeUploadedMedia(result.results[0]);
-          newMediaItems.push(m);
+        if (response.ok && uploaded) {
+          newMediaItems.push(normalizeUploadedMedia(uploaded));
           successCount++;
         } else {
-          errors.push(result?.message || `Failed to upload ${file.name}.`);
+          errors.push(typeof result?.message === "string" ? result.message : `Failed to upload ${file.name}.`);
         }
       } catch (err) {
         console.error("Upload error", err);
-        errors.push(`Failed to upload ${file.name}.`);
+        errors.push(err instanceof Error ? err.message : `Failed to upload ${file.name}.`);
       }
     }
 

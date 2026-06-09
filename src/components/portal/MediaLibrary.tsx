@@ -8,6 +8,12 @@ import { useRouter } from "next/navigation";
 
 import { formatValue } from "@/lib/portal/format";
 import { normalizeMediaUrl, resolveUploadAlt } from "@/lib/cms-media";
+import {
+  fetchPortalMediaUploadConfig,
+  parsePortalMediaUploadResponse,
+  portalUploadedMediaToDoc,
+  uploadPortalMediaFile,
+} from "@/lib/portal/upload-media-client";
 import { fetchMoreMedia } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
 
 function imageUrl(doc: Record<string, unknown>) {
@@ -79,47 +85,42 @@ export function MediaLibrary({
     const errors: string[] = [];
     const totalToUpload = files.length;
 
+    let uploadConfig;
+    try {
+      uploadConfig = await fetchPortalMediaUploadConfig();
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+      setMessage("Could not load upload settings. Please refresh and try again.");
+      return;
+    }
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const singleFormData = new FormData();
-      singleFormData.append("file", file);
-      singleFormData.append("alt", resolveUploadAlt(formAlt, file, totalToUpload));
-      if (formCaption) singleFormData.append("caption", formCaption);
+      const alt = resolveUploadAlt(formAlt, file, totalToUpload);
 
       setMessage(`Uploading ${i + 1} of ${totalToUpload}...`);
 
       try {
-        const response = await fetch("/api/portal/media", {
-          body: singleFormData,
-          credentials: "include",
-          method: "POST",
+        const { response } = await uploadPortalMediaFile({
+          alt,
+          caption: formCaption || undefined,
+          file,
+          uploadConfig,
         });
 
         const result = await response.json().catch(() => null);
+        const uploaded = parsePortalMediaUploadResponse(result);
 
-        if (response.ok && result?.results?.[0]) {
-          const m = result.results[0];
-          const sizes = m.sizes && typeof m.sizes === "object" ? m.sizes as Record<string, unknown> : {};
-          const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
-          const card = sizes.card && typeof sizes.card === "object" ? sizes.card as Record<string, unknown> : {};
-
-          const newDoc = {
-            alt: String(m.alt ?? ""),
-            caption: m.caption ? String(m.caption) : "",
-            filename: String(m.filename ?? ""),
-            id: String(m.id),
-            url: normalizeMediaUrl(String(card.url ?? m.url ?? thumb.url ?? "")),
-            sizes: m.sizes,
-          };
-
-          setLoadedDocs((prev) => [newDoc as Record<string, unknown>, ...prev]);
+        if (response.ok && uploaded) {
+          setLoadedDocs((prev) => [portalUploadedMediaToDoc(uploaded) as Record<string, unknown>, ...prev]);
           successCount++;
         } else {
-          errors.push(result?.message || `Failed to upload ${file.name}.`);
+          errors.push(typeof result?.message === "string" ? result.message : `Failed to upload ${file.name}.`);
         }
       } catch (err) {
         console.error("Upload error for file", file.name, err);
-        errors.push(`Failed to upload ${file.name}.`);
+        errors.push(err instanceof Error ? err.message : `Failed to upload ${file.name}.`);
       }
     }
 

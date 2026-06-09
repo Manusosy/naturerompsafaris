@@ -14,7 +14,10 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: path.resolve(process.cwd(), "public/media"),
     adminThumbnail: "thumb",
-    mimeTypes: ["image/*"],
+    // Allow JPEG/JPG, PNG, and WebP. JPEG/PNG are converted to WebP via
+    // `formatOptions` below; WebP files are already in the target format and the
+    // upload flow preserves them (see src/app/api/portal/media/route.ts).
+    mimeTypes: ["image/jpeg", "image/png", "image/webp"],
     formatOptions: {
       format: "webp",
       options: {

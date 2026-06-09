@@ -24,6 +24,17 @@ type BlobUploadBody = {
   size?: number;
 };
 
+async function deleteOrphanBlob(blobUrl: string) {
+  try {
+    const { del } = await import("@vercel/blob");
+    await del(blobUrl);
+  } catch (error) {
+    // Non-fatal: the media record was created successfully, this just leaves an
+    // unreferenced source file in Blob storage.
+    console.error("[portal/media] Failed to remove orphaned source blob:", error);
+  }
+}
+
 function unauthorized() {
   return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 }
@@ -92,17 +103,28 @@ export async function POST(request: Request) {
         );
       } else {
         await assertImageProcessable(buffer);
+        const resolvedMimeType = inferImageMimeType(filename, fetchedMimeType || mimeType);
+        // WebP is already the target format: the browser uploaded the original to
+        // Blob under a `.webp` key that matches Payload's output filename, so we
+        // tell the storage adapter to skip re-uploading it. This keeps the WebP
+        // file byte-for-byte unchanged. JPEG/PNG, however, are converted to WebP
+        // by Payload and re-uploaded under the new `.webp` key, which leaves the
+        // browser's original (non-webp) blob orphaned — we delete it afterwards.
+        const isWebp = resolvedMimeType === "image/webp";
         const result = await createPortalMediaRecord({
-          alreadyUploaded: true,
+          alreadyUploaded: isWebp,
           alt,
           buffer,
           caption,
           filename,
-          mimeType: inferImageMimeType(filename, fetchedMimeType || mimeType),
+          mimeType: resolvedMimeType,
           payload,
           size: declaredSize || buffer.length,
         });
         results.push(result);
+        if (!isWebp) {
+          await deleteOrphanBlob(body.blobUrl);
+        }
       }
     } catch (error: unknown) {
       console.error("[portal/media] Blob-backed upload failed:", error);

@@ -305,7 +305,7 @@ export function MediaLibrary({
           <div className="media-upload-card__toolbar">
             <label className="portal-field media-upload-card__file">
               <span>Upload image(s)</span>
-              <input accept="image/*" name="file" required type="file" multiple />
+              <input accept="image/jpeg,image/png,image/webp" name="file" required type="file" multiple />
             </label>
             <label className="portal-field media-upload-card__alt">
               <span>Alt text</span>

@@ -369,7 +369,7 @@ export function MediaPickerField({
                   </label>
                   <form className="portal-media-dialog__upload" onSubmit={uploadMedia}>
                     <label className="portal-field portal-media-dialog__upload-file">
-                      <input accept="image/*" aria-label="Upload image" multiple name="file" required type="file" />
+                      <input accept="image/jpeg,image/png,image/webp" aria-label="Upload image" multiple name="file" required type="file" />
                     </label>
                     <label className="portal-field portal-media-dialog__upload-alt">
                       <input aria-label="Alt text" name="alt" placeholder="Alt text (optional for bulk)" />

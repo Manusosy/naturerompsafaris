@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
+import { assertImageProcessable } from "@/lib/portal/media-image-probe";
 import {
   createPortalMediaRecord,
   fetchBlobUploadBuffer,
@@ -90,6 +91,7 @@ export async function POST(request: Request) {
           `${originalFilename}: File is too large (max ${Math.round(uploadConfig.maxBytes / (1024 * 1024))}MB).`,
         );
       } else {
+        await assertImageProcessable(buffer);
         const result = await createPortalMediaRecord({
           alreadyUploaded: true,
           alt,
@@ -132,6 +134,7 @@ export async function POST(request: Request) {
 
       try {
         const buffer = Buffer.from(await file.arrayBuffer());
+        await assertImageProcessable(buffer);
         const result = await createPortalMediaRecord({
           alt,
           buffer,

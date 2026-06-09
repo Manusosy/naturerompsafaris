@@ -1,62 +1,42 @@
 import sharp from "sharp";
 
-/**
- * Mirrors the image transforms Payload performs inside `generateFileData`
- * (auto-rotate, convert the main file to WebP, and generate each configured
- * size). Payload wraps ANY failure in those steps in a generic
- * "There was a problem while uploading the file" error and only writes the real
- * cause to `payload.logger`, which end users never see and which is effectively
- * invisible on serverless platforms. Running the same pipeline here lets us
- * surface the actual reason (corrupt bytes, unsupported color profile, sharp
- * platform issue, out-of-memory, etc.) directly to the uploader.
- *
- * Thrown messages intentionally OMIT the filename: the caller passes the error
- * through `formatPortalUploadError`, which is the single place responsible for
- * prefixing the filename. Including it here would duplicate it.
- *
- * Keep the operations in sync with `src/collections/Media.ts` `upload`.
- */
-const MEDIA_SIZES = [
-  { name: "thumb", width: 320, height: 220, quality: 78 },
-  { name: "card", width: 640, height: 420, quality: 82 },
-  { name: "hero", width: 1600, height: 900, quality: 84 },
-] as const;
-
 function describeError(error: unknown) {
   if (error instanceof Error && error.message) return error.message;
   return "unknown error";
 }
 
-export async function assertImageProcessable(buffer: Buffer) {
-  let metadata: sharp.Metadata;
+/**
+ * Decodes an uploaded image and re-encodes it to a clean, metadata-stripped
+ * WebP buffer that is then handed to Payload for storage and size generation.
+ *
+ * Why this exists:
+ * - Payload's upload pipeline (`generateFileData`) wraps ANY processing failure
+ *   in a generic "There was a problem while uploading the file" error and only
+ *   writes the real cause to `payload.logger`, which is effectively invisible on
+ *   serverless platforms. Users just see "Image processing failed".
+ * - Some images (notably WhatsApp/phone exports) carry unusual ICC profiles,
+ *   EXIF, or encodings that decode fine on one platform/sharp build but trip a
+ *   specific code path on another (e.g. Vercel's Linux runtime). Re-encoding to
+ *   a normalized WebP up front sidesteps those edge cases so Payload processes a
+ *   predictable input.
+ * - If the image genuinely cannot be decoded, this throws with the REAL reason
+ *   instead of the opaque generic message.
+ *
+ * `.rotate()` with no arguments bakes EXIF orientation into the pixels so the
+ * normalized image still looks correct after its metadata is dropped. The
+ * resulting WebP quality matches `formatOptions` in `src/collections/Media.ts`.
+ *
+ * Note: for already-WebP uploads in production the SERVED file is still the
+ * browser's untouched original (the storage adapter skips re-uploading it); this
+ * normalized buffer is only used by Payload to generate the resized variants.
+ */
+export async function normalizeImageToWebp(buffer: Buffer): Promise<Buffer> {
   try {
-    metadata = await sharp(buffer).metadata();
+    return await sharp(buffer, { failOn: "none" })
+      .rotate()
+      .webp({ quality: 82 })
+      .toBuffer();
   } catch (error) {
-    throw new Error(`the file is not a readable image (${describeError(error)}).`);
-  }
-
-  if (!metadata.width || !metadata.height) {
-    throw new Error("image dimensions could not be determined; the file may be corrupt.");
-  }
-
-  try {
-    await sharp(buffer).rotate().toFormat("webp", { quality: 82 }).toBuffer();
-  } catch (error) {
-    throw new Error(`the server could not convert this image (${describeError(error)}).`);
-  }
-
-  for (const size of MEDIA_SIZES) {
-    // Payload omits a size when the source is smaller than the target, so only
-    // probe sizes the source can actually satisfy without enlargement.
-    if (metadata.width < size.width || metadata.height < size.height) continue;
-    try {
-      await sharp(buffer)
-        .rotate()
-        .resize({ width: size.width, height: size.height, position: "centre" })
-        .toFormat("webp", { quality: size.quality })
-        .toBuffer();
-    } catch (error) {
-      throw new Error(`the server could not generate the ${size.name} size (${describeError(error)}).`);
-    }
+    throw new Error(`the image could not be processed (${describeError(error)}).`);
   }
 }

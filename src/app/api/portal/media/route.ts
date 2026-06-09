@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
-import { assertImageProcessable } from "@/lib/portal/media-image-probe";
+import { normalizeImageToWebp } from "@/lib/portal/media-image-probe";
 import {
   createPortalMediaRecord,
   fetchBlobUploadBuffer,
@@ -102,24 +102,25 @@ export async function POST(request: Request) {
           `${originalFilename}: File is too large (max ${Math.round(uploadConfig.maxBytes / (1024 * 1024))}MB).`,
         );
       } else {
-        await assertImageProcessable(buffer);
-        const resolvedMimeType = inferImageMimeType(filename, fetchedMimeType || mimeType);
         // WebP is already the target format: the browser uploaded the original to
         // Blob under a `.webp` key that matches Payload's output filename, so we
-        // tell the storage adapter to skip re-uploading it. This keeps the WebP
-        // file byte-for-byte unchanged. JPEG/PNG, however, are converted to WebP
-        // by Payload and re-uploaded under the new `.webp` key, which leaves the
-        // browser's original (non-webp) blob orphaned — we delete it afterwards.
-        const isWebp = resolvedMimeType === "image/webp";
+        // tell the storage adapter to skip re-uploading it. This keeps the served
+        // WebP file byte-for-byte unchanged. JPEG/PNG are converted to WebP and
+        // re-uploaded under the new `.webp` key, which leaves the browser's
+        // original (non-webp) blob orphaned — we delete it afterwards.
+        const isWebp = inferImageMimeType(filename, fetchedMimeType || mimeType) === "image/webp";
+        // Normalize to a clean WebP buffer so Payload's pipeline can process it
+        // reliably (and to surface the real error if it truly can't be decoded).
+        const cleanBuffer = await normalizeImageToWebp(buffer);
         const result = await createPortalMediaRecord({
           alreadyUploaded: isWebp,
           alt,
-          buffer,
+          buffer: cleanBuffer,
           caption,
           filename,
-          mimeType: resolvedMimeType,
+          mimeType: "image/webp",
           payload,
-          size: declaredSize || buffer.length,
+          size: cleanBuffer.length,
         });
         results.push(result);
         if (!isWebp) {
@@ -147,7 +148,6 @@ export async function POST(request: Request) {
       const alt = String(formData.get("alt") || file.name).trim();
       const caption = String(formData.get("caption") || "").trim();
       const filename = sanitizeUploadFilename(file.name);
-      const mimeType = inferImageMimeType(filename, file.type);
 
       if (file.size > uploadConfig.maxBytes) {
         errors.push(`${file.name}: File is too large (max ${Math.round(uploadConfig.maxBytes / (1024 * 1024))}MB).`);
@@ -156,15 +156,15 @@ export async function POST(request: Request) {
 
       try {
         const buffer = Buffer.from(await file.arrayBuffer());
-        await assertImageProcessable(buffer);
+        const cleanBuffer = await normalizeImageToWebp(buffer);
         const result = await createPortalMediaRecord({
           alt,
-          buffer,
+          buffer: cleanBuffer,
           caption,
           filename,
-          mimeType,
+          mimeType: "image/webp",
           payload,
-          size: buffer.length,
+          size: cleanBuffer.length,
         });
         results.push(result);
       } catch (error: unknown) {

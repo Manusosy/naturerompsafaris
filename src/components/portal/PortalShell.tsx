@@ -7,6 +7,7 @@ import { Bell, ChevronDown, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search,
 import { useEffect, useMemo, useState } from "react";
 
 import { notificationLink, sidebarGroups, sidebarItems, sidebarLinksAfterTrips, notificationsNavLink, type SidebarLink } from "@/lib/portal/modules";
+import { portalLogo } from "@/lib/portal/branding";
 
 type PortalShellProps = {
   children: React.ReactNode;
@@ -207,7 +208,14 @@ export function PortalShell({ children, notificationCount = 0, user }: PortalShe
     <aside className={collapsed ? "portal-sidebar is-collapsed" : "portal-sidebar"}>
       <div className="portal-brand">
         <div className="portal-brand__logo">
-          <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={160} height={56} />
+          <Image
+            alt={portalLogo.alt}
+            className="portal-brand__logo-image"
+            height={portalLogo.height}
+            priority
+            src={portalLogo.src}
+            width={portalLogo.width}
+          />
         </div>
       </div>
 

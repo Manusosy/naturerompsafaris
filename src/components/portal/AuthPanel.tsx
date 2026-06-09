@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { SIGNUP_GENERIC_SENT_MESSAGE } from "@/lib/portal-signup";
+import { portalAuthBranding, portalLogo } from "@/lib/portal/branding";
 
 type AuthMode = "forgot" | "login" | "register" | "reset";
 
@@ -344,7 +345,18 @@ export function AuthPanel({
         : "Login";
 
   return (
-    <main className="portal-auth">
+    <main
+      className={
+        portalAuthBranding.hideSideBelowWidth > 0
+          ? "portal-auth portal-auth--hide-side-mobile"
+          : "portal-auth"
+      }
+      style={
+        {
+          "--portal-auth-side-image": `url("${portalAuthBranding.sideImageSrc}")`,
+        } as React.CSSProperties
+      }
+    >
       <section className="portal-auth__image" aria-label="Safari operations portal">
         <div>
           <span>Nature Romp Safaris Portal</span>
@@ -353,7 +365,14 @@ export function AuthPanel({
       </section>
       <section className="portal-auth__panel">
         <div className="portal-auth__card">
-          <Image src="/assets/img/logo.jpg" alt="Nature Romp Safaris" width={128} height={74} priority />
+          <Image
+            alt={portalLogo.alt}
+            className="portal-auth__logo"
+            height={portalLogo.height}
+            priority
+            src={portalLogo.src}
+            width={portalLogo.width}
+          />
           <h2>{title}</h2>
           {isRegisterDetailsStep ? (
             <form onSubmit={submitRegisterDetails}>

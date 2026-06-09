@@ -24,10 +24,12 @@ describe("resolvePortalRoute", () => {
     }
   });
 
-  it("keeps admin, CMS fallback, and API routes available on the portal host", () => {
+  it("keeps admin, CMS fallback, API, and static asset routes available on the portal host", () => {
     expect(resolve(portalHost, "/admin").type).toBe("next");
     expect(resolve(portalHost, "/cms-admin").type).toBe("next");
     expect(resolve(portalHost, "/api/users/me").type).toBe("next");
+    expect(resolve(portalHost, "/assets/img/logo.jpg").type).toBe("next");
+    expect(resolve(portalHost, "/assets/img/banner1.webp").type).toBe("next");
   });
 
   it("redirects Payload's internal first-user URL to the portal login URL", () => {

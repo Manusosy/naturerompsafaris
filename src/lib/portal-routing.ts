@@ -4,6 +4,7 @@ export type PortalRouteAction =
 
 const allowedPortalPrefixes = [
   "/admin",
+  "/assets",
   "/cms-admin",
   "/api",
   "/_next",

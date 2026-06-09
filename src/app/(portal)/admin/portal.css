@@ -82,7 +82,7 @@ a {
   color: white;
   background:
     linear-gradient(135deg, rgba(93, 36, 17, 0.94), rgba(93, 36, 17, 0.78)),
-    url("/assets/img/banner1.webp") center / cover;
+    var(--portal-auth-side-image, url("/assets/img/banner1.webp")) center / cover;
 }
 
 .portal-auth__image div {
@@ -119,7 +119,8 @@ a {
   width: min(100%, 480px);
 }
 
-.portal-auth__card img {
+.portal-auth__card img,
+.portal-auth__logo {
   display: block;
   width: min(140px, 42vw);
   height: auto;
@@ -932,9 +933,12 @@ button.portal-auth__link {
   justify-content: flex-start;
 }
 
-.portal-brand__logo img {
-  width: 100%;
-  height: 100%;
+.portal-brand__logo img,
+.portal-brand__logo-image {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 52px;
   object-fit: contain;
   object-position: left center;
   display: block;
@@ -1159,7 +1163,10 @@ button.portal-auth__link {
   justify-content: center;
 }
 
-.portal-sidebar.is-collapsed .portal-brand__logo img {
+.portal-sidebar.is-collapsed .portal-brand__logo img,
+.portal-sidebar.is-collapsed .portal-brand__logo-image {
+  max-height: 38px;
+  max-width: 38px;
   object-position: center center;
 }
 
@@ -4402,6 +4409,26 @@ button.portal-auth__link {
 @media (max-width: 768px) {
   .acc-inclusions-row {
     grid-template-columns: 1fr;
+  }
+
+  .portal-auth--hide-side-mobile .portal-auth__image {
+    display: none;
+  }
+
+  .portal-auth--hide-side-mobile .portal-auth__panel {
+    min-height: 100dvh;
+    padding: 28px 16px 40px;
+  }
+
+  .portal-auth__card h2 {
+    font-size: clamp(24px, 7vw, 32px);
+    margin-bottom: 20px;
+  }
+
+  .portal-auth__card img,
+  .portal-auth__logo {
+    margin-bottom: 24px;
+    width: min(128px, 52vw);
   }
 }
 

@@ -664,25 +664,48 @@ button.portal-auth__link {
   background: transparent;
 }
 
-.portal-media-dialog__tools > form {
+.portal-media-dialog__tools > form,
+.portal-media-dialog__upload {
+  align-items: flex-end;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex: 1 1 320px;
   flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
 }
 
-.portal-media-dialog__tools > form input[type="file"] {
+.portal-media-dialog__tools > form input[type="file"],
+.portal-media-dialog__upload .portal-field input[type="file"] {
   font-size: 12px;
+  min-height: 36px;
+  padding: 6px 8px;
 }
 
 .portal-media-dialog__tools > form input[type="text"],
-.portal-media-dialog__tools > form input:not([type="file"]):not([type="submit"]) {
+.portal-media-dialog__tools > form input:not([type="file"]):not([type="submit"]),
+.portal-media-dialog__upload .portal-field input:not([type="file"]) {
   height: 36px;
-  border: 1px solid #8c8f94;
-  border-radius: 3px;
-  padding: 0 10px;
-  font-size: 13px;
-  width: 160px;
+  min-height: 36px;
+}
+
+.portal-media-dialog__upload-file {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.portal-media-dialog__upload-alt,
+.portal-media-dialog__upload-caption {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.portal-media-dialog__upload .portal-field {
+  gap: 0;
+  margin: 0;
+}
+
+.portal-media-dialog__upload .portal-field > span {
+  display: none;
 }
 
 .portal-media-dialog__message {
@@ -1803,15 +1826,39 @@ button.portal-auth__link {
 
 .media-library__search {
   align-items: center;
+  background: var(--p-surface);
+  border: 1.5px solid var(--p-line);
+  border-radius: var(--p-radius-sm);
   display: flex;
   flex: 1 1 220px;
   gap: 8px;
+  min-height: 40px;
   min-width: 0;
+  padding: 0 12px;
   position: relative;
 }
 
+.media-library__search svg {
+  color: var(--p-muted);
+  flex-shrink: 0;
+}
+
 .media-library__search input {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  flex: 1;
+  font-size: 14px;
+  min-height: 38px;
+  min-width: 0;
+  outline: none;
+  padding: 0;
   width: 100%;
+}
+
+.media-library__search:focus-within {
+  border-color: var(--brand-brown);
+  box-shadow: 0 0 0 3px rgba(93, 36, 17, 0.12);
 }
 
 .media-library__view {
@@ -1841,9 +1888,67 @@ button.portal-auth__link {
 }
 
 .media-upload-card {
-  display: grid;
-  gap: 12px;
+  background: var(--p-surface);
+  border: 1px solid #dcdcde;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 16px;
+}
+
+.media-upload-card--edit {
+  background: var(--p-surface-2);
+  border: 1.5px solid var(--p-line);
+  border-radius: var(--p-radius);
+}
+
+.media-upload-card--upload {
+  background: #f9f9f9;
+}
+
+.media-upload-card__toolbar {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.media-upload-card__toolbar .portal-field {
+  flex: 1 1 180px;
+  margin: 0;
+  min-width: 0;
+}
+
+.media-upload-card__file {
+  flex: 1 1 240px !important;
+}
+
+.media-upload-card__alt,
+.media-upload-card__caption {
+  flex: 1 1 200px !important;
+}
+
+.media-upload-card__toolbar .portal-field input[type="file"] {
+  font-size: 13px;
+  min-height: 40px;
+  padding: 8px 10px;
+}
+
+.media-upload-card__submit {
+  flex: 0 0 auto;
+  min-height: 40px;
+}
+
+.media-upload-card__message {
+  color: var(--p-green-800);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.media-upload-card__message.is-error {
+  color: var(--p-brown);
 }
 
 .media-upload-card label {
@@ -3089,6 +3194,12 @@ button.portal-auth__link {
     flex-direction: column;
   }
 
+  .portal-media-dialog__upload {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
   .portal-media-dialog__tools input[type="search"],
   .portal-media-dialog__tools input[type="text"] {
     width: 100%;
@@ -3096,6 +3207,15 @@ button.portal-auth__link {
 
   .media-library__bar {
     align-items: stretch;
+  }
+
+  .media-upload-card__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .media-upload-card__submit {
+    width: 100%;
   }
 
   .media-upload-card__row,

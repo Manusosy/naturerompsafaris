@@ -7,7 +7,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { formatValue } from "@/lib/portal/format";
-import { normalizeMediaUrl } from "@/lib/cms-media";
+import { normalizeMediaUrl, resolveUploadAlt } from "@/lib/cms-media";
 import { fetchMoreMedia } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
 
 function imageUrl(doc: Record<string, unknown>) {
@@ -57,7 +57,7 @@ export function MediaLibrary({
         .toLowerCase()
         .includes(normalized),
     );
-  }, [docs, query]);
+  }, [loadedDocs, query]);
 
   async function uploadMedia(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,17 +65,26 @@ export function MediaLibrary({
     setUploading(true);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const files = formData.getAll("file") as File[];
+    const files = formData.getAll("file").filter((entry): entry is File => entry instanceof File);
+    const formAlt = String(formData.get("alt") || "");
+    const formCaption = String(formData.get("caption") || "").trim();
+
+    if (files.length === 0) {
+      setUploading(false);
+      setMessage("Please choose at least one image to upload.");
+      return;
+    }
 
     let successCount = 0;
+    const errors: string[] = [];
     const totalToUpload = files.length;
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const singleFormData = new FormData();
       singleFormData.append("file", file);
-      // Use filename as default alt for bulk
-      singleFormData.append("alt", file.name);
+      singleFormData.append("alt", resolveUploadAlt(formAlt, file, totalToUpload));
+      if (formCaption) singleFormData.append("caption", formCaption);
 
       setMessage(`Uploading ${i + 1} of ${totalToUpload}...`);
 
@@ -88,7 +97,7 @@ export function MediaLibrary({
 
         const result = await response.json().catch(() => null);
 
-        if (response.ok && result.results && result.results[0]) {
+        if (response.ok && result?.results?.[0]) {
           const m = result.results[0];
           const sizes = m.sizes && typeof m.sizes === "object" ? m.sizes as Record<string, unknown> : {};
           const thumb = sizes.thumb && typeof sizes.thumb === "object" ? sizes.thumb as Record<string, unknown> : {};
@@ -105,16 +114,25 @@ export function MediaLibrary({
 
           setLoadedDocs((prev) => [newDoc as Record<string, unknown>, ...prev]);
           successCount++;
+        } else {
+          errors.push(result?.message || `Failed to upload ${file.name}.`);
         }
       } catch (err) {
         console.error("Upload error for file", file.name, err);
+        errors.push(`Failed to upload ${file.name}.`);
       }
     }
 
     setUploading(false);
     form.reset();
-    setMessage(`✓ Uploaded ${successCount} of ${totalToUpload} successfully!`);
-    setTimeout(() => setMessage(""), 5000);
+    if (successCount === totalToUpload) {
+      setMessage(`Uploaded ${successCount} of ${totalToUpload} successfully.`);
+    } else if (successCount > 0) {
+      setMessage(`Uploaded ${successCount} of ${totalToUpload}. ${errors[0] || ""}`.trim());
+    } else {
+      setMessage(errors[0] || "Upload failed. Please try again.");
+    }
+    setTimeout(() => setMessage(""), 7000);
   }
 
   async function deleteMedia(id: string) {
@@ -219,14 +237,8 @@ export function MediaLibrary({
 
       {selectedDoc ? (
         <form
-          className="media-upload-card"
+          className="media-upload-card media-upload-card--edit"
           onSubmit={saveMediaChanges}
-          style={{
-            alignItems: "flex-start",
-            background: "var(--p-surface-2)",
-            border: "1.5px solid var(--p-line)",
-            borderRadius: "var(--p-radius)",
-          }}
         >
           <div className="media-upload-card__row">
             <div className="media-upload-card__preview">
@@ -281,28 +293,30 @@ export function MediaLibrary({
                   />
                 </label>
               </div>
-              {message ? <p style={{ margin: 0, color: "var(--p-green-800)", fontWeight: "bold", fontSize: "13px" }}>{message}</p> : null}
+              {message ? <p className="media-upload-card__message">{message}</p> : null}
             </div>
           </div>
         </form>
       ) : (
-        <form className="media-upload-card" onSubmit={uploadMedia}>
-          <label>
-            <span>Upload image(s)</span>
-            <input accept="image/*" name="file" required type="file" multiple />
-          </label>
-          <label>
-            <span>Alt text</span>
-            <input name="alt" placeholder="Describe the image for SEO and accessibility" required />
-          </label>
-          <label>
-            <span>Caption</span>
-            <input name="caption" placeholder="Optional caption for articles" />
-          </label>
-          <button className="portal-button" disabled={uploading} type="submit">
-            <Upload size={17} /> {uploading ? "Uploading..." : "Upload"}
-          </button>
-          {message ? <p style={{ gridColumn: "span 4", margin: "4px 0 0" }}>{message}</p> : null}
+        <form className="media-upload-card media-upload-card--upload" onSubmit={uploadMedia}>
+          <div className="media-upload-card__toolbar">
+            <label className="portal-field media-upload-card__file">
+              <span>Upload image(s)</span>
+              <input accept="image/*" name="file" required type="file" multiple />
+            </label>
+            <label className="portal-field media-upload-card__alt">
+              <span>Alt text</span>
+              <input name="alt" placeholder="Describe the image for SEO and accessibility" />
+            </label>
+            <label className="portal-field media-upload-card__caption">
+              <span>Caption</span>
+              <input name="caption" placeholder="Optional caption for articles" />
+            </label>
+            <button className="portal-button media-upload-card__submit" disabled={uploading} type="submit">
+              <Upload size={17} /> {uploading ? "Uploading..." : "Upload"}
+            </button>
+          </div>
+          {message ? <p className={`media-upload-card__message${message.includes("failed") || message.includes("Failed") ? " is-error" : ""}`}>{message}</p> : null}
         </form>
       )}
 

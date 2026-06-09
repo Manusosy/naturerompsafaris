@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { fetchMoreMediaOptions, fetchTotalMediaCount } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
+import { normalizeMediaUrl, resolveUploadAlt } from "@/lib/cms-media";
 
 export type PortalMediaOption = {
   alt: string;
@@ -29,19 +30,6 @@ type MediaPickerFieldProps = {
 
 function optionImage(option: PortalMediaOption) {
   return option.thumbUrl || option.url;
-}
-
-function normalizeMediaUrl(url: string) {
-  if (!url || url.startsWith("/")) return url;
-  try {
-    const parsed = new URL(url);
-    if (parsed.pathname.startsWith("/api/media/file/")) {
-      return `${parsed.pathname}${parsed.search}`;
-    }
-  } catch {
-    return url;
-  }
-  return url;
 }
 
 function normalizeUploadedMedia(result: Record<string, unknown>): PortalMediaOption {
@@ -211,16 +199,26 @@ export function MediaPickerField({
     setUploading(true);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const files = formData.getAll("file") as File[];
+    const files = formData.getAll("file").filter((entry): entry is File => entry instanceof File);
+    const formAlt = String(formData.get("alt") || "");
+    const formCaption = String(formData.get("caption") || "").trim();
+
+    if (files.length === 0) {
+      setUploading(false);
+      setUploadMessage("Please choose at least one image to upload.");
+      return;
+    }
 
     let successCount = 0;
+    const errors: string[] = [];
     const newMediaItems: PortalMediaOption[] = [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const singleFormData = new FormData();
       singleFormData.append("file", file);
-      singleFormData.append("alt", file.name);
+      singleFormData.append("alt", resolveUploadAlt(formAlt, file, files.length));
+      if (formCaption) singleFormData.append("caption", formCaption);
 
       setUploadMessage(`Uploading ${i + 1} of ${files.length}...`);
 
@@ -233,31 +231,43 @@ export function MediaPickerField({
 
         const result = await response.json().catch(() => null);
 
-        if (response.ok && result.results && result.results[0]) {
+        if (response.ok && result?.results?.[0]) {
           const m = normalizeUploadedMedia(result.results[0]);
           newMediaItems.push(m);
           successCount++;
+        } else {
+          errors.push(result?.message || `Failed to upload ${file.name}.`);
         }
       } catch (err) {
         console.error("Upload error", err);
+        errors.push(`Failed to upload ${file.name}.`);
       }
     }
 
     if (newMediaItems.length > 0) {
       setMediaOptions((prev) => dedupeMediaOptions([...newMediaItems, ...prev]));
-      const newIds = newMediaItems.map(m => m.id);
+      const newIds = newMediaItems.map((m) => m.id);
       const nextSelected = hasMany ? [...selectedIds, ...newIds] : [newIds[0]];
 
       setSelectedIds(nextSelected);
-      onChange?.(nextSelected, nextSelected.map(id => {
-        return [...newMediaItems, ...mediaOptions].find(m => String(m.id) === id);
-      }).filter(Boolean) as PortalMediaOption[]);
+      onChange?.(
+        nextSelected,
+        nextSelected
+          .map((id) => [...newMediaItems, ...mediaOptions].find((m) => String(m.id) === id))
+          .filter(Boolean) as PortalMediaOption[],
+      );
     }
 
     setUploading(false);
     form.reset();
-    setUploadMessage(`✓ Uploaded ${successCount} of ${files.length} successfully!`);
-    setTimeout(() => setUploadMessage(""), 5000);
+    if (successCount === files.length) {
+      setUploadMessage(`Uploaded ${successCount} of ${files.length} successfully.`);
+    } else if (successCount > 0) {
+      setUploadMessage(`Uploaded ${successCount} of ${files.length}. ${errors[0] || ""}`.trim());
+    } else {
+      setUploadMessage(errors[0] || "Upload failed. Please try again.");
+    }
+    setTimeout(() => setUploadMessage(""), 7000);
   }
 
   return (
@@ -339,17 +349,27 @@ export function MediaPickerField({
                     <Search size={17} />
                     <input onChange={(event) => setQuery(event.target.value)} placeholder="Search images..." value={query} />
                   </label>
-                  <form onSubmit={uploadMedia}>
-                    <input accept="image/*" aria-label="Upload image" multiple name="file" required type="file" />
-                    <input aria-label="Alt text" name="alt" placeholder="Alt text (optional for bulk)" />
-                    <input aria-label="Caption" name="caption" placeholder="Caption" />
+                  <form className="portal-media-dialog__upload" onSubmit={uploadMedia}>
+                    <label className="portal-field portal-media-dialog__upload-file">
+                      <input accept="image/*" aria-label="Upload image" multiple name="file" required type="file" />
+                    </label>
+                    <label className="portal-field portal-media-dialog__upload-alt">
+                      <input aria-label="Alt text" name="alt" placeholder="Alt text (optional for bulk)" />
+                    </label>
+                    <label className="portal-field portal-media-dialog__upload-caption">
+                      <input aria-label="Caption" name="caption" placeholder="Caption" />
+                    </label>
                     <button className="portal-button" disabled={uploading} type="submit">
                       <Upload size={16} />
                       {uploading ? "Uploading..." : "Upload"}
                     </button>
                   </form>
                 </div>
-                {uploadMessage ? <p className="portal-media-dialog__message">{uploadMessage}</p> : null}
+                {uploadMessage ? (
+                  <p className={`portal-media-dialog__message${/failed|please choose/i.test(uploadMessage) ? " portal-media-dialog__message--error" : ""}`}>
+                    {uploadMessage}
+                  </p>
+                ) : null}
                 {loadError ? <p className="portal-media-dialog__message portal-media-dialog__message--error">{loadError}</p> : null}
 
                 <div className="portal-media-dialog__grid">

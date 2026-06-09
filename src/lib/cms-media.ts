@@ -1,3 +1,15 @@
+export function defaultUploadAlt(file: File) {
+  const base = file.name.replace(/\.[^.]+$/, "");
+  const humanized = base.replace(/[-_]+/g, " ").trim();
+  return humanized || file.name;
+}
+
+export function resolveUploadAlt(formAlt: string, file: File, fileCount: number) {
+  const trimmed = formAlt.trim();
+  if (fileCount === 1) return trimmed || defaultUploadAlt(file);
+  return defaultUploadAlt(file);
+}
+
 export function normalizeMediaUrl(url: string) {
   if (!url) return url;
 

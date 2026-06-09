@@ -15,6 +15,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: |
+          cat > next-env.d.ts << 'EOF'
+          /// <reference types="next" />
+          /// <reference types="next/image-types/global" />
+          EOF
       - run: npm run secret:scan
       - run: npm test
       - run: npm run lint

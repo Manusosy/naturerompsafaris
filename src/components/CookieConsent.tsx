@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import siteIcon from "@/app/icon.png";
-
 const consentKey = "nature-romp-cookie-consent";
 
 export function CookieConsent() {
@@ -34,7 +32,7 @@ export function CookieConsent() {
         className="cookie-consent__icon"
         height={44}
         priority
-        src={siteIcon}
+        src="/favicon.ico"
         width={44}
       />
       <div className="cookie-consent__content">

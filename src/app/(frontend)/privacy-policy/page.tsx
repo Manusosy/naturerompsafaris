@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -37,6 +36,7 @@ export default function PrivacyPolicyPage() {
           </aside>
 
           <div className="legal-content">
+            {/* eslint-disable react/no-unescaped-entities -- legal copy includes quoted terms */}
             <p><strong>Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong></p>
             <p>Nature Romp Safaris Ltd ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or book a safari tour with us.</p>
             <p>Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.</p>
@@ -98,6 +98,7 @@ export default function PrivacyPolicyPage() {
               Email: info@naturerompsafaris.com
             </p>
             <p>You also have the right to make a complaint at any time to the Information Commissioner's Office (ICO) or your local data protection supervisory authority.</p>
+            {/* eslint-enable react/no-unescaped-entities */}
 
           </div>
         </div>

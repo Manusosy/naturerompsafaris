@@ -2,7 +2,7 @@
 
 import { CheckCircle2, ImagePlus, Search, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { fetchMoreMediaOptions, fetchTotalMediaCount } from "@/app/(portal)/admin/(dashboard)/[module]/actions";
 import { resolveUploadAlt } from "@/lib/cms-media";
@@ -60,6 +60,14 @@ function dedupeMediaOptions(items: PortalMediaOption[]) {
   });
 }
 
+function useIsClient() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
 export function MediaPickerField({
   autoOpen = false,
   hasMany = false,
@@ -82,21 +90,20 @@ export function MediaPickerField({
   const [hasMore, setHasMore] = useState(options.length >= 36);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   const [loadError, setLoadError] = useState("");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const emptyFetchAttempted = useRef(false);
+  const incomingOptions = dedupeMediaOptions(options);
+  const optionsSyncKey = incomingOptions.map((item) => item.id).join("|");
+  const [syncedOptionsKey, setSyncedOptionsKey] = useState(optionsSyncKey);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const unique = dedupeMediaOptions(options);
-    setMediaOptions(unique);
-    setHasMore(unique.length >= 36);
-    if (unique.length > 0) {
-      setCurrentPage(Math.max(1, Math.ceil(unique.length / 36)));
+  if (optionsSyncKey !== syncedOptionsKey) {
+    setSyncedOptionsKey(optionsSyncKey);
+    setMediaOptions(incomingOptions);
+    setHasMore(incomingOptions.length >= 36);
+    if (incomingOptions.length > 0) {
+      setCurrentPage(Math.max(1, Math.ceil(incomingOptions.length / 36)));
     }
-  }, [options]);
+  }
 
   useEffect(() => {
     if (open && totalCount === undefined) {

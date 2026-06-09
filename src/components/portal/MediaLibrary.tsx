@@ -3,7 +3,7 @@
 import { Grid2X2, List, Save, Search, Trash2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { formatValue } from "@/lib/portal/format";
@@ -46,12 +46,14 @@ export function MediaLibrary({
   const [loadedDocs, setLoadedDocs] = useState(docs);
   const [currentPage, setCurrentPage] = useState(page);
   const [loadingMore, setLoadingMore] = useState(false);
+  const docsSyncKey = `${page}:${docs.map((doc) => String(doc.id)).join("|")}`;
+  const [syncedDocsKey, setSyncedDocsKey] = useState(docsSyncKey);
 
-  // Sync loadedDocs if initial docs prop changes (e.g. upload or delete changes the initial list)
-  useEffect(() => {
+  if (docsSyncKey !== syncedDocsKey) {
+    setSyncedDocsKey(docsSyncKey);
     setLoadedDocs(docs);
     setCurrentPage(page);
-  }, [docs, page]);
+  }
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -167,7 +169,7 @@ export function MediaLibrary({
       if (selectedDoc?.id === id) setSelectedDoc(null);
       setTimeout(() => setMessage(""), 3000);
       router.refresh();
-    } catch (err) {
+    } catch {
       setSavingState(false);
       setMessage("An unexpected error occurred.");
     }
@@ -210,7 +212,7 @@ export function MediaLibrary({
 
       setTimeout(() => setMessage(""), 3000);
       router.refresh();
-    } catch (err) {
+    } catch {
       setSavingState(false);
       setMessage("An unexpected error occurred.");
     }

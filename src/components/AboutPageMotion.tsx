@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 export function AboutPageMotion() {
-  const loopRef = useRef<any>(null);
+  const loopRef = useRef<{ timeScale: (value: number) => void } | null>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

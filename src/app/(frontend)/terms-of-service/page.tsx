@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -45,6 +44,7 @@ export default function TermsOfServicePage() {
           </aside>
 
           <div className="legal-content">
+            {/* eslint-disable react/no-unescaped-entities -- legal copy includes quoted terms */}
             <p><strong>Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong></p>
             <p>Welcome to Nature Romp Safaris Ltd. Please read these terms carefully before booking a safari tour with us.</p>
             <hr style={{ margin: "32px 0", borderColor: "#eae5e3" }} />
@@ -178,6 +178,7 @@ export default function TermsOfServicePage() {
             <p>
               If you cancel after the safari has started, no refunds will be given. We’ll try to resolve it if the reason is valid.
             </p>
+            {/* eslint-enable react/no-unescaped-entities */}
 
           </div>
         </div>

@@ -30,11 +30,12 @@ export function PlaceSearchInput({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resolving, setResolving] = useState(false);
+  const queryReady = open && value.trim().length >= 2;
+  const visibleSuggestions = queryReady ? suggestions : [];
+  const showSpinner = queryReady && (loading || resolving);
 
   useEffect(() => {
-    if (!open || value.trim().length < 2) {
-      setSuggestions([]);
-      setLoading(false);
+    if (!queryReady) {
       return;
     }
 
@@ -53,7 +54,7 @@ export function PlaceSearchInput({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [country, open, value]);
+  }, [country, queryReady, value]);
 
   async function applySuggestion(result: GeocodeResult) {
     setResolving(true);
@@ -95,7 +96,7 @@ export function PlaceSearchInput({
           type="text"
           value={value}
         />
-        {loading || resolving ? <Loader2 className="place-search-input__spinner" size={14} /> : null}
+        {showSpinner ? <Loader2 className="place-search-input__spinner" size={14} /> : null}
         {datalistOptions.length ? (
           <datalist id={`${id}-list`}>
             {datalistOptions.map((option) => (
@@ -103,9 +104,9 @@ export function PlaceSearchInput({
             ))}
           </datalist>
         ) : null}
-        {open && suggestions.length > 0 ? (
+        {open && visibleSuggestions.length > 0 ? (
           <ul className="location-search-picker__suggestions">
-            {suggestions.map((item) => (
+            {visibleSuggestions.map((item) => (
               <li key={item.placeId ?? `${item.label}-${item.lat}-${item.lng}`}>
                 <button disabled={resolving} onMouseDown={(event) => event.preventDefault()} onClick={() => applySuggestion(item)} type="button">
                   {item.label}

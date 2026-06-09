@@ -16,15 +16,17 @@ export function DetailGallerySlider({
   className?: string;
   images: DetailGalleryImage[];
 }) {
+  const safeImages = images.filter((image) => image.src);
+  const hasMany = safeImages.length > 1;
+  const galleryKey = safeImages.map((image) => image.src).join("|");
+  const [gallerySignature, setGallerySignature] = useState(galleryKey);
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbsRef = useRef<HTMLDivElement>(null);
 
-  const safeImages = images.filter((image) => image.src);
-  const hasMany = safeImages.length > 1;
-
-  useEffect(() => {
+  if (galleryKey !== gallerySignature) {
+    setGallerySignature(galleryKey);
     setActiveIndex(0);
-  }, [images]);
+  }
 
   useEffect(() => {
     const thumb = thumbsRef.current?.querySelector<HTMLButtonElement>(

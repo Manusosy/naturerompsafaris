@@ -28,12 +28,7 @@ function HeroSlideBackground({
 }) {
   const images = slide.images.length ? slide.images : slide.image ? [slide.image] : [];
   const [imageIndex, setImageIndex] = useState(0);
-
-  useEffect(() => {
-    if (!isActive) {
-      setImageIndex(0);
-    }
-  }, [isActive]);
+  const visibleIndex = isActive ? imageIndex : 0;
 
   useEffect(() => {
     if (!isActive || slide.youtubeVideoId || images.length <= 1) return;
@@ -62,7 +57,7 @@ function HeroSlideBackground({
     <div aria-hidden className="hero__image-stack">
       {images.map((src, index) => (
         <div
-          className={index === imageIndex ? "hero__bg hero__bg--active" : "hero__bg"}
+          className={index === visibleIndex ? "hero__bg hero__bg--active" : "hero__bg"}
           key={`${src}-${index}`}
           style={{ backgroundImage: `url(${src})` }}
         />

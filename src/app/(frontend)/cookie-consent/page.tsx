@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
@@ -37,6 +36,7 @@ export default function CookiePolicyPage() {
           </aside>
 
           <div className="legal-content">
+            {/* eslint-disable react/no-unescaped-entities -- legal copy includes quoted terms */}
             <p><strong>Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</strong></p>
             <p>Nature Romp Safaris Ltd ("we," "us," or "our") uses cookies and similar tracking technologies on our website. This Cookie Policy explains what these technologies are, why we use them, and your rights to control our use of them.</p>
             <hr style={{ margin: "32px 0", borderColor: "#eae5e3" }} />
@@ -74,6 +74,7 @@ export default function CookiePolicyPage() {
               Nairobi, Kenya<br />
               Email: info@naturerompsafaris.com
             </p>
+            {/* eslint-enable react/no-unescaped-entities */}
 
           </div>
         </div>

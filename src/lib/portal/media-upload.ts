@@ -12,6 +12,8 @@ import {
 
 import { toWebpStorageFilename } from "@/lib/portal/media-upload-utils";
 
+export { toWebpStorageFilename };
+
 const WEBP_MIME = "image/webp";
 
 export type PortalBlobUploadPayload = {
@@ -73,6 +75,13 @@ async function resolveUniqueFilename(payload: Payload, desiredFilename: string) 
   }
   return candidate;
 }
+
+type StoredPortalMediaFile = {
+  filename: string;
+  filesize: number;
+  mimeType: string;
+  url: string;
+};
 
 async function storePortalMediaBuffer(filename: string, buffer: Buffer): Promise<StoredPortalMediaFile> {
   const safeFilename = sanitizeFilename(filename);

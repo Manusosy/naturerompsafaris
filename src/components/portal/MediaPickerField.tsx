@@ -85,10 +85,12 @@ export function MediaPickerField({
   const seedOptionsKey = seedOptions.map((item) => item.id).join("|");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedIds(initialValues.filter(Boolean).map(String));
   }, [initialValues.join("|")]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMediaOptions((prev) => mergeMediaSources(catalog, seedOptions, prev));
   }, [catalog, seedOptionsKey, seedOptions]);
 
@@ -96,6 +98,7 @@ export function MediaPickerField({
     if (!open) return;
 
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRefreshing(true);
     setLoadError("");
 

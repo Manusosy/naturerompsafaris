@@ -13,7 +13,9 @@ export const Media: CollectionConfig = {
   },
   upload: {
     filesRequiredOnCreate: false,
-    staticDir: path.resolve(process.cwd(), "public/media"),
+    staticDir: process.env.VERCEL || process.env.NODE_ENV === "production"
+      ? "/tmp"
+      : path.resolve(process.cwd(), "public/media"),
     adminThumbnail: "thumb",
     // Allow JPEG/JPG, PNG, and WebP. JPEG/PNG are converted to WebP via
     // `formatOptions` below; WebP files are already in the target format and the

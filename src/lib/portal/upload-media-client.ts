@@ -1,13 +1,8 @@
 "use client";
 
-import { inferImageMimeType, sanitizeUploadFilename } from "@/lib/portal/media-upload";
+import { inferImageMimeType, sanitizeUploadFilename } from "@/lib/portal/media-upload-utils";
+import type { PortalMediaUploadConfig } from "@/lib/portal/media-upload-utils";
 import { toPortalMediaOption } from "@/lib/portal/media-option";
-
-export type PortalMediaUploadConfig = {
-  clientUploadUrl: string;
-  maxBytes: number;
-  useClientBlobUpload: boolean;
-};
 
 export type PortalUploadedMedia = Record<string, unknown>;
 

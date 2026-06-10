@@ -128,9 +128,9 @@ export default async function AccommodationDetailPage({
             {item.location}
           </div>
 
-          {item.availabilityNote && (
-            <p className="accdet__avail-note">{item.availabilityNote}</p>
-          )}
+          {item.availabilityNote ? (
+            <p className="accdet__avail-text">{item.availabilityNote}</p>
+          ) : null}
 
           {item.description && (
             <div className="accdet__description">
@@ -183,9 +183,9 @@ export default async function AccommodationDetailPage({
               {avail.label}
             </div>
 
-            {item.availabilityNote && (
-              <p className="accdet__book-note">{item.availabilityNote}</p>
-            )}
+            {item.availabilityNote ? (
+              <p className="accdet__book-text">{item.availabilityNote}</p>
+            ) : null}
 
             <a
               className="accdet__wa-btn"

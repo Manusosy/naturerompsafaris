@@ -56,30 +56,68 @@ function normalizePlaceQuery(query: string) {
 function scoreNominatimRow(row: NominatimRow, query: string) {
   const name = String(row.display_name ?? "").toLowerCase();
   const normalizedQuery = normalizePlaceQuery(query);
-  let score = Number(row.importance ?? 0);
+  // Scale importance up so it has meaningful weight (usually 0.0 - 1.0)
+  let score = Number(row.importance ?? 0) * 100;
 
+  // Boost national parks and reserves heavily
   if (row.class === "boundary" && (row.type === "national_park" || row.type === "protected_area")) {
-    score += 80;
+    score += 150;
   }
-  if (row.class === "natural" || row.type === "peak") score += 25;
+  
+  // Boost physical features, mountains, and water bodies heavily
+  if (
+    row.class === "natural" || 
+    row.class === "waterway" || 
+    row.type === "peak" || 
+    row.type === "volcano" || 
+    row.type === "lake" || 
+    row.type === "water" ||
+    row.type === "mountain_range"
+  ) {
+    score += 150;
+  }
+
+  // Text-based boosting
   if (
     name.includes("national park") ||
     name.includes("national reserve") ||
     name.includes("game reserve") ||
-    name.includes("conservation area")
+    name.includes("conservation area") ||
+    name.includes("mount ") ||
+    name.includes("mountain") ||
+    name.includes("lake ") ||
+    name.includes("river ") ||
+    name.includes("peak")
   ) {
     score += 60;
   }
-  if (normalizePlaceQuery(name).includes(normalizedQuery)) score += 30;
 
+  // Exact or strong query match
+  if (normalizePlaceQuery(name).includes(normalizedQuery)) {
+    score += 30;
+  }
+  if (normalizePlaceQuery(name) === normalizedQuery) {
+    score += 50;
+  }
+
+  // Penalize businesses, establishments, and irrelevant features
   if (
     name.includes("university") ||
     name.includes("sewerage") ||
     name.includes("school") ||
     name.includes("hockey") ||
-    name.includes("botanical garden")
+    name.includes("botanical garden") ||
+    name.includes("lodge") ||
+    name.includes("camp") ||
+    name.includes("resort") ||
+    name.includes("hotel") ||
+    name.includes("safari club") ||
+    name.includes("diocese") ||
+    name.includes("church") ||
+    name.includes("a.c.k") ||
+    name.includes("ack")
   ) {
-    score -= 120;
+    score -= 300;
   }
 
   return score;

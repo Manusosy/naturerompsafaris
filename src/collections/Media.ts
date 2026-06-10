@@ -12,6 +12,7 @@ export const Media: CollectionConfig = {
     delete: editorOrAdmin,
   },
   upload: {
+    filesRequiredOnCreate: false,
     staticDir: path.resolve(process.cwd(), "public/media"),
     adminThumbnail: "thumb",
     // Allow JPEG/JPG, PNG, and WebP. JPEG/PNG are converted to WebP via

@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nature Romp Safaris
 
-## Getting Started
+Nature Romp Safaris is a full-stack web application built for a tour and safari company. It provides a dynamic frontend for users to explore destinations, packages, and trips, along with a robust backend powered by Payload CMS for content management and bookings.
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **CMS:** [Payload CMS 3](https://payloadcms.com/)
+- **Database:** PostgreSQL (via `@payloadcms/db-postgres`)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations:** [GSAP](https://gsap.com/)
+- **Storage:** Vercel Blob Storage
+- **Emails:** Resend / Nodemailer
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Dynamic Content Management:** Fully integrated Payload CMS to manage Accommodations, Destinations, Itineraries, Packages, Trips, Testimonials, and FAQs.
+- **Booking & Enquiries Engine:** Built-in forms and data collection for user enquiries and trip bookings.
+- **User Portal:** Dedicated portal features with sign-up verifications.
+- **Media & Gallery:** Centralized media management with Vercel Blob integration.
+- **Blog & Articles:** Complete post management with categories and tags.
+- **Custom Synchronization Scripts:** Scripts for syncing various schema elements and migrating data.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js >= 20
+- A running PostgreSQL database instance
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd nature-romp-safaris
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Environment Setup:**
+   Copy the example environment file and configure it with your credentials:
+   ```bash
+   cp .env.example .env.local
+   ```
+   *Make sure to provide your `DATABASE_URL`, Payload Secret, and Vercel Blob tokens in the `.env.local` file.*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the frontend. 
+The Payload CMS admin panel is available at [http://localhost:3000/cms-admin](http://localhost:3000/cms-admin).
+
+## 📜 Scripts
+
+- `npm run dev`: Starts the Next.js and Payload CMS development server.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts the production server.
+- `npm run db:sync-*`: Various scripts to sync database schemas (e.g., accommodations, trips, gallery).
+- `npm run test`: Runs the Vitest test suite.
+- `npm run lint`: Lints the codebase using ESLint.
+
+## ☁️ Deployment
+
+This project is optimized for deployment on [Vercel](https://vercel.com/). Ensure that your environment variables (Database, Vercel Blob, Resend) are correctly configured in your deployment platform.

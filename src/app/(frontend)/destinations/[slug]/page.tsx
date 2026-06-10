@@ -137,7 +137,7 @@ export default async function DestinationPage({ params }: Props) {
           ) : null}
 
           {destination.summary ? (
-            <p className="accdet__avail-note">{destination.summary}</p>
+            <p className="accdet__avail-text">{destination.summary}</p>
           ) : null}
 
           {sanitizedContent ? (
@@ -164,7 +164,7 @@ export default async function DestinationPage({ params }: Props) {
                   />
                 </div>
               ) : (
-                <p className="accdet__avail-note">
+                <p className="accdet__avail-text">
                   Coordinates: {destination.latitude}, {destination.longitude}
                 </p>
               )}
@@ -190,9 +190,9 @@ export default async function DestinationPage({ params }: Props) {
           <div className="accdet__book-card">
             <div className="accdet__book-price">Plan a safari here</div>
             <div className={`accdet__book-avail ${countryBadge.cls}`}>{countryBadge.label}</div>
-            {destination.summary ? (
-              <p className="accdet__book-note">{destination.summary}</p>
-            ) : null}
+            <p className="accdet__book-text">
+              Get expert advice and a custom itinerary tailored for your trip to {destination.name}.
+            </p>
 
             <a className="accdet__wa-btn" href={waLink} rel="noopener noreferrer" target="_blank">
               <svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20">

@@ -1,22 +1,18 @@
+import fs from "fs/promises";
+import path from "path";
 import type { Payload } from "payload";
+import sanitize from "sanitize-filename";
+import { sanitizeFilename } from "payload/shared";
 
-const EXTENSION_MIME: Record<string, string> = {
-  avif: "image/avif",
-  gif: "image/gif",
-  heic: "image/heic",
-  heif: "image/heif",
-  jpeg: "image/jpeg",
-  jpg: "image/jpeg",
-  png: "image/png",
-  svg: "image/svg+xml",
-  webp: "image/webp",
-};
+import {
+  buildPortalMediaAssets,
+  PORTAL_MEDIA_SIZES,
+  type PortalMediaSizeName,
+} from "@/lib/portal/media-image-probe";
 
-export type PortalMediaUploadConfig = {
-  clientUploadUrl: string;
-  maxBytes: number;
-  useClientBlobUpload: boolean;
-};
+import { toWebpStorageFilename } from "@/lib/portal/media-upload-utils";
+
+const WEBP_MIME = "image/webp";
 
 export type PortalBlobUploadPayload = {
   alt: string;
@@ -27,91 +23,6 @@ export type PortalBlobUploadPayload = {
   pathname?: string;
   size: number;
 };
-
-export function sanitizeUploadFilename(name: string) {
-  const trimmed = name.trim();
-  const dotIndex = trimmed.lastIndexOf(".");
-  const ext = dotIndex > 0 ? trimmed.slice(dotIndex).toLowerCase() : "";
-  const base = dotIndex > 0 ? trimmed.slice(0, dotIndex) : trimmed;
-  const safeBase = base
-    .replace(/\s+/g, "-")
-    .replace(/[^a-zA-Z0-9._-]+/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return `${safeBase || "upload"}${ext}`;
-}
-
-export function inferImageMimeType(filename: string, fallbackType = "") {
-  const normalizedFallback = fallbackType.trim().toLowerCase();
-  if (normalizedFallback.startsWith("image/")) {
-    return normalizedFallback;
-  }
-
-  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
-  return EXTENSION_MIME[ext] ?? "image/jpeg";
-}
-
-export function getPortalMediaUploadConfig(requestUrl: string): PortalMediaUploadConfig {
-  const useClientBlobUpload = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-  const origin = new URL(requestUrl).origin;
-
-  return {
-    clientUploadUrl: `${origin}/api/vercel-blob-client-upload-route`,
-    maxBytes: 10 * 1024 * 1024,
-    useClientBlobUpload,
-  };
-}
-
-function nestedErrorMessage(error: unknown): string | undefined {
-  if (!error || typeof error !== "object") return undefined;
-
-  const record = error as Record<string, unknown>;
-  if (record.cause instanceof Error && record.cause.message) {
-    return record.cause.message;
-  }
-  if (typeof record.cause === "string" && record.cause.trim()) {
-    return record.cause;
-  }
-
-  if (Array.isArray(record.errors)) {
-    const messages = record.errors
-      .map((entry) => {
-        if (!entry || typeof entry !== "object") return "";
-        const item = entry as Record<string, unknown>;
-        return typeof item.message === "string" ? item.message : "";
-      })
-      .filter(Boolean);
-    if (messages.length > 0) return messages.join(", ");
-  }
-
-  if (record.data && typeof record.data === "object") {
-    const data = record.data as Record<string, unknown>;
-    if (Array.isArray(data.errors)) {
-      const messages = data.errors
-        .map((entry) => {
-          if (!entry || typeof entry !== "object") return "";
-          const item = entry as Record<string, unknown>;
-          return typeof item.message === "string" ? item.message : "";
-        })
-        .filter(Boolean);
-      if (messages.length > 0) return messages.join(", ");
-    }
-  }
-
-  return undefined;
-}
-
-export function formatPortalUploadError(error: unknown, filename: string) {
-  const fallback = error instanceof Error ? error.message : "Unknown error";
-  const nested = nestedErrorMessage(error);
-  const message = nested && nested !== fallback ? `${fallback}: ${nested}` : fallback;
-
-  if (/problem while uploading the file/i.test(message)) {
-    return `${filename}: Image processing failed. Try a JPG or PNG under 10MB, or re-export the photo without unusual metadata.`;
-  }
-
-  return `${filename}: ${message}`;
-}
 
 export async function fetchBlobUploadBuffer(blobUrl: string) {
   const response = await fetch(blobUrl, { cache: "no-store" });
@@ -130,47 +41,147 @@ export async function fetchBlobUploadBuffer(blobUrl: string) {
   };
 }
 
+function incrementFilename(name: string) {
+  const extension = name.split(".").pop() ?? "webp";
+  const baseFilename = sanitize(name.substring(0, name.lastIndexOf(".")) || name);
+  const match = baseFilename.match(/(.*)-(\d+)$/);
+  if (!match) {
+    return `${baseFilename}-1.${extension}`;
+  }
+  return `${match[1]}-${Number(match[2]) + 1}.${extension}`;
+}
+
+async function filenameExists(payload: Payload, filename: string) {
+  const existing = await payload.find({
+    collection: "media",
+    limit: 1,
+    overrideAccess: true,
+    where: {
+      filename: {
+        equals: filename,
+      },
+    },
+  });
+
+  return existing.totalDocs > 0;
+}
+
+async function resolveUniqueFilename(payload: Payload, desiredFilename: string) {
+  let candidate = sanitizeFilename(desiredFilename);
+  while (await filenameExists(payload, candidate)) {
+    candidate = sanitizeFilename(incrementFilename(candidate));
+  }
+  return candidate;
+}
+
+async function storePortalMediaBuffer(filename: string, buffer: Buffer): Promise<StoredPortalMediaFile> {
+  const safeFilename = sanitizeFilename(filename);
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+
+  if (token) {
+    const { put } = await import("@vercel/blob");
+    const result = await put(safeFilename, buffer, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: WEBP_MIME,
+      token,
+    });
+
+    return {
+      filename: safeFilename,
+      filesize: buffer.length,
+      mimeType: WEBP_MIME,
+      url: result.url,
+    };
+  }
+
+  const staticDir = path.resolve(process.cwd(), "public/media");
+  await fs.mkdir(staticDir, { recursive: true });
+  await fs.writeFile(path.join(staticDir, safeFilename), buffer);
+
+  return {
+    filename: safeFilename,
+    filesize: buffer.length,
+    mimeType: WEBP_MIME,
+    url: `/api/media/file/${safeFilename}`,
+  };
+}
+
+type PortalSizeRecord = {
+  filename: string | null;
+  filesize: number | null;
+  height: number | null;
+  mimeType: string | null;
+  url: string | null;
+  width: number | null;
+};
+
+function emptyPortalSizeRecord(): PortalSizeRecord {
+  return {
+    filename: null,
+    filesize: null,
+    height: null,
+    mimeType: null,
+    url: null,
+    width: null,
+  };
+}
+
 export async function createPortalMediaRecord({
-  alreadyUploaded = false,
   alt,
   buffer,
   caption,
   filename,
-  mimeType,
   payload,
-  size,
 }: {
-  alreadyUploaded?: boolean;
   alt: string;
   buffer: Buffer;
   caption?: string;
   filename: string;
-  mimeType: string;
   payload: Payload;
-  size: number;
 }) {
-  const resolvedMimeType = inferImageMimeType(filename, mimeType);
-  const storageName = sanitizeUploadFilename(filename);
+  const desiredFilename = toWebpStorageFilename(filename);
+  const mainFilename = await resolveUniqueFilename(payload, desiredFilename);
+  const outputBaseName = mainFilename.replace(/\.webp$/i, "");
+  const assets = await buildPortalMediaAssets(buffer, outputBaseName);
+  const main = await storePortalMediaBuffer(mainFilename, assets.mainBuffer);
+
+  const sizes: Record<PortalMediaSizeName, PortalSizeRecord> = {
+    thumb: emptyPortalSizeRecord(),
+    card: emptyPortalSizeRecord(),
+    hero: emptyPortalSizeRecord(),
+  };
+
+  for (const size of PORTAL_MEDIA_SIZES) {
+    const variant = assets.sizes[size.name];
+    if (!variant) continue;
+
+    const stored = await storePortalMediaBuffer(variant.filename, variant.buffer);
+    sizes[size.name] = {
+      filename: stored.filename,
+      filesize: stored.filesize,
+      height: variant.height,
+      mimeType: stored.mimeType,
+      url: stored.url,
+      width: variant.width,
+    };
+  }
 
   return payload.create({
     collection: "media",
     data: {
       alt: alt.trim() || filename,
       ...(caption ? { caption } : {}),
+      filename: main.filename,
+      filesize: main.filesize,
+      focalX: 50,
+      focalY: 50,
+      height: assets.height,
+      mimeType: main.mimeType,
+      sizes,
+      url: main.url,
+      width: assets.width,
     },
-    file: {
-      data: buffer,
-      mimetype: resolvedMimeType,
-      name: storageName,
-      size: buffer.length || size,
-      // When the browser already uploaded the original to Vercel Blob, signal
-      // the storage adapter to skip re-uploading it. Without this, the adapter
-      // PUTs the same blob key again and Vercel rejects the duplicate, which
-      // surfaces to users as a generic image-processing failure. Resized
-      // images (thumb/card/hero) are still generated from the buffer and
-      // uploaded normally because they ignore this flag.
-      ...(alreadyUploaded ? { clientUploadContext: { provider: "vercel-blob" } } : {}),
-    } as Parameters<Payload["create"]>[0]["file"],
     overrideAccess: true,
   });
 }

@@ -6,6 +6,7 @@ import { AlertCircle, Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-r
 
 import { LocationSearchPicker } from "@/components/portal/LocationSearchPicker";
 import { MediaPickerField, type PortalMediaOption } from "@/components/portal/MediaPickerField";
+import { RichTextField } from "@/components/portal/RichTextField";
 import { buildMapEmbedUrl } from "@/lib/portal/geocode";
 import { slugify } from "@/lib/portal/format";
 
@@ -514,13 +515,12 @@ export function DestinationWizard({
 
             <div className="acc-field">
               <label className="acc-label" htmlFor="dest-content">Full Description</label>
-              <textarea
-                className="acc-textarea"
-                id="dest-content"
-                onChange={(e) => set("content", e.target.value)}
-                placeholder="Detailed description — wildlife, landscapes, experiences, travel tips…"
-                rows={12}
-                value={data.content}
+              <RichTextField
+                defaultValue={data.content}
+                key={document?.id ? String(document.id) : "new-dest"}
+                media={media}
+                name="content"
+                onChange={(val) => set("content", val)}
               />
             </div>
           </div>

@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { getPayloadClient, getPortalUser } from "@/lib/portal/data";
-import { normalizeImageToWebp } from "@/lib/portal/media-image-probe";
 import {
   createPortalMediaRecord,
   fetchBlobUploadBuffer,
+} from "@/lib/portal/media-upload";
+import {
   formatPortalUploadError,
   getPortalMediaUploadConfig,
-  inferImageMimeType,
   sanitizeUploadFilename,
-} from "@/lib/portal/media-upload";
+} from "@/lib/portal/media-upload-utils";
 import { canManagePortalCollection, isTrustedPortalOrigin } from "@/lib/portal/security";
 
 export const maxDuration = 60;
@@ -29,8 +29,6 @@ async function deleteOrphanBlob(blobUrl: string) {
     const { del } = await import("@vercel/blob");
     await del(blobUrl);
   } catch (error) {
-    // Non-fatal: the media record was created successfully, this just leaves an
-    // unreferenced source file in Blob storage.
     console.error("[portal/media] Failed to remove orphaned source blob:", error);
   }
 }
@@ -80,10 +78,7 @@ export async function POST(request: Request) {
     const originalFilename = String(body.filename || "").trim() || "upload";
     const alt = String(body.alt || originalFilename).trim();
     const caption = String(body.caption || "").trim();
-    // Prefer the exact key the browser uploaded to so the media record's
-    // filename matches the existing blob and resolves to a valid URL.
     const filename = sanitizeUploadFilename(String(body.pathname || "").trim() || originalFilename);
-    const mimeType = inferImageMimeType(filename, String(body.mimeType || ""));
     const declaredSize = Number(body.size || 0);
 
     if (declaredSize > uploadConfig.maxBytes) {
@@ -96,36 +91,21 @@ export async function POST(request: Request) {
     }
 
     try {
-      const { buffer, mimeType: fetchedMimeType } = await fetchBlobUploadBuffer(body.blobUrl);
+      const { buffer } = await fetchBlobUploadBuffer(body.blobUrl);
       if (buffer.length > uploadConfig.maxBytes) {
         errors.push(
           `${originalFilename}: File is too large (max ${Math.round(uploadConfig.maxBytes / (1024 * 1024))}MB).`,
         );
       } else {
-        // WebP is already the target format: the browser uploaded the original to
-        // Blob under a `.webp` key that matches Payload's output filename, so we
-        // tell the storage adapter to skip re-uploading it. This keeps the served
-        // WebP file byte-for-byte unchanged. JPEG/PNG are converted to WebP and
-        // re-uploaded under the new `.webp` key, which leaves the browser's
-        // original (non-webp) blob orphaned — we delete it afterwards.
-        const isWebp = inferImageMimeType(filename, fetchedMimeType || mimeType) === "image/webp";
-        // Normalize to a clean WebP buffer so Payload's pipeline can process it
-        // reliably (and to surface the real error if it truly can't be decoded).
-        const cleanBuffer = await normalizeImageToWebp(buffer);
         const result = await createPortalMediaRecord({
-          alreadyUploaded: isWebp,
           alt,
-          buffer: cleanBuffer,
+          buffer,
           caption,
           filename,
-          mimeType: "image/webp",
           payload,
-          size: cleanBuffer.length,
         });
         results.push(result);
-        if (!isWebp) {
-          await deleteOrphanBlob(body.blobUrl);
-        }
+        await deleteOrphanBlob(body.blobUrl);
       }
     } catch (error: unknown) {
       console.error("[portal/media] Blob-backed upload failed:", error);
@@ -156,15 +136,12 @@ export async function POST(request: Request) {
 
       try {
         const buffer = Buffer.from(await file.arrayBuffer());
-        const cleanBuffer = await normalizeImageToWebp(buffer);
         const result = await createPortalMediaRecord({
           alt,
-          buffer: cleanBuffer,
+          buffer,
           caption,
           filename,
-          mimeType: "image/webp",
           payload,
-          size: cleanBuffer.length,
         });
         results.push(result);
       } catch (error: unknown) {

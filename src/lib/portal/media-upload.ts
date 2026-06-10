@@ -104,6 +104,12 @@ async function storePortalMediaBuffer(filename: string, buffer: Buffer): Promise
     };
   }
 
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Vercel Blob storage is not configured. Vercel's file system is read-only, so local uploads are not supported in production. Please create a Vercel Blob store in your Vercel dashboard and link it to this project.",
+    );
+  }
+
   const staticDir = path.resolve(process.cwd(), "public/media");
   await fs.mkdir(staticDir, { recursive: true });
   await fs.writeFile(path.join(staticDir, safeFilename), buffer);

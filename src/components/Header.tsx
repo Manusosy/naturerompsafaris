@@ -8,7 +8,7 @@ import Image from "next/image";
 
 import Link from "next/link";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 
 
@@ -131,6 +131,8 @@ export function Header({
 
   const [open, setOpen] = useState(false);
 
+  const headerRef = useRef<HTMLElement | null>(null);
+
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   const destinationPreviews = buildDestinationPreviewByCountry(destinations);
@@ -219,6 +221,26 @@ export function Header({
 
     };
 
+  }, [open]);
+
+  // The mobile menu panel is fixed below the header. The header's height
+  // varies (topbar contact rows wrap on narrow screens), so a hardcoded
+  // offset lets the panel crowd or overlap the nav bar. Measure the real
+  // bottom edge of the nav bar and expose it as the CSS offset variable.
+  useEffect(() => {
+    if (!open) return;
+    const header = headerRef.current;
+    if (!header) return;
+
+    const updateOffset = () => {
+      const navwrap = header.querySelector<HTMLElement>(".navwrap");
+      const bottom = (navwrap ?? header).getBoundingClientRect().bottom;
+      header.style.setProperty("--mobile-header-offset", `${Math.max(0, Math.round(bottom))}px`);
+    };
+
+    updateOffset();
+    window.addEventListener("resize", updateOffset);
+    return () => window.removeEventListener("resize", updateOffset);
   }, [open]);
 
 
@@ -412,6 +434,8 @@ export function Header({
       className={open ? "site-header site-header--flash site-header--nav-open" : "site-header site-header--flash"}
 
       data-navigation-ready="flashmc"
+
+      ref={headerRef}
 
     >
 

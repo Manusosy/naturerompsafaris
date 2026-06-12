@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { DetailGallerySlider } from "@/components/DetailGallerySlider";
 import { JsonLd } from "@/components/JsonLd";
 import { getDestinationBySlug } from "@/lib/destination-content";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
@@ -81,6 +82,13 @@ export default async function DestinationPage({ params }: Props) {
       </nav>
 
       <section className="accdet__gallery">
+        <DetailGallerySlider
+          className="accdet__gallery-slider"
+          images={allImages.map((url, index) => ({
+            alt: `${destination.name} — photo ${index + 1}`,
+            src: url,
+          }))}
+        />
         {allImages.length > 0 ? (
           <div
             className={`accdet__gallery-grid accdet__gallery-grid--${Math.min(allImages.length, 5)}`}

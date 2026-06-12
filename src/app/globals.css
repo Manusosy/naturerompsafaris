@@ -8474,40 +8474,7 @@ textarea {
   }
 }
 
-@media (max-width: 900px) {
-  .pkg-facts--linear {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pkg-fact-line:nth-child(2n) {
-    border-right: 0;
-  }
-
-  .pkg-fact-line:nth-last-child(-n+2):nth-child(odd):last-child {
-    grid-column: 1 / -1;
-    border-right: 0;
-  }
-}
-
 @media (max-width: 760px) {
-  .pkg-facts--linear {
-    grid-template-columns: 1fr;
-  }
-
-  .pkg-fact-line {
-    border-bottom: 1px solid #e5e9e1;
-    border-right: 0;
-    width: 100%;
-  }
-
-  .pkg-fact-line:last-child {
-    border-bottom: 0;
-  }
-
-  .pkg-fact-line:nth-child(2n) {
-    border-right: 0;
-  }
-
   .pkg-linked-tours__grid.acc-grid--trips {
     grid-template-columns: 1fr;
     justify-items: stretch;
@@ -8555,7 +8522,6 @@ textarea {
     border-left: 3px dashed rgba(255, 255, 255, 0.52);
   }
 
-  .pkg-facts,
   .pkg-inclusions ul,
   .packages-page .card-grid,
   .homepage-packages .card-grid {

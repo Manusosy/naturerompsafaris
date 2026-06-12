@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { ListingFilters } from "@/components/ListingFilters";
 import { getAllDestinations, getDestinationRegions } from "@/lib/destination-content";
 import { buildMetadata } from "@/lib/seo";
 
@@ -62,7 +63,8 @@ export default async function DestinationsPage({
       </section>
 
       <div className="acc-page__layout">
-        <aside className="acc-sidebar">
+        <aside className="acc-sidebar" aria-label="Destination filters">
+          <ListingFilters activeCount={(country !== "__all" ? 1 : 0) + (region ? 1 : 0)}>
           <form action="/destinations" className="acc-filter-form" method="get">
             <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Country</h3>
@@ -105,6 +107,7 @@ export default async function DestinationsPage({
               </Link>
             )}
           </form>
+          </ListingFilters>
         </aside>
 
         <section className="acc-results">

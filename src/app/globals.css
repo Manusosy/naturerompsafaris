@@ -9951,21 +9951,89 @@ textarea {
   align-items: start;
 }
 
-@media (max-width: 860px) {
-  .acc-page__layout { grid-template-columns: 1fr; }
-
-  .acc-sidebar {
-    position: static;
-    top: auto;
-  }
-}
-
 .acc-sidebar {
   background: white;
   border: 1px solid #e5e7eb;
   padding: 20px;
-  position: sticky;
-  top: 80px;
+}
+
+/* Sticky only on desktop widths; on mobile the sidebar must scroll away
+   with the page instead of pinning over the results. */
+@media (min-width: 861px) {
+  .acc-sidebar {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+}
+
+.acc-filters__toggle {
+  display: none;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 0;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-brown);
+  cursor: pointer;
+}
+
+.acc-filters__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 7px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--brand-brown);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.acc-filters__chevron {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.acc-filters__chevron.is-open {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 860px) {
+  .acc-page__layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .acc-sidebar {
+    position: static;
+    top: auto;
+    padding: 0;
+  }
+
+  .acc-filters__toggle {
+    display: flex;
+  }
+
+  .acc-filters__body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .acc-filters__body.is-open {
+    display: block;
+  }
 }
 
 .acc-filter-form { display: flex; flex-direction: column; gap: 0; }
@@ -10126,6 +10194,19 @@ textarea {
 .acc-grid--trips .acc-card {
   max-width: 300px;
   width: 100%;
+}
+
+@media (max-width: 680px) {
+  .acc-grid,
+  .acc-grid--trips,
+  .acc-grid--packages {
+    grid-template-columns: 1fr;
+  }
+
+  .acc-grid--trips .acc-card,
+  .acc-grid--packages .acc-card {
+    max-width: none;
+  }
 }
 
 .acc-grid--trips .acc-card__price {
@@ -10731,7 +10812,11 @@ textarea {
 
 .accdet__amenities-list li svg { flex-shrink: 0; color: #163522; }
 
-.accdet__sidebar { position: sticky; top: 90px; }
+/* Sticky only on desktop; the 900px media query above expects this to be
+   static on mobile so it cannot pin over the page content. */
+@media (min-width: 901px) {
+  .accdet__sidebar { position: sticky; top: 90px; }
+}
 
 .accdet__book-card {
   background: white;

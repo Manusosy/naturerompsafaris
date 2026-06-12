@@ -4,6 +4,7 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 
 import { PackageCard, type Package } from "@/components/Cards";
+import { ListingFilters } from "@/components/ListingFilters";
 import { enrichPackageForCatalog, fetchLinkedTripsByPackageIds } from "@/lib/package-trips";
 import {
   PACKAGE_CATEGORY_FILTER_OPTIONS,
@@ -115,6 +116,13 @@ export default async function PackagesPage({
 
       <div className="acc-page__layout">
         <aside className="acc-sidebar" aria-label="Safari package filters">
+          <ListingFilters
+            activeCount={
+              (category !== "__all" ? 1 : 0) +
+              (activeGroup !== "__all" ? 1 : 0) +
+              (tier !== "__all" ? 1 : 0)
+            }
+          >
           <form action="/safari-packages" className="acc-filter-form" method="get">
             <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Market / Destination</h3>
@@ -162,6 +170,7 @@ export default async function PackagesPage({
               </Link>
             ) : null}
           </form>
+          </ListingFilters>
         </aside>
 
         <section className="acc-results" aria-label="Safari package results">

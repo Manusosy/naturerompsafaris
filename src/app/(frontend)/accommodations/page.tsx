@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
+import { ListingFilters } from "@/components/ListingFilters";
 import { getAllAccommodations, getAccommodationLocations } from "@/lib/accommodation-content";
 import { buildMetadata } from "@/lib/seo";
 
@@ -108,7 +109,16 @@ export default async function AccommodationsPage({
 
       <div className="acc-page__layout">
         {/* Sidebar */}
-        <aside className="acc-sidebar">
+        <aside className="acc-sidebar" aria-label="Accommodation filters">
+          <ListingFilters
+            activeCount={
+              (country !== "__all" ? 1 : 0) +
+              (type !== "__all" ? 1 : 0) +
+              (location ? 1 : 0) +
+              (params.min ? 1 : 0) +
+              (params.max ? 1 : 0)
+            }
+          >
           <form action="/accommodations" className="acc-filter-form" method="get">
             <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Country</h3>
@@ -193,6 +203,7 @@ export default async function AccommodationsPage({
               </Link>
             )}
           </form>
+          </ListingFilters>
         </aside>
 
         {/* Results */}

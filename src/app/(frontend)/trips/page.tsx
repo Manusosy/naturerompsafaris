@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getPayload } from "payload";
 
 import { TripCard, type Trip } from "@/components/Cards";
+import { ListingFilters } from "@/components/ListingFilters";
 import { buildMetadata } from "@/lib/seo";
 import {
   mergeExperienceTypes,
@@ -149,6 +150,15 @@ export default async function TripsPage({
 
       <div className="acc-page__layout">
         <aside className="acc-sidebar" aria-label="Safari tour filters">
+          <ListingFilters
+            activeCount={
+              (country !== "__all" ? 1 : 0) +
+              (experience !== "__all" ? 1 : 0) +
+              (tier !== "__all" ? 1 : 0) +
+              (params.minDays ? 1 : 0) +
+              (params.maxDays ? 1 : 0)
+            }
+          >
           <form action="/trips" className="acc-filter-form" method="get">
             <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Country</h3>
@@ -233,6 +243,7 @@ export default async function TripsPage({
               </Link>
             ) : null}
           </form>
+          </ListingFilters>
         </aside>
 
         <section className="acc-results" aria-label="Safari tour results">

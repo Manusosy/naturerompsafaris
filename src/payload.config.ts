@@ -112,7 +112,7 @@ export default buildConfig({
   }),
   plugins: [
     vercelBlobStorage({
-      clientUploads: false,
+      clientUploads: true,
       collections: {
         media: true,
       },

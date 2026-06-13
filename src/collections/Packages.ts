@@ -194,17 +194,8 @@ export const Packages: CollectionConfig = {
     },
     {
       name: "category",
-      type: "select",
-      options: [
-        { label: "— Select category —", value: "" },
-        "Kenya Safaris",
-        "Tanzania Safaris",
-        "Zanzibar Holidays",
-        "Kenya Tanzania Combined Safaris",
-        "Kenya Adventure Safaris",
-        "Tanzania Adventure Safaris",
-      ],
-      admin: { position: "sidebar" },
+      type: "text",
+      admin: { position: "sidebar", description: "The destination market." },
     },
     {
       name: "packageTier",

@@ -35,14 +35,7 @@ const STEPS = [
   { id: 5, label: "Publish", description: "Review & save" },
 ] as const;
 
-const CATEGORY_OPTIONS = [
-  { label: "Kenya Safaris", value: "Kenya Safaris" },
-  { label: "Tanzania Safaris", value: "Tanzania Safaris" },
-  { label: "Zanzibar Holidays", value: "Zanzibar Holidays" },
-  { label: "Kenya & Tanzania Combined", value: "Kenya Tanzania Combined Safaris" },
-  { label: "Kenya Adventure", value: "Kenya Adventure Safaris" },
-  { label: "Tanzania Adventure", value: "Tanzania Adventure Safaris" },
-];
+
 
 const TIER_OPTIONS = [
   { label: "Budget", value: "budget" },
@@ -96,7 +89,7 @@ function buildFromDoc(doc: Record<string, unknown>): WizardData {
   return {
     title: String(doc.title ?? ""),
     slug: String(doc.slug ?? ""),
-    category: String(doc.category ?? "Kenya Safaris"),
+    category: String(doc.category ?? ""),
     packageTier: String(doc.packageTier ?? "mid-range"),
     duration: String(doc.duration ?? ""),
     imageId: relationId(doc.image),
@@ -233,7 +226,7 @@ export function PackageWizard({
       : {
           title: "",
           slug: "",
-          category: "Kenya Safaris",
+          category: "",
           packageTier: "mid-range",
           duration: "",
           imageId: "",
@@ -464,8 +457,9 @@ export function PackageWizard({
                   onChange={(e) => set("category", e.target.value)}
                   value={data.category}
                 >
-                  {CATEGORY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
+                  <option value="">— Select destination —</option>
+                  {destinations.map((o) => (
+                    <option key={o.value} value={o.label}>{o.label}</option>
                   ))}
                 </select>
                 <span className="acc-hint">Shown as the category badge above the package title.</span>
@@ -711,7 +705,7 @@ export function PackageWizard({
               <div className="acc-review__row">
                 <span className="acc-review__label">Market</span>
                 <span className="acc-review__value">
-                  {CATEGORY_OPTIONS.find((o) => o.value === data.category)?.label ?? data.category}
+                  {data.category || <em>—</em>}
                 </span>
               </div>
               <div className="acc-review__row">

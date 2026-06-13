@@ -1,8 +1,5 @@
-import dns from "node:dns";
 import fs from "node:fs";
 import { Client } from "pg";
-
-dns.setDefaultResultOrder("ipv4first");
 
 function loadLocalEnv() {
   if (!fs.existsSync(".env.local")) return;
@@ -16,10 +13,16 @@ function loadLocalEnv() {
 
 loadLocalEnv();
 
-const client = new Client({ connectionString: process.env.DATABASE_URL });
-await client.connect();
+async function run() {
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  await client.connect();
 
-const res = await client.query('SELECT id, filename, url FROM media LIMIT 5');
-console.log(res.rows);
+  const res = await client.query('SELECT id, filename, url, sizes FROM media');
+  for (const row of res.rows) {
+    console.log(`ID: ${row.id}, File: ${row.filename}`);
+  }
 
-await client.end();
+  await client.end();
+}
+
+run();

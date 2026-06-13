@@ -134,6 +134,7 @@ async function storePortalMediaBuffer(filename: string, buffer: Buffer): Promise
     );
   }
 
+  const safeFilename = sanitizeFilename(filename);
   const staticDir = path.resolve(process.cwd(), "public/media");
   await fs.mkdir(staticDir, { recursive: true });
   await fs.writeFile(path.join(staticDir, safeFilename), buffer);

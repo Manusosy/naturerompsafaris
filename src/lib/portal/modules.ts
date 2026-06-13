@@ -655,13 +655,29 @@ export const sidebarGroups: SidebarGroup[] = [
   },
   {
     defaultOpen: true,
+    icon: MapPinned,
+    label: "Destinations",
+    links: [
+      { href: "/admin/destinations", icon: MapPinned, label: "All Destinations" },
+      { href: "/admin/destinations/new", icon: FilePlus2, label: "Add New" },
+    ],
+  },
+  {
+    defaultOpen: true,
+    icon: PackagePlus,
+    label: "Packages",
+    links: [
+      { href: "/admin/packages", icon: PackagePlus, label: "All Packages" },
+      { href: "/admin/packages/new", icon: FilePlus2, label: "Add New" },
+    ],
+  },
+  {
+    defaultOpen: true,
     icon: Tags,
     label: "Trips",
     links: [
       { href: "/admin/trips", icon: Tags, label: "All Trips" },
       { href: "/admin/trips/new", icon: FilePlus2, label: "Add New" },
-      { href: "/admin/destinations", icon: MapPinned, label: "Destinations" },
-      { href: "/admin/packages", icon: PackagePlus, label: "Packages" },
     ],
   },
   {

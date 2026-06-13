@@ -66,6 +66,35 @@ export const Accommodations: CollectionConfig = {
       ],
     },
     {
+      name: "comfortLevel",
+      label: "Comfort Level",
+      type: "select",
+      options: [
+        { label: "Economy", value: "economy" },
+        { label: "Mid Range", value: "mid-range" },
+        { label: "Luxury", value: "luxury" },
+        { label: "Ultra Luxury", value: "ultra-luxury" },
+      ],
+    },
+    {
+      name: "roomTypes",
+      label: "Room Types",
+      type: "array",
+      fields: [
+        {
+          name: "roomType",
+          type: "select",
+          required: true,
+          options: [
+            { label: "Two Bedroom Cottage", value: "two-bedroom-cottage" },
+            { label: "Three Bedroomed Cottage", value: "three-bedroom-cottage" },
+            { label: "Five Bedroomed Cottage", value: "five-bedroom-cottage" },
+            { label: "Standard Suite", value: "standard-suite" },
+          ],
+        },
+      ],
+    },
+    {
       name: "country",
       type: "select",
       required: true,

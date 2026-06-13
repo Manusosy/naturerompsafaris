@@ -23,10 +23,12 @@ export async function generateMetadata({
   const params = await searchParams;
   const country = (params.country ?? "__all").toLowerCase();
   const type = params.type ?? "__all";
+  const comfortLevel = params.comfortLevel ?? "__all";
   const location = params.location ?? "";
   const isFiltered =
     country !== "__all" ||
     type !== "__all" ||
+    comfortLevel !== "__all" ||
     location.length > 0 ||
     Boolean(params.min) ||
     Boolean(params.max);
@@ -81,12 +83,13 @@ export default async function AccommodationsPage({
   const params = await searchParams;
   const country = (params.country ?? "__all").toLowerCase();
   const type = params.type ?? "__all";
+  const comfortLevel = params.comfortLevel ?? "__all";
   const location = params.location ?? "";
   const minPrice = params.min ? Number(params.min) : undefined;
   const maxPrice = params.max ? Number(params.max) : undefined;
 
   const [items, locations] = await Promise.all([
-    getAllAccommodations({ country, type, location, minPrice, maxPrice }),
+    getAllAccommodations({ comfortLevel, country, type, location, minPrice, maxPrice }),
     getAccommodationLocations(country),
   ]);
   const activeCountryLabel = COUNTRY_LABELS[country] ?? "";
@@ -114,6 +117,7 @@ export default async function AccommodationsPage({
             activeCount={
               (country !== "__all" ? 1 : 0) +
               (type !== "__all" ? 1 : 0) +
+              (comfortLevel !== "__all" ? 1 : 0) +
               (location ? 1 : 0) +
               (params.min ? 1 : 0) +
               (params.max ? 1 : 0)
@@ -157,6 +161,27 @@ export default async function AccommodationsPage({
             </div>
 
             <div className="acc-filter-group">
+              <h3 className="acc-filter-heading">Comfort Level</h3>
+              {[
+                { label: "All Levels", value: "__all" },
+                { label: "Economy", value: "economy" },
+                { label: "Mid Range", value: "mid-range" },
+                { label: "Luxury", value: "luxury" },
+                { label: "Ultra Luxury", value: "ultra-luxury" },
+              ].map(({ label, value }) => (
+                <label className="acc-filter-radio" key={value}>
+                  <input
+                    defaultChecked={comfortLevel === value}
+                    name="comfortLevel"
+                    type="radio"
+                    value={value}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            <div className="acc-filter-group">
               <h3 className="acc-filter-heading">Location</h3>
               <select className="acc-filter-select" defaultValue={location} name="location">
                 <option value="">All Locations</option>
@@ -197,7 +222,7 @@ export default async function AccommodationsPage({
 
             <button className="acc-filter-btn" type="submit">Apply Filters</button>
 
-            {(country !== "__all" || type !== "__all" || location || params.min || params.max) && (
+            {(country !== "__all" || type !== "__all" || comfortLevel !== "__all" || location || params.min || params.max) && (
               <Link className="acc-filter-clear" href="/accommodations">
                 Clear all filters
               </Link>

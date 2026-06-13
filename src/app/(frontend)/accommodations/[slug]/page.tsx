@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { DetailGallerySlider } from "@/components/DetailGallerySlider";
 import { getAccommodationBySlug } from "@/lib/accommodation-content";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,7 @@ export default async function AccommodationDetailPage({
   const youtubeId = item.youtubeUrl ? getYouTubeEmbedId(item.youtubeUrl) : null;
   const allImages = [item.imageUrl, ...item.galleryUrls].filter(Boolean);
   const waLink = buildWhatsApp(item.name);
+  const sanitizedDescription = item.description ? sanitizeHtml(item.description) : "";
 
   return (
     <main className="accdet">
@@ -132,12 +134,13 @@ export default async function AccommodationDetailPage({
             <p className="accdet__avail-text">{item.availabilityNote}</p>
           ) : null}
 
-          {item.description && (
+          {sanitizedDescription && (
             <div className="accdet__description">
               <h2>About this property</h2>
-              {item.description.split("\n").filter(Boolean).map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
+              <div 
+                className="blog-article-prose" 
+                dangerouslySetInnerHTML={{ __html: sanitizedDescription }} 
+              />
             </div>
           )}
 

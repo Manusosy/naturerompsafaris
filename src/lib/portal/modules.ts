@@ -94,6 +94,14 @@ export const portalModules: Record<string, PortalModule> = {
           { label: "Hotel", value: "hotel" },
         ], type: "select"
       },
+      {
+        label: "Comfort Level", name: "comfortLevel", options: [
+          { label: "Economy", value: "economy" },
+          { label: "Mid Range", value: "mid-range" },
+          { label: "Luxury", value: "luxury" },
+          { label: "Ultra Luxury", value: "ultra-luxury" },
+        ], type: "select"
+      },
       { label: "Country", name: "country", options: [{ label: "Kenya", value: "kenya" }, { label: "Tanzania", value: "tanzania" }], required: true, type: "select" },
       { label: "Location", name: "location", required: true, type: "text" },
       { label: "Cost Per Night (USD)", name: "price", type: "number" },
@@ -102,7 +110,7 @@ export const portalModules: Record<string, PortalModule> = {
       { label: "Availability note", name: "availabilityNote", rows: 3, type: "textarea" },
       { hasMany: true, label: "Photos", name: "photos", relationTo: "media", type: "relationship" },
       { label: "YouTube URL", name: "youtubeUrl", type: "url" },
-      { label: "Description", name: "description", rows: 12, type: "textarea" },
+      { label: "Description", name: "description", rows: 16, type: "content" },
       { label: "Status", name: "status", options: [{ label: "Draft", value: "draft" }, { label: "Published", value: "published" }], type: "select" },
     ],
     href: "/admin/accommodations",

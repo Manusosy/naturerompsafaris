@@ -6,6 +6,7 @@ import { normalizeMediaUrl } from "@/lib/cms-media";
 export type AccommodationCard = {
   availability: string;
   availabilityNote: string;
+  comfortLevel: string;
   country: string;
   description: string;
   id: string;
@@ -37,6 +38,7 @@ function normalisePhoto(photo: unknown): { url: string; alt: string } {
 }
 
 export async function getAllAccommodations(opts: {
+  comfortLevel?: string;
   country?: string;
   limit?: number;
   location?: string;
@@ -52,6 +54,7 @@ export async function getAllAccommodations(opts: {
     };
     if (opts.country && opts.country !== "__all") where.country = { equals: opts.country };
     if (opts.type && opts.type !== "__all") where.type = { equals: opts.type };
+    if (opts.comfortLevel && opts.comfortLevel !== "__all") where.comfortLevel = { equals: opts.comfortLevel };
     if (opts.location) where.location = { like: opts.location };
     if (opts.minPrice != null) where.price = { ...((where.price as object) ?? {}), greater_than_equal: opts.minPrice };
     if (opts.maxPrice != null) where.price = { ...((where.price as object) ?? {}), less_than_equal: opts.maxPrice };
@@ -71,6 +74,7 @@ export async function getAllAccommodations(opts: {
       return {
         availability: String(doc.availability ?? "on-request"),
         availabilityNote: String(doc.availabilityNote ?? ""),
+        comfortLevel: String(doc.comfortLevel ?? ""),
         country: String(doc.country ?? ""),
         description: String(doc.description ?? ""),
         id: String(doc.id),
@@ -117,6 +121,7 @@ export async function getAccommodationBySlug(slug: string): Promise<Accommodatio
       amenities: rawAmenities,
       availability: String(doc.availability ?? "on-request"),
       availabilityNote: String(doc.availabilityNote ?? ""),
+      comfortLevel: String(doc.comfortLevel ?? ""),
       country: String(doc.country ?? ""),
       description: String(doc.description ?? ""),
       galleryUrls: gallery,

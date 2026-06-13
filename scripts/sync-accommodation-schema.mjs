@@ -26,6 +26,7 @@ ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS slug varchar;
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS country enum_accommodations_country;
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS price numeric;
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS youtube_url varchar;
+ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS comfort_level varchar;
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS status enum_accommodations_status NOT NULL DEFAULT 'draft';
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS seo_meta_title varchar;
 ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS seo_meta_description varchar;
@@ -78,6 +79,15 @@ ALTER TABLE payload_locked_documents_rels
   ADD COLUMN IF NOT EXISTS accommodations_id integer REFERENCES accommodations(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS payload_locked_documents_rels_accommodations_id_idx
   ON payload_locked_documents_rels(accommodations_id);
+
+CREATE TABLE IF NOT EXISTS accommodations_room_types (
+  _order integer NOT NULL,
+  _parent_id integer NOT NULL REFERENCES accommodations(id) ON DELETE CASCADE,
+  id varchar PRIMARY KEY,
+  room_type varchar NOT NULL
+);
+CREATE INDEX IF NOT EXISTS accommodations_room_types_order_idx ON accommodations_room_types(_order);
+CREATE INDEX IF NOT EXISTS accommodations_room_types_parent_id_idx ON accommodations_room_types(_parent_id);
 
 INSERT INTO payload_migrations(name, batch, updated_at, created_at)
 SELECT 'sync-accommodation-schema', 1, now(), now()

@@ -84,24 +84,48 @@ type StoredPortalMediaFile = {
 };
 
 async function storePortalMediaBuffer(filename: string, buffer: Buffer): Promise<StoredPortalMediaFile> {
-  const safeFilename = sanitizeFilename(filename);
   const token = process.env.BLOB_READ_WRITE_TOKEN;
 
   if (token) {
     const { put } = await import("@vercel/blob");
-    const result = await put(safeFilename, buffer, {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: WEBP_MIME,
-      token,
-    });
 
-    return {
-      filename: safeFilename,
-      filesize: buffer.length,
-      mimeType: WEBP_MIME,
-      url: result.url,
-    };
+    // Try the desired filename, then increment on blob-level conflicts:
+    // e.g. image.webp → image-1.webp → image-2.webp …
+    let candidateFilename = sanitizeFilename(filename);
+    const MAX_ATTEMPTS = 99;
+
+    for (let attempt = 0; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const result = await put(candidateFilename, buffer, {
+          access: "public",
+          addRandomSuffix: false,
+          contentType: WEBP_MIME,
+          token,
+        });
+
+        return {
+          filename: candidateFilename,
+          filesize: buffer.length,
+          mimeType: WEBP_MIME,
+          url: result.url,
+        };
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        const isConflict =
+          message.toLowerCase().includes("already exists") ||
+          message.toLowerCase().includes("allowoverwrite");
+
+        if (isConflict && attempt < MAX_ATTEMPTS) {
+          // Increment the filename and retry
+          candidateFilename = sanitizeFilename(incrementFilename(candidateFilename));
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Should never reach here, but TypeScript needs a return path
+    throw new Error(`Could not store ${filename}: too many blob conflicts.`);
   }
 
   if (process.env.VERCEL) {

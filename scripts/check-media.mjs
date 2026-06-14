@@ -17,7 +17,7 @@ async function run() {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
 
-  const res = await client.query('SELECT id, filename, url, sizes FROM media');
+  const res = await client.query('SELECT id, filename, url FROM media');
   for (const row of res.rows) {
     console.log(`ID: ${row.id}, File: ${row.filename}`);
   }

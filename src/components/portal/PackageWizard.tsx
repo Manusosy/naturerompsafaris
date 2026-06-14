@@ -6,6 +6,7 @@ import { AlertCircle, Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-r
 
 import { slugify } from "@/lib/portal/format";
 import { MediaPickerField, type PortalMediaOption } from "@/components/portal/MediaPickerField";
+import { RichTextField } from "@/components/portal/RichTextField";
 
 type RelationOption = { label: string; value: string };
 type QaItem = { question: string; answer: string };
@@ -224,21 +225,21 @@ export function PackageWizard({
     document
       ? buildFromDoc(document)
       : {
-          title: "",
-          slug: "",
-          category: "",
-          packageTier: "mid-range",
-          duration: "",
-          imageId: "",
-          priceText: "",
-          bestTime: "",
-          destinationIds: [],
-          destinationsText: "",
-          content: "",
-          excerpt: "",
-          faqs: [{ question: "", answer: "" }],
-          accommodationIds: [],
-        },
+        title: "",
+        slug: "",
+        category: "",
+        packageTier: "mid-range",
+        duration: "",
+        imageId: "",
+        priceText: "",
+        bestTime: "",
+        destinationIds: [],
+        destinationsText: "",
+        content: "",
+        excerpt: "",
+        faqs: [{ question: "", answer: "" }],
+        accommodationIds: [],
+      },
   );
   const [savingAs, setSavingAs] = useState<"draft" | "published" | null>(null);
   const [error, setError] = useState("");
@@ -617,14 +618,12 @@ export function PackageWizard({
             </p>
 
             <div className="acc-field">
-              <label className="acc-label" htmlFor="pkg-content">Safari overview</label>
-              <textarea
-                className="acc-textarea"
-                id="pkg-content"
-                onChange={(e) => set("content", e.target.value)}
-                placeholder="Main overview text for the package page. Use “Tour Highlights” to split paragraphs if needed."
-                rows={10}
-                value={data.content}
+              <label className="acc-label">Safari overview</label>
+              <RichTextField
+                defaultValue={data.content}
+                media={media}
+                name="content"
+                onChange={(val) => set("content", val)}
               />
             </div>
 

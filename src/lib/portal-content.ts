@@ -7,6 +7,10 @@ type MediaDoc = {
 };
 
 type AccommodationDoc = {
+  id?: number | string;
+  slug?: string;
+  country?: string;
+  price?: number;
   availability?: "available" | "limited" | "on-request" | "unavailable";
   description?: string;
   location?: string;
@@ -32,6 +36,10 @@ type LocalPayloadReader = {
 
 export type PackageEnhancements = {
   accommodations: Array<{
+    id: string;
+    slug: string;
+    country: string;
+    price: number | null;
     availability: string;
     description?: string;
     imageAlt: string;
@@ -42,12 +50,12 @@ export type PackageEnhancements = {
     type: string;
   }>;
   flightAffiliate:
-    | {
-        ctaLabel: string;
-        href: string;
-        provider: string;
-      }
-    | null;
+  | {
+    ctaLabel: string;
+    href: string;
+    provider: string;
+  }
+  | null;
 };
 
 export async function getPackageEnhancements(
@@ -83,6 +91,10 @@ export async function getPackageEnhancements(
           const media = firstPhoto as MediaDoc | undefined;
 
           return {
+            id: String(item.id ?? ""),
+            slug: item.slug ?? String(item.id ?? ""),
+            country: item.country ?? "kenya",
+            price: item.price != null ? Number(item.price) : null,
             availability: item.availability ?? "on-request",
             description: item.description,
             imageAlt: media?.alt ?? item.name ?? "Safari accommodation",
@@ -95,16 +107,16 @@ export async function getPackageEnhancements(
         }),
       flightAffiliate:
         typeof flightSettings?.provider === "string" &&
-        flightSettings.provider !== "disabled" &&
-        typeof flightSettings.affiliateUrl === "string"
+          flightSettings.provider !== "disabled" &&
+          typeof flightSettings.affiliateUrl === "string"
           ? {
-              ctaLabel:
-                typeof flightSettings.ctaLabel === "string"
-                  ? flightSettings.ctaLabel
-                  : "Check Flights",
-              href: flightSettings.affiliateUrl,
-              provider: flightSettings.provider,
-            }
+            ctaLabel:
+              typeof flightSettings.ctaLabel === "string"
+                ? flightSettings.ctaLabel
+                : "Check Flights",
+            href: flightSettings.affiliateUrl,
+            provider: flightSettings.provider,
+          }
           : null,
     };
   } catch {

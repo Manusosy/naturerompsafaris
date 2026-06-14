@@ -26,6 +26,7 @@ import {
 import { getPackageEnhancements } from "@/lib/portal-content";
 import { site } from "@/content/site";
 import { breadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { getImageUrl, getMediaAlt } from "@/components/Cards";
 import { shouldSkipBuildTimePayload } from "@/lib/build-static-params";
 
@@ -192,11 +193,11 @@ export default async function PackageDetailPage({ params }: Props) {
 
   const packageFaqs = Array.isArray(item.faqs)
     ? (item.faqs as Array<Record<string, unknown>>)
-        .map((entry) => ({
-          answer: typeof entry.answer === "string" ? entry.answer.trim() : "",
-          question: typeof entry.question === "string" ? entry.question.trim() : "",
-        }))
-        .filter((entry) => entry.question && entry.answer)
+      .map((entry) => ({
+        answer: typeof entry.answer === "string" ? entry.answer.trim() : "",
+        question: typeof entry.question === "string" ? entry.question.trim() : "",
+      }))
+      .filter((entry) => entry.question && entry.answer)
     : [];
   const tripFaqs = primaryTrip?.faqs ?? [];
   const faqs = packageFaqs.length ? packageFaqs : tripFaqs;
@@ -229,12 +230,12 @@ export default async function PackageDetailPage({ params }: Props) {
     ...(displayDuration ? { duration: displayDuration } : {}),
     ...(linkedTrips.length
       ? {
-          hasPart: linkedTrips.map((trip) => ({
-            "@type": "TouristTrip",
-            name: trip.title,
-            url: `${siteUrl}/trips/${trip.slug}`,
-          })),
-        }
+        hasPart: linkedTrips.map((trip) => ({
+          "@type": "TouristTrip",
+          name: trip.title,
+          url: `${siteUrl}/trips/${trip.slug}`,
+        })),
+      }
       : {}),
   };
 
@@ -244,6 +245,7 @@ export default async function PackageDetailPage({ params }: Props) {
     item as Record<string, unknown>,
     item.title,
   );
+  const sanitizedContent = item.content ? sanitizeHtml(item.content) : "";
   const overviewText =
     stripHtml(item.content) ||
     item.excerpt ||
@@ -339,11 +341,19 @@ export default async function PackageDetailPage({ params }: Props) {
           </dl>
 
           <div className="pkg-detail__intro">
-            <div className="pkg-detail__lede">
-              {overviewBlocks.map((block, index) => (
-                <p key={index}>{block}</p>
-              ))}
-            </div>
+            {sanitizedContent ? (
+              <div
+                className="pkg-detail__lede blog-article-prose"
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+                style={{ textAlign: "left", width: "100%", maxWidth: "100%" }}
+              />
+            ) : (
+              <div className="pkg-detail__lede">
+                {overviewBlocks.map((block, index) => (
+                  <p key={index}>{block}</p>
+                ))}
+              </div>
+            )}
             <p className="pkg-detail__note">
               {linkedTrips.length
                 ? "This page is the package overview. Open any tour below for the full day-by-day itinerary, seasonal pricing, inclusions, exclusions and enquiries."

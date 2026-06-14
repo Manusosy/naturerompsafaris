@@ -10159,13 +10159,20 @@ textarea {
 }
 
 .acc-grid--packages {
-  grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
-  justify-content: start;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
 
 .acc-grid--packages .acc-card {
-  max-width: 300px;
+  max-width: 100%;
   width: 100%;
+}
+
+@media (max-width: 1024px) and (min-width: 681px) {
+  .acc-grid--packages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .acc-card__route {

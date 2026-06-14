@@ -41,6 +41,7 @@ const STEPS = [
 const COUNTRY_OPTIONS = [
   { label: "Kenya", value: "kenya" },
   { label: "Tanzania", value: "tanzania" },
+  { label: "Kenya & Tanzania Combined Safaris", value: "combined" },
 ];
 
 const REGION_HINTS: Record<string, string[]> = {
@@ -215,23 +216,23 @@ export function DestinationWizard({
     document
       ? buildFromDoc(document)
       : {
-          name: "",
-          slug: "",
-          country: "kenya",
-          region: "",
-          heroImageId: "",
-          galleryImageIds: [],
-          summary: "",
-          content: "",
-          mapEmbedUrl: "",
-          mapSearchQuery: "",
-          latitude: "",
-          longitude: "",
-          faqs: [{ question: "", answer: "" }],
-          seoDescription: "",
-          seoKeywords: "",
-          seoCanonicalSlug: "",
-        },
+        name: "",
+        slug: "",
+        country: "kenya",
+        region: "",
+        heroImageId: "",
+        galleryImageIds: [],
+        summary: "",
+        content: "",
+        mapEmbedUrl: "",
+        mapSearchQuery: "",
+        latitude: "",
+        longitude: "",
+        faqs: [{ question: "", answer: "" }],
+        seoDescription: "",
+        seoKeywords: "",
+        seoCanonicalSlug: "",
+      },
   );
   const [savingAs, setSavingAs] = useState<"draft" | "published" | null>(null);
   const [error, setError] = useState("");

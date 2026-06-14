@@ -65,13 +65,13 @@ export const Destinations: CollectionConfig = {
                 },
               },
             },
-            { 
-              name: "summary", 
-              type: "textarea", 
+            {
+              name: "summary",
+              type: "textarea",
               admin: { placeholder: "A brief, compelling summary of the destination..." },
             },
-            { 
-              name: "content", 
+            {
+              name: "content",
               type: "textarea",
               admin: { description: "Detailed description of the destination." },
             },
@@ -131,17 +131,17 @@ export const Destinations: CollectionConfig = {
                 description: "Add questions and answers. You can drag to reorder, add new ones going down, or remove them.",
               },
               fields: [
-                { 
-                  name: "question", 
-                  type: "text", 
-                  required: true, 
-                  admin: { placeholder: "e.g. When is the best time to visit?" } 
+                {
+                  name: "question",
+                  type: "text",
+                  required: true,
+                  admin: { placeholder: "e.g. When is the best time to visit?" }
                 },
-                { 
-                  name: "answer", 
-                  type: "textarea", 
-                  required: true, 
-                  admin: { placeholder: "Provide a clear and helpful answer..." } 
+                {
+                  name: "answer",
+                  type: "textarea",
+                  required: true,
+                  admin: { placeholder: "Provide a clear and helpful answer..." }
                 },
               ],
             },
@@ -220,6 +220,7 @@ export const Destinations: CollectionConfig = {
       options: [
         { label: "Kenya", value: "kenya" },
         { label: "Tanzania", value: "tanzania" },
+        { label: "Kenya & Tanzania Combined Safaris", value: "combined" },
       ],
       admin: { position: "sidebar" },
     },

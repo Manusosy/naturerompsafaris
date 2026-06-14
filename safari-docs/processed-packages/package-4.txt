@@ -1,127 +1,49 @@
 ====================================================================
-PACKAGE WIZARD MAPPING: 6-Day Tsavo East, Amboseli, Lake Naivasha & Maasai Mara Safari
+PACKAGE WIZARD FIELDS: Package 4 (6-Day Mombasa to Nairobi Safari)
 ====================================================================
 
-This file organizes all the data needed for the admin side Package Wizard to publish this safari package (Package 4), fully optimized for SEO.
+[Step 1: Basics]
+* Title: 6-Day Tsavo East, Amboseli, Lake Naivasha & Maasai Mara Safari
+* Slug: 6-day-tsavo-east-amboseli-naivasha-masai-mara
+* Market / Destination: Kenya Safaris
+* Style / Tier: Mid Range
 
---------------------------------------------------------------------
-SECTION 1: WIZARD FORM FIELDS (Metadata)
---------------------------------------------------------------------
+[Step 2: Hero Image]
+* Cover Image: [Select / Upload an Amboseli or Maasai Mara wildlife photo]
 
-These fields map directly to the inputs in the Package Wizard.
+[Step 3: Quick Facts]
+* Duration (fallback): 6 Days / 5 Nights
+* Destinations: Tsavo East National Park, Amboseli National Park, Lake Naivasha, Maasai Mara National Reserve
+* Destinations label: Tsavo East · Amboseli · Lake Naivasha · Maasai Mara
+* Best time to travel: July – October (Wildebeest Migration) or Year-round
+* Starting price (fallback): From USD 1,450 per person
 
-[Wizard Field]               [Field Type / Option]     [Value]
---------------------------------------------------------------------
-Title:                       Text                      6-Day Tsavo East, Amboseli, Lake Naivasha & Maasai Mara Safari
-Slug:                        Text (Auto-generated)     6-day-tsavo-east-amboseli-naivasha-masai-mara
-Category (Market):           Text                      Kenya Safaris
-Package Tier:                Select Option             mid-range
-Duration:                    Text                      6 Days / 5 Nights
-Cover Image:                 Media Upload              [Upload / Select a Tsavo, Amboseli, or Maasai Mara landscape image]
-Price / Starting Text:       Text                      From USD 1,450 per person
-Best Time:                   Text                      July – October (Wildebeest Migration) or Year-round
-Destinations Text:           Text                      Tsavo East · Amboseli · Lake Naivasha · Maasai Mara
-Destinations:                Relationship (Many)       Tsavo East National Park, Amboseli National Park, Lake Naivasha, Maasai Mara National Reserve (Select in Wizard)
-Accommodations:              Relationship (Many)       [Select Voi Safari Lodge, AA Amboseli Lodge, Pelican Lodge, Enchoro Wildlife Camp in the Wizard]
-Excerpt:                     Textarea                  Embark on an incredible 6-day Kenya safari starting from Mombasa or Diani and ending in Nairobi. Explore Tsavo East, Amboseli under Mt. Kilimanjaro, Lake Naivasha, and the world-famous Maasai Mara.
-Meta Title:                  Text (SEO)                6-Day Mombasa to Nairobi Safari | Nature Romp Safaris
-Meta Description:            Textarea (SEO)            Experience Kenya's top parks with Kenya Tanzania Safari Adventures. Track the Big Five across Tsavo East, Amboseli, Lake Naivasha, and Maasai Mara.
-SEO Keywords:                Text (SEO)                Kenya Tanzania Safari Adventures, Nature Romp Safaris, Mombasa to Nairobi safari, 6 day Kenya safari, Tsavo East Amboseli Naivasha Mara safari, midrange Kenya tour
-
-
---------------------------------------------------------------------
-Frequently Asked Questions (FAQs)
---------------------------------------------------------------------
-These Q&As can be added under Step 4: Page Content in the FAQs accordion.
-
-FAQ 1
-* Question: How does the transport work for this safari starting in Mombasa and ending in Nairobi?
-* Answer: This safari with Nature Romp Safaris includes a convenient morning pickup from your hotel in Mombasa or Diani, or Moi International Airport. You will travel in a custom safari vehicle (Safari Van or private 4x4 Land Cruiser) and end your tour in Nairobi, with drop-off at your hotel or Jomo Kenyatta International Airport.
-
-FAQ 2
-* Question: What activities are available at Lake Naivasha and Hell's Gate National Park?
-* Answer: Lake Naivasha offers serene optional boat rides to view hippos and abundant birdlife. At the nearby Hell's Gate National Park, you can enjoy active excursions like walking safaris, cycling among zebras and gazelles, or hiking through gorges and dramatic cliffs.
-
-FAQ 3
-* Question: Which accommodations are included in this mid-range package?
-* Answer: Kenya Tanzania Safari Adventures handpicks comfortable, quality mid-range lodges and camps, such as Voi Safari Lodge in Tsavo East, AA Amboseli Lodge in Amboseli, Taphe Guest Resort or Pelican Lodge in Naivasha, and Enchoro Wildlife Camp in the Maasai Mara.
-
-
---------------------------------------------------------------------
-SECTION 2: MAIN PAGE CONTENT (Rich Editor Copy-Paste)
---------------------------------------------------------------------
-
-Copy and paste the formatted content below into the Safari Overview rich text editor (Step 4).
+[Step 4: Page Content - Safari Overview]
+(Copy and paste the text block below directly into the Rich Text Editor)
 
 Embark on an incredible 6-day safari expedition across Kenya's most legendary wilderness regions with **Kenya Tanzania Safari Adventures**. Starting from the coastal shores of Mombasa or Diani and concluding in the vibrant capital of Nairobi, this midrange safari curated by **Nature Romp Safaris** connects the red-dust plains of Tsavo East, the elephant-rich marshlands of Amboseli, the active landscapes of Lake Naivasha, and the predator-dense savannahs of the Maasai Mara.
 
 Enjoy expert-led game drives, spectacular scenic drives through the Great Rift Valley, and stay in comfortable mid-range lodges and tented camps that place you in the heart of Africa's wild action.
 
-### Safari Highlights
-* **Seamless point-to-point journey:** Convenient pickup in Mombasa/Diani and drop-off in Nairobi.
-* **Tsavo East red elephants:** Explore Kenya's largest park, famous for its red-dust bathing giants.
-* **Amboseli's majestic views:** See massive elephant herds grazing in front of Mt. Kilimanjaro.
-* **Lake Naivasha & Hell's Gate:** Walk, cycle, or hike amongst volcanic cliffs, geothermal valleys, and diverse wildlife.
-* **Maasai Mara big cats:** Witness the unmatched predator action and rich wildlife of Africa's crown jewel.
+Tour Highlights
+Mombasa to Nairobi route: Point-to-point journey starting on the coast and ending in the capital.
+Tsavo East red-dust giants: Encounter the unique red-dust bathing elephants of Kenya's largest national park.
+Kilimanjaro backdrop: Spot huge herds of elephants under the snowcapped peak of Africa's highest mountain.
+Lake Naivasha boat tour: Enjoy birdwatching and hippo spotting on a fresh water lake, and hiking in Hell's Gate.
+Maasai Mara big cats: Unmatched predator-dense plains with lions, leopards, cheetahs, and the Great Migration.
 
----
+[Step 4: Page Content - Fallback & FAQs]
+* Overview fallback (Excerpt): Discover the magic of Kenya's top parks with Nature Romp Safaris on this 6-day Mombasa to Nairobi tour.
+* Frequently Asked Questions:
 
-### Detailed Itinerary
+  FAQ 1
+  - Question: How does the transport work for this safari starting in Mombasa and ending in Nairobi?
+  - Answer: This safari with Nature Romp Safaris includes a convenient morning pickup from your hotel in Mombasa or Diani, or Moi International Airport. You will travel in a custom safari vehicle (Safari Van or private 4x4 Land Cruiser) and end your tour in Nairobi, with drop-off at your hotel or Jomo Kenyatta International Airport.
 
-#### Day 1: Mombasa – Tsavo East National Park
-Your safari adventure with **Nature Romp Safaris** kicks off with a morning pick-up from your Mombasa hotel or Moi International Airport, followed by a scenic drive inland to Tsavo East National Park, one of Kenya’s oldest and largest conservation areas. The journey unfolds across changing landscapes, from coastal plains to the wild heart of Tsavo.
+  FAQ 2
+  - Question: What activities are available at Lake Naivasha and Hell's Gate National Park?
+  - Answer: Lake Naivasha offers serene optional boat rides to view hippos and abundant birdlife. At the nearby Hell's Gate National Park, you can enjoy active excursions like walking safaris, cycling among zebras and gazelles, or hiking through gorges and dramatic cliffs.
 
-* **First Game Drive:** As you enter the park, your first game drive begins en route to the lodge, where wildlife sightings may include dust-red elephants, zebras, buffaloes, lions, and lesser kudus. Tsavo East is famed for its "Man-Eaters of Tsavo" legend and is home to over 500 bird species.
-* **Afternoon Exploration:** Arrive in time for lunch at the iconic **Voi Safari Lodge**, perched atop a cliff with sweeping views of the wilderness. Later in the afternoon, embark on another game drive across the open plains as the sun sets.
-* **Overnight:** Voi Safari Lodge (Tsavo East).
-
-#### Day 2: Tsavo East – Amboseli National Park
-Rise early for breakfast before checking out. Enjoy a final morning game drive through Tsavo East as you exit the park and begin your journey westward to Amboseli National Park, located at the base of the majestic Mount Kilimanjaro.
-
-* **Arrival & Lunch:** Arrive around midday and proceed to **Manjaro Tented Camp** (or AA Amboseli Lodge), where you’ll check in and enjoy a warm lunch.
-* **Afternoon Game Drive:** After a short rest, head out for a late afternoon game drive, where you’ll encounter large herds of elephants, buffalos, cheetahs, giraffes, zebras, and possibly even elusive predators like lions or leopards.
-* ** Kilimanjaro Backdrop:** Enjoy the photogenic scenery as Kilimanjaro’s snowcapped peak emerges from the clouds.
-* **Overnight:** Manjaro Tented Camp / AA Amboseli Lodge.
-
-#### Day 3: Amboseli – Lake Naivasha
-After an early breakfast, check out and enjoy a final morning game drive as you depart Amboseli. The journey takes you north through the Great Rift Valley with **Kenya Tanzania Safari Adventures**, where a stop at a scenic viewpoint offers sweeping views of ancient escarpments and volcanic terrain.
-
-* **Arrival & Hell's Gate Adventure:** Arrive in Lake Naivasha in time for lunch at **Taphe Guest Resort** (or The Pelican Lodge). In the afternoon, head to Hell’s Gate National Park for an active twist to your safari — choose to explore the dramatic landscape on foot, bike, or even rock climb among cliffs, gorges, and geothermal features.
-* **Geothermal Visit:** Visit the nearby Olkaria Geothermal Power Plant to learn about the region’s volcanic energy.
-* **Overnight:** Taphe Guest Resort / The Pelican Lodge.
-
-#### Day 4: Lake Naivasha – Maasai Mara National Reserve
-Fuel up with breakfast before setting off southwest to the legendary Maasai Mara, a journey that takes you through lush farmlands and rolling savannahs.
-
-* **First Mara Game Drive:** Arrive at **Enchoro Wildlife Camp** in time for lunch and a short rest. In the late afternoon, venture into the Mara plains for your first game drive in this iconic reserve, home to lions, elephants, cheetahs, buffalo, and many other species.
-* **Overnight:** Enchoro Wildlife Camp / Ol Moran Tented Camp.
-
-#### Day 5: Full Day Safari in Maasai Mara
-Rise with the sun for a morning game drive, when the bush is most alive and predators are likely on the move. Return for breakfast, then set out for a full-day safari with packed lunch to maximize your time in the wild.
-
-* **The Big Five & Great Migration:** Today, track the Big Five—lion, leopard, elephant, rhino, and buffalo—alongside herds of wildebeest, zebras, gazelles, and giraffes. If your visit falls between July and October, you may witness the breathtaking wildebeest migration across the Mara River, where crocodiles lie in wait.
-* **Picnic Lunch:** Enjoy your picnic lunch in the heart of the reserve, surrounded by raw nature. Return to camp in the evening.
-* **Overnight:** Enchoro Wildlife Camp / Ol Moran Tented Camp.
-
-#### Day 6: Maasai Mara – Nairobi
-After your final breakfast in the wild, check out and begin your journey back to Nairobi. Optionally, if you have an evening flight, you can enjoy an extra morning game drive with a packed lunch, departing the Mara around midday.
-
-* **Nairobi Drop-off:** Arrive in Nairobi in the afternoon (between 3:00–6:00 pm). Enjoy optional lunch at the famous Carnivore Restaurant (at your own cost) before your guide drops you at either your hotel or Jomo Kenyatta International Airport (JKIA) for your onward flight.
-
----
-
-### What's Included
-* Park Entrance Fees for all reserves and parks
-* Transport by private Safari Van with pop-up roof
-* Quality mid-range accommodation as specified in the itinerary
-* All meals as specified on tour (Full Board)
-* Unlimited bottled drinking water during game drives
-* Fully guided game drives with services of a qualified, English-speaking driver guide
-* All applicable government taxes and levies
-
-### What's Not Included
-* Tips and gratuities for safari guide and lodge staff (highly recommended)
-* Items and expenses of a personal nature (e.g. laundry, souvenirs, passport/visas)
-* Drinks, alcoholic beverages, and any extra meals not specified in the itinerary
-* Optional activities (e.g. Maasai village visit, Hot Air Balloon safari, Lake Naivasha boat ride)
-* International flights and travel insurance
+  FAQ 3
+  - Question: Which accommodations are included in this mid-range package?
+  - Answer: Kenya Tanzania Safari Adventures handpicks comfortable, quality mid-range lodges and camps, such as Voi Safari Lodge in Tsavo East, AA Amboseli Lodge in Amboseli, Taphe Guest Resort or Pelican Lodge in Naivasha, and Enchoro Wildlife Camp in the Maasai Mara.

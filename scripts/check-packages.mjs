@@ -17,20 +17,17 @@ async function run() {
     const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
 
-    console.log("--- TABLE COLUMNS FOR 'packages' ---");
-    const cols = await client.query(`
-    SELECT column_name, data_type, is_nullable
-    FROM information_schema.columns 
-    WHERE table_name = 'packages'
-    ORDER BY ordinal_position;
-  `);
-    for (const col of cols.rows) {
-        console.log(`${col.column_name}: ${col.data_type} (nullable: ${col.is_nullable})`);
+    console.log("--- PUBLISHED PACKAGES IN DATABASE ---");
+    const res = await client.query(`
+        SELECT id, title, slug, category, duration
+        FROM packages
+        ORDER BY id;
+    `);
+    for (const row of res.rows) {
+        console.log(`ID: ${row.id} | Slug: ${row.slug} | Title: ${row.title}`);
     }
 
     await client.end();
 }
-
-run().catch(console.error);
 
 run().catch(console.error);

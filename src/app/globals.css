@@ -8045,9 +8045,12 @@ textarea {
   width: 100%;
 }
 
-.pkg-detail__section,
-.pkg-detail__extras {
+.pkg-detail__section {
   max-width: 820px;
+}
+
+.pkg-detail__extras {
+  max-width: min(1140px, calc(100% - 32px));
 }
 
 .pkg-facts--linear {

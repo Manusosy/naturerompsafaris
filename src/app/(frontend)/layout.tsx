@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { ScrollAnimations } from "@/components/ScrollAnimations";
+import { Analytics } from "@vercel/analytics/next";
 import { organizationSchema } from "@/lib/seo";
 import { site } from "@/content/site";
 import { getPublishedDestinationsForNav } from "@/lib/public-destinations";
@@ -58,6 +59,7 @@ export default async function RootLayout({
         {children}
         <Footer navItems={navItems} siteSettings={siteSettings} />
         <CookieConsent />
+        <Analytics />
       </body>
     </html>
   );
